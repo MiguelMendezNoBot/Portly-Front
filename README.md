@@ -1,6 +1,6 @@
 Aquí tienes una estructura de README.md moderna y funcional para un proyecto frontend utilizando React + Vite. Está diseñada para que cualquier miembro de tu equipo pueda levantar el entorno de desarrollo en segundos.
 
-⚛️ Proyecto Frontend: [Nombre del Sistema]
+⚛️ Proyecto Frontend: 
 Este es el cliente web desarrollado con React y Vite, enfocado en una arquitectura modular y alto rendimiento.
 
 🚀 Requisitos Previos
