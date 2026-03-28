@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { registerUser } from "../../../services/authService"
+import { useToast } from "../../../hooks/useToast"
+import { saveToken, saveUsuarioId } from "../../../utils/storage"
 
 interface FormFields {
     nombre: string
@@ -54,7 +56,7 @@ export const useRegisterForm = () => {
         email: "", password: "", confirmPassword: ""
     })
     const [errors, setErrors] = useState<FormErrors>({})
-    const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null)
+    const { toast, showToast } = useToast()
 
     const handleChange = (field: keyof FormFields) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -69,17 +71,14 @@ export const useRegisterForm = () => {
             profesion: validateAlphaField(fields.profesion, "La profesión"),
             email: validateEmail(fields.email),
             password: validatePassword(fields.password),
-            confirmPassword: fields.confirmPassword !== fields.password
-                ? "Las contraseñas no coinciden"
-                : !fields.confirmPassword ? "Confirma tu contraseña" : undefined
+            confirmPassword: !fields.confirmPassword
+            ? "Confirma tu contraseña"
+            : fields.confirmPassword !== fields.password
+            ? "Las contraseñas no coinciden"
+            : undefined
         }
         setErrors(newErrors)
         return Object.values(newErrors).every(e => e === undefined)
-    }
-
-    const showToast = (message: string, type: "success" | "error") => {
-        setToast({ message, type })
-        setTimeout(() => setToast(null), 3500)
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -100,7 +99,8 @@ export const useRegisterForm = () => {
             confirmarContrasena: fields.confirmPassword
         })
 
-        localStorage.setItem("token", data.token)
+        saveToken(data.token)
+        saveUsuarioId(data.usuarioId) 
         showToast("¡Cuenta creada exitosamente!", "success")
 
     } catch (error: any) {

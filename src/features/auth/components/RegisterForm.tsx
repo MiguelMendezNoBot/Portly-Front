@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import {Input} from '../../../components/Input'
 import { useRegisterForm } from '../hooks/useRegisterForm'
 
@@ -41,15 +42,10 @@ export const RegisterForm = () => {
                     value={fields.confirmPassword} onChange={handleChange('confirmPassword')} error={errors.confirmPassword}
                 />
                 <div>
-                    <button
-                        type="submit"
-                        className="mt-6 w-full py-2 rounded-lg text-white font-medium bg-[#6C63FF] hover:bg-[#5a52d5] transition-colors"
-                    >
-                        Registrarse
-                    </button>
+                    <button type="submit" className="mt-6 w-full py-2 rounded-lg text-white font-medium bg-[#6C63FF] hover:bg-[#5a52d5] transition-colors"> Registrarse </button>
                     <div className="text-center mt-2">
                         <span className="text-gray-500 text-sm">¿Ya tienes cuenta? </span>
-                        <span className="text-[#6C63FF] font-medium text-sm cursor-pointer">Iniciar Sesión</span>
+                        <Link to="/auth/login" className="text-[#6C63FF] font-medium text-sm cursor-pointer hover:underline">Iniciar Sesión </Link>
                     </div>
                 </div>
             </form>
