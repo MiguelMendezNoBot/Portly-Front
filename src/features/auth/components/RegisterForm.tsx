@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import {Input} from '../../../components/Input'
 import { useRegisterForm } from '../hooks/useRegisterForm'
+import { GoogleIcon } from '../../../components/SocialIcons'
+
+const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
 
 export const RegisterForm = () => {
     const { fields, errors, toast, handleChange, handleSubmit } = useRegisterForm()
@@ -15,6 +18,24 @@ export const RegisterForm = () => {
             <div className="pb-2 text-center">
                 <h1 className="font-bold text-3xl">Crea tu cuenta</h1>
                 <h2 className="text-gray-500 font-thin text-[13px]">Regístrate en el sistema, mediante el siguiente formulario</h2>
+            </div>
+            <div className="mb-4">
+                <button
+                    type="button"
+                    onClick={() => { window.location.href = GOOGLE_AUTH_URL; }}
+                    className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+                >
+                    <GoogleIcon className="w-5 h-5" />
+                    Continuar con Google
+                </button>
+                <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                        <span className="bg-white px-3 text-gray-400 font-semibold tracking-wider">O con correo</span>
+                    </div>
+                </div>
             </div>
             <form onSubmit={handleSubmit} noValidate>
                 <div className='flex flex-col sm:gap-5 sm:flex-row'>
