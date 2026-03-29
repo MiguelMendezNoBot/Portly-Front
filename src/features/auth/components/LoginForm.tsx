@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react'; // 1. Importamos useRef
+import { useState, useRef } from 'react';
 import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
+
+const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -35,7 +37,11 @@ export function LoginForm() {
 
         {/* Botones Sociales */}
         <div className="space-y-4 mb-8">
-          <button type="button" className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors">
+          <button
+            type="button"
+            onClick={() => { window.location.href = GOOGLE_AUTH_URL; }}
+            className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+          >
             <GoogleIcon className="w-5 h-5" />
             Google
           </button>
