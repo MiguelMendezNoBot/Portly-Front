@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { verifyCode, forgotPassword } from '../services/authService';
 
 // Icono circular de verificación (similar al estilo de candado de image_14.png)
 const CodeIcon = () => (
@@ -31,16 +32,30 @@ const formatTime = (seconds: number): string => {
 };
 
 export const VerifyCodeForm = () => {
-  // Estado para los 6 dígitos del código
   const [code, setCode] = useState<string[]>(new Array(6).fill(''));
-  // Referencias a los inputs para manejar el foco automáticamente
   const inputRefs = useRef<(HTMLInputElement | null)[]>(
     new Array(6).fill(null)
   );
-  // Estado del temporizador
+
   const [secondsLeft, setSecondsLeft] = useState(59);
   const [canResend, setCanResend] = useState(false);
-  //const navigate = useNavigate();
+
+  // Estados para manejar la carga y los errores
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Rescatamos el email que nos pasaron desde ForgotPasswordPage
+  const email = location.state?.email;
+
+  // Si el usuario entra directamente a esta URL sin un correo, lo mandamos de vuelta
+  useEffect(() => {
+    if (!email) {
+      navigate('/forgot-password', { replace: true });
+    }
+  }, [email, navigate]);
 
   // Lógica del temporizador de cuenta regresiva
   useEffect(() => {
@@ -54,108 +69,148 @@ export const VerifyCodeForm = () => {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  // Manejar el cambio de texto en un input individual
+  // Manejar el cambio en los inputs de código
   const handleInputChange = (index: number, value: string) => {
-    // Solo permitir números
     if (!/^\d*$/.test(value)) return;
+
+    setError(null); // Limpiamos el error si el usuario empieza a escribir de nuevo
 
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
 
-    // Saltar automáticamente al siguiente input si se escribe un dígito
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  // Manejar la pulsación de teclas (Backspace)
   const handleKeyDown = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    // Volver automáticamente al input anterior si se presiona Backspace en un campo vacío
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // Manejar el pegado de código (Paste)
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
-    if (!/^\d{6}$/.test(pastedData)) return; // Asegurar que sean 6 dígitos numéricos
+    if (!/^\d{6}$/.test(pastedData)) return;
 
-    const newCode = pastedData.split('');
-    setCode(newCode);
-    // Poner el foco en el último input
+    setError(null);
+    setCode(pastedData.split(''));
     inputRefs.current[5]?.focus();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ENVÍO DEL CÓDIGO PARA VERIFICACIÓN
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const fullCode = code.join('');
-    console.log('Verificando código:', fullCode);
-    // Aquí iría la llamada al backend para verificar el código
-    // navigate('/reset-password'); // Ejemplo de redirección a la siguiente pantalla
+
+    if (fullCode.length < 6) {
+      setError('Por favor, ingresa el código de 6 dígitos.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Llamamos a tu controlador de Spring Boot
+      await verifyCode(email, fullCode);
+
+      // Si el backend devuelve 200 OK, navegamos a cambiar contraseña
+      // Pasamos el email nuevamente para que NewPasswordForm sepa a quién actualizarle la clave
+      navigate('/reset-password', {
+        state: { email: email, codigo: fullCode },
+      });
+    } catch (err: any) {
+      // Capturamos el InvalidCodeException o CodeExpiredException
+      setError(err.message || 'Código inválido. Intenta nuevamente.');
+      // Limpiamos los inputs para que lo intente de nuevo
+      setCode(new Array(6).fill(''));
+      inputRefs.current[0]?.focus();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResend = () => {
-    console.log('Reenviando código...');
-    setSecondsLeft(59); // Reiniciar temporizador
-    setCanResend(false);
-    // Aquí iría la llamada al backend para reenviar el código
+  // LÓGICA DE REENVÍO
+  const handleResend = async () => {
+    if (!canResend) return;
+
+    setError(null);
+    setCanResend(false); // Deshabilitamos el botón inmediatamente
+
+    try {
+      // Llamamos al mismo endpoint de solicitar contraseña en tu backend
+      await forgotPassword(email);
+      setSecondsLeft(59); // Reiniciamos el timer
+    } catch (err: any) {
+      setError('No se pudo reenviar el código. Intenta de nuevo.');
+      setCanResend(true); // Lo volvemos a habilitar si falló
+    }
   };
 
   return (
     <div className="w-[85%] sm:w-full max-w-sm mx-auto px-5 sm:px-10 py-10 bg-white rounded-[35px] relative shadow-lg flex flex-col items-center">
       <CodeIcon />
 
-      <div className="pb-8 text-center">
-        {/* Tipografía grande y negrita */}
+      <div className="pb-6 text-center">
         <h1 className="font-bold text-3xl leading-tight">Verificar Código</h1>
-        {/* Tipografía pequeña y gris */}
         <h2 className="text-gray-500 font-normal text-[13px] mt-4 px-2">
-          Ingresa el código de 6 dígitos que enviamos a tu correo
+          Ingresa el código de 6 dígitos que enviamos a
+          <br />
+          <span className="font-bold text-gray-800">{email}</span>
         </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full">
-        {/* Contenedor de los 6 inputs de código */}
-        <div className="flex justify-center gap-3 mb-8" onPaste={handlePaste}>
+        <div
+          className="flex justify-center gap-2 sm:gap-3 mb-2"
+          onPaste={handlePaste}
+        >
           {code.map((digit, index) => (
             <input
               key={index}
               type="text"
-              maxLength={1} // Solo un carácter por campo
+              maxLength={1}
               value={digit}
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
               onChange={(e) => handleInputChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              // Clases de Tailwind para inputs cuadrados, centrados y redondeados
-              className="w-12 h-12 border border-gray-300 rounded-xl text-center text-2xl font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+              className={`w-10 h-12 sm:w-12 sm:h-12 border ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-xl text-center text-xl sm:text-2xl font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
             />
           ))}
         </div>
 
-        {/* Botón principal morado */}
+        {/* Mensaje de error en rojo debajo del código */}
+        <div className="h-6 mb-4 text-center">
+          {error && (
+            <span className="text-red-500 text-[12px] font-medium">
+              {error}
+            </span>
+          )}
+        </div>
+
         <button
           type="submit"
-          className="w-full py-3 rounded-2xl text-white font-semibold bg-[#6C63FF] hover:bg-[#5a52d5] transition-colors text-[14px] flex items-center justify-center tracking-wide"
+          disabled={isLoading}
+          className={`w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] tracking-wide ${isLoading ? 'bg-[#5a52d5] cursor-wait' : 'bg-[#6C63FF] hover:bg-[#5a52d5]'}`}
         >
-          VERIFICAR
+          {isLoading ? 'VERIFICANDO...' : 'VERIFICAR'}
         </button>
       </form>
 
-      {/* Enlace de reenvío con temporizador */}
       <div className="mt-8 text-center text-[13px] text-gray-500">
         ¿No recibiste el código?{' '}
         <button
+          type="button"
           onClick={handleResend}
           disabled={!canResend}
-          // Color azul/morado para el enlace
           className={`font-semibold transition-colors ${canResend ? 'text-[#6C63FF] hover:underline cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
         >
           Reenviar {canResend ? '' : `en ${formatTime(secondsLeft)}`}

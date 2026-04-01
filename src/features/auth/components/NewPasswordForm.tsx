@@ -1,14 +1,29 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-// Asegúrate de tener los iconos sociales y de visibilidad definidos en un archivo separado
-// como lo tienes en tu LoginForm, o inclúyelos directamente. Para este ejemplo los incluiré.
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
+import { resetPassword } from '../services/authService'; // Tu servicio
 
-// --- Iconos SVGs para Requisitos de Seguridad y Botón ---
+// --- Iconos SVGs ---
 const CheckmarkIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-blue-500 mr-2.5">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-4 h-4 text-[#6C63FF] mr-2.5"
+  >
     <path
       d="M5 13l4 4L19 7"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ErrorCrossIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-red-500 mr-2.5">
+    <path
+      d="M18 6L6 18M6 6l12 12"
       stroke="currentColor"
       strokeWidth="3"
       strokeLinecap="round"
@@ -39,69 +54,119 @@ const KeyIcon = () => (
     />
   </svg>
 );
-// --- Fin Iconos ---
 
 export const NewPasswordForm = () => {
-  // Estado para los inputs y su visibilidad
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Estado para errores o mensajes de confirmación
-  const [error, setError] = useState<string | null>(null);
-  //const navigate = useNavigate();
+  // Estados de control y peticiones
+  const [isLoading, setIsLoading] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  // Este estado controla si el backend rechazó la contraseña por ser igual a la anterior
+  const [isSameAsOld, setIsSameAsOld] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Obtenemos los datos pasados desde VerifyCodeForm
+  const email = location.state?.email;
+  const codigo = location.state?.codigo;
+
+  // Redirección de seguridad si acceden sin el flujo normal
+  useEffect(() => {
+    if (!email || !codigo) {
+      navigate('/login', { replace: true });
+    }
+  }, [email, codigo, navigate]);
 
   // --- Lógica de Validación en Tiempo Real ---
   const requirements = useMemo(() => {
     return {
       hasMinLength: password.length >= 8,
       hasNumber: /\d/.test(password),
-      // La validación de 'No igual a la anterior' es lógica de backend,
-      // no se puede verificar en el frontend sin el historial.
-      // Para la maqueta, la dejaremos en false/grey.
-      isNotSameAsPrevious: false,
+      // Cumple si el backend NO ha dicho que es igual a la anterior
+      isNotSameAsPrevious: !isSameAsOld,
     };
-  }, [password]);
+  }, [password, isSameAsOld]);
 
-  // Verificar si todos los requisitos se cumplen para habilitar el botón
-  const canSubmit = requirements.hasMinLength && requirements.hasNumber;
+  // El botón solo se habilita si TODOS los requisitos visuales se cumplen y las contraseñas coinciden
+  const canSubmit =
+    requirements.hasMinLength &&
+    requirements.hasNumber &&
+    requirements.isNotSameAsPrevious &&
+    password === confirmPassword &&
+    password.length > 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-
-    console.log('Cambiando contraseña...', { password });
-    // Aquí iría la llamada al backend: changePassword(password)
-    // navigate('/login'); // Ejemplo de redirección al login
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    // Si el usuario empieza a borrar o cambiar la contraseña, limpiamos el error del backend
+    if (isSameAsOld) setIsSameAsOld(false);
+    if (generalError) setGeneralError(null);
   };
 
-  // Función auxiliar para renderizar los requisitos con el icono correcto
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGeneralError(null);
+
+    setIsLoading(true);
+    try {
+      // Llamamos a tu endpoint pasándole el JSON requerido
+      await resetPassword(email, codigo, password);
+
+      // Si funciona (200 OK), el backend la cambió. Mandamos al login.
+      alert('¡Contraseña restablecida con éxito!'); // Puedes cambiar esto por un toast
+      navigate('/login', { replace: true });
+    } catch (err: any) {
+      // Si el backend lanza la IllegalArgumentException
+      const errorMessage = err.message?.toLowerCase() || '';
+      if (errorMessage.includes('igual') || errorMessage.includes('actual')) {
+        setIsSameAsOld(true); // Disparamos el check 3 para que se ponga rojo
+      } else {
+        setGeneralError(
+          err.message || 'Ocurrió un error al cambiar la contraseña.'
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Componente auxiliar para pintar los checks (con soporte para estado de error)
   const RequirementItem = ({
     isMet,
+    hasError,
     label,
   }: {
     isMet: boolean;
+    hasError?: boolean;
     label: string;
-  }) => (
-    <div className="flex items-center mt-2.5">
-      {isMet ? <CheckmarkIcon /> : <EmptyCircleIcon />}
-      <span
-        className={`text-[12.5px] font-medium ${isMet ? 'text-gray-900' : 'text-gray-500'}`}
-      >
-        {label}
-      </span>
-    </div>
-  );
+  }) => {
+    let Icon = EmptyCircleIcon;
+    let textColor = 'text-gray-500';
+
+    if (hasError) {
+      Icon = ErrorCrossIcon;
+      textColor = 'text-red-500 font-semibold';
+    } else if (isMet) {
+      Icon = CheckmarkIcon;
+      textColor = 'text-gray-900';
+    }
+
+    return (
+      <div className="flex items-center mt-2.5 transition-colors">
+        <Icon />
+        <span className={`text-[12.5px] font-medium ${textColor}`}>
+          {label}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <div className="w-[85%] sm:w-full max-w-sm mx-auto px-5 sm:px-10 py-10 bg-white rounded-[35px] relative shadow-lg flex flex-col items-center">
-      {/* Cabecera del formulario idéntica a la maqueta */}
       <div className="pb-8 text-center">
         <h1 className="font-bold text-3xl leading-tight">Nueva Contraseña</h1>
         <h2 className="text-gray-500 font-normal text-[13px] mt-4 px-2">
@@ -110,7 +175,7 @@ export const NewPasswordForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="w-full">
-        {/* --- Input 1: Nueva Contraseña (Estilo Manual de LoginForm) --- */}
+        {/* --- Input 1: Nueva Contraseña --- */}
         <div className="flex flex-col gap-1 mt-1 relative">
           <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
             NUEVA CONTRASEÑA
@@ -120,28 +185,26 @@ export const NewPasswordForm = () => {
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              // Usando las mismas clases base que tu <Input>
-              className={`w-full text-xs px-2 pt-2.5 pb-1.5 border rounded-xl outline-none pr-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 border-gray-400`}
+              onChange={handlePasswordChange}
+              className={`w-full text-xs px-2 pt-2.5 pb-1.5 border rounded-xl outline-none pr-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 ${isSameAsOld ? 'border-red-400' : 'border-gray-400'}`}
               required
             />
-            {/* Icono del ojo para ver/ocultar */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 tabIndex={-1}"
             >
               {showPassword ? (
-                <EyeOffIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                <EyeOffIcon className="w-4 h-4 text-gray-400" />
               ) : (
-                <EyeIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                <EyeIcon className="w-4 h-4 text-gray-400" />
               )}
             </button>
           </div>
         </div>
 
-        {/* --- Input 2: Confirmar Nueva Contraseña (Estilo Manual de LoginForm) --- */}
-        <div className="flex flex-col gap-1 mt-4.5 relative">
+        {/* --- Input 2: Confirmar Nueva Contraseña --- */}
+        <div className="flex flex-col gap-1 mt-4 relative">
           <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
             CONFIRMAR NUEVA CONTRASEÑA
           </label>
@@ -150,36 +213,41 @@ export const NewPasswordForm = () => {
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              // Usando las mismas clases base que tu <Input>
-              className={`w-full text-xs px-2 pt-2.5 pb-1.5 border rounded-xl outline-none pr-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 border-gray-400`}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setGeneralError(null);
+              }}
+              className={`w-full text-xs px-2 pt-2.5 pb-1.5 border rounded-xl outline-none pr-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 ${password !== confirmPassword && confirmPassword.length > 0 ? 'border-red-400' : 'border-gray-400'}`}
               required
             />
-            {/* Icono del ojo para ver/ocultar */}
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 tabIndex={-1}"
             >
               {showConfirmPassword ? (
-                <EyeOffIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                <EyeOffIcon className="w-4 h-4 text-gray-400" />
               ) : (
-                <EyeIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                <EyeIcon className="w-4 h-4 text-gray-400" />
               )}
             </button>
           </div>
+          {password !== confirmPassword && confirmPassword.length > 0 && (
+            <span className="text-red-500 text-[11px] mt-1 block">
+              Las contraseñas no coinciden
+            </span>
+          )}
         </div>
-        {error && (
-          <span className="text-red-500 text-[11px] mt-1.5 block">{error}</span>
-        )}
 
         {/* --- Recuadro de Requisitos de Seguridad --- */}
-        <div className="mt-8 bg-[#EEF2FF] px-6 py-6 rounded-2xl w-full border border-gray-200">
-          <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
+        <div
+          className={`mt-8 bg-[#EEF2FF] px-6 py-5 rounded-2xl w-full border ${isSameAsOld ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}
+        >
+          <label className="text-black text-[12.5px] font-bold uppercase tracking-wide">
             REQUISITOS DE SEGURIDAD
           </label>
 
-          <div className="mt-1">
+          <div className="mt-2">
             <RequirementItem
               isMet={requirements.hasMinLength}
               label="Mínimo 8 caracteres"
@@ -188,22 +256,34 @@ export const NewPasswordForm = () => {
               isMet={requirements.hasNumber}
               label="Incluye un número"
             />
+            {/* Este tercer check se pone rojo (hasError) si el backend lanza la excepción */}
             <RequirementItem
               isMet={requirements.isNotSameAsPrevious}
+              hasError={isSameAsOld}
               label="No puede ser igual a la anterior"
             />
           </div>
         </div>
 
+        {generalError && (
+          <div className="text-red-500 text-[12px] font-medium mt-4 text-center">
+            {generalError}
+          </div>
+        )}
+
         {/* Botón principal Cambiar Contraseña */}
         <div>
           <button
             type="submit"
-            disabled={!canSubmit}
-            className={`mt-10 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] shadow-lg shadow-indigo-100 ${canSubmit ? 'bg-[#6C63FF] hover:bg-[#5a52d5] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
+            disabled={!canSubmit || isLoading}
+            className={`mt-8 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] shadow-lg ${
+              canSubmit && !isLoading
+                ? 'bg-[#6C63FF] hover:bg-[#5a52d5] cursor-pointer shadow-indigo-100'
+                : 'bg-gray-400 cursor-not-allowed shadow-none'
+            }`}
           >
-            Cambiar contraseña
-            <KeyIcon />
+            {isLoading ? 'Cambiando...' : 'Cambiar contraseña'}
+            {!isLoading && <KeyIcon />}
           </button>
         </div>
       </form>

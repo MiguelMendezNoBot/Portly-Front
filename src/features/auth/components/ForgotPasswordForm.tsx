@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Input } from '../../../components/Input';
+import { forgotPassword } from '../services/authService';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Icono circular del candado
 const ResetIcon = () => (
@@ -51,11 +53,38 @@ const ArrowLeftIcon = () => (
 
 export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Enviando correo de recuperación a:', email);
-    // Aquí iría la llamada al backend: sendRecoveryEmail(email)
+
+    // Validación básica en front
+    if (!email.trim()) {
+      setError('Por favor, ingresa tu correo electrónico.');
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      // Llamamos al backend (Puerto 8080)
+      await forgotPassword(email);
+
+      // Si todo sale bien (código 200 OK), navegamos a la siguiente página.
+      // TRUCO: Pasamos el 'email' en el state de la navegación para que
+      // la página VerifyCodePage sepa qué correo estamos verificando.
+      navigate('/verify-code', { state: { email: email } });
+    } catch (err: any) {
+      // Si el backend lanza el EmailDoesNotExistException (404 o 400)
+      console.error('Error al solicitar recuperación:', err);
+      setError(err.message || 'Error al conectar con el servidor.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -74,33 +103,39 @@ export const ForgotPasswordForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="w-full">
-        <div className="mt-2">
+        <div className="mt-2 flex flex-col gap-1">
           <Input
             label="Correo Electrónico"
             type="email"
             placeholder="tu@ejemplo.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null); // Limpiamos el error al escribir
+            }}
+            // Usamos la prop de error de tu componente Input
+            error={error || undefined}
           />
+          {/* El mensaje de error rojito y pequeño debajo del input */}
         </div>
 
         <button
           type="submit"
-          className="mt-8 w-full py-3 rounded-2xl text-white font-semibold bg-[#6C63FF] hover:bg-[#5a52d5] transition-colors text-[14px] flex items-center justify-center"
+          disabled={isLoading}
+          className={`mt-8 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] ${isLoading ? 'bg-[#5a52d5] cursor-wait' : 'bg-[#6C63FF] hover:bg-[#5a52d5]'}`}
         >
-          Enviar enlace
-          <ArrowRightIcon />
+          {isLoading ? 'Enviando...' : 'Enviar enlace'}
+          {!isLoading && <ArrowRightIcon />}
         </button>
       </form>
 
-      {/* Enlace para volver (Idealmente esto usará <Link to="/login"> de react-router-dom) */}
-      <a
-        href="/login"
+      <Link
+        to="/login"
         className="mt-8 text-[#3B3066] font-semibold text-[13px] flex items-center cursor-pointer hover:underline"
       >
         <ArrowLeftIcon />
         Volver al inicio
-      </a>
+      </Link>
     </div>
   );
 };
