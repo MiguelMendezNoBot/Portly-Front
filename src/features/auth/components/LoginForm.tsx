@@ -1,5 +1,12 @@
 import { useState, useRef } from 'react';
-import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
+import {
+  GoogleIcon,
+  GitHubIcon,
+  LinkedInIcon,
+  EyeIcon,
+  EyeOffIcon,
+} from '../../../components/SocialIcons';
+import { Link } from 'react-router-dom';
 
 const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
 
@@ -28,29 +35,38 @@ export function LoginForm() {
 
   return (
     <div className="min-h-screen bg-[#0f1629] flex items-center justify-center p-4 font-sans text-gray-900">
-      
       <div className="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-[480px]">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold mb-2">Bienvenido de nuevo</h2>
-          <p className="text-gray-600 text-sm">Ingresa en la plataforma con tus redes profesionales</p>
+          <p className="text-gray-600 text-sm">
+            Ingresa en la plataforma con tus redes profesionales
+          </p>
         </div>
 
         {/* Botones Sociales */}
         <div className="space-y-4 mb-8">
           <button
             type="button"
-            onClick={() => { window.location.href = GOOGLE_AUTH_URL; }}
+            onClick={() => {
+              window.location.href = GOOGLE_AUTH_URL;
+            }}
             className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
           >
             <GoogleIcon className="w-5 h-5" />
             Google
           </button>
           <div className="flex gap-4">
-            <button type="button" className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+            >
               <GitHubIcon className="w-5 h-5" />
               GitHub
             </button>
-            <button type="button" className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+            >
               <LinkedInIcon className="w-5 h-5 text-[#0077B5]" />
               LinkedIn
             </button>
@@ -63,16 +79,20 @@ export function LoginForm() {
             <div className="w-full border-t border-gray-200"></div>
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-white px-3 font-semibold text-gray-400 tracking-wider">INICIO DE SESION</span>
+            <span className="bg-white px-3 font-semibold text-gray-400 tracking-wider">
+              INICIO DE SESION
+            </span>
           </div>
         </div>
 
         {/* 5. Agregamos el onSubmit al formulario */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-bold mb-1">Correo Electronico</label>
-            <input 
-              type="email" 
+            <label className="block text-sm font-bold mb-1">
+              Correo Electronico
+            </label>
+            <input
+              type="email"
               placeholder="nombre@dominio.com"
               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               value={email}
@@ -85,22 +105,27 @@ export function LoginForm() {
           <div className="relative">
             <div className="flex justify-between items-center mb-1">
               <label className="block text-sm font-bold">Contraseña</label>
-              <a href="#" className="text-sm font-bold text-gray-900 hover:text-indigo-600">¿Olvidaste tu contraseña?</a>
+              <Link
+                to="/forgot-password"
+                className="text-sm font-bold text-gray-900 hover:text-indigo-600"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
             </div>
-            
+
             <div className="relative">
-              <input 
+              <input
                 ref={passwordInputRef} // 6. Conectamos el "control remoto" aquí
-                type={showPassword ? "text" : "password"} 
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 className="w-full border border-gray-300 rounded-xl px-4 py-3.5 pr-12 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              
-              <button 
-                type="button" 
+
+              <button
+                type="button"
                 onMouseDown={(e) => {
                   e.preventDefault();
                   setShowPassword(!showPassword);
@@ -117,7 +142,7 @@ export function LoginForm() {
             </div>
           </div>
 
-          <button 
+          <button
             type="submit" // 7. Importante: debe ser tipo submit
             className="w-full bg-[#6B72FF] hover:bg-[#585fe6] text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg shadow-indigo-200"
           >
@@ -126,7 +151,10 @@ export function LoginForm() {
         </form>
 
         <p className="text-center text-sm text-gray-600 mt-8">
-          ¿Nuevo en la plataforma? <a href="#" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</a>
+          ¿Nuevo en la plataforma?{' '}
+          <a href="#" className="text-[#6B72FF] font-bold hover:underline">
+            Crea una cuenta
+          </a>
         </p>
       </div>
     </div>
