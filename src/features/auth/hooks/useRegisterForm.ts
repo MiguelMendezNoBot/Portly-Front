@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { registerUser } from "../../../services/authService"
+import { registerUser } from "../services/authService"
 import { useToast } from "../../../hooks/useToast"
 import { saveToken, saveUsuarioId } from "../../../utils/storage"
 
@@ -18,6 +18,7 @@ interface FormErrors {
     apellido?: string
     profesion?: string
     email?: string
+    biografia?: string
     password?: string
     confirmPassword?: string
 }
@@ -42,12 +43,24 @@ const validateEmail = (value: string): string | undefined => {
     return undefined
 }
 
+const validateBiografia = (value: string): string | undefined => {
+    if (!value.trim()) return "La biografia es obligatoria"
+    if (value.length > 500) return "La biografia no puede superar los 500 caracteres"
+    return undefined
+}
+
 const validatePassword = (value: string): string | undefined => {
     if (!value) return "La contraseña es obligatoria"
     if (!passwordValidation.test(value)) {
         return "Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo (!#$*-/~)"
     }
     return undefined
+}
+
+const fieldsByStep: Record<number, (keyof FormFields)[]> = {
+    1: ['email', 'password', 'confirmPassword'],
+    2: ['nombre', 'apellido'],
+    3: ['profesion', 'biografia']
 }
 
 export const useRegisterForm = () => {
@@ -59,25 +72,30 @@ export const useRegisterForm = () => {
     const { toast, showToast } = useToast()
 
     const handleChange = (field: keyof FormFields) =>
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
             setFields(prev => ({ ...prev, [field]: e.target.value }))
             setErrors(prev => ({ ...prev, [field]: undefined }))
         }
 
-    const validate = (): boolean => {
-        const newErrors: FormErrors = {
-            nombre: validateAlphaField(fields.nombre, "El nombre"),
-            apellido: validateAlphaField(fields.apellido, "El apellido"),
-            profesion: validateAlphaField(fields.profesion, "La profesión"),
-            email: validateEmail(fields.email),
-            password: validatePassword(fields.password),
-            confirmPassword: !fields.confirmPassword
+    const validate = (step?: number): boolean => {
+        const shouldValidate = (field: keyof FormFields) =>
+            !step || fieldsByStep[step].includes(field)
+
+        const newErrors: FormErrors = {}
+
+        if (shouldValidate('email')) newErrors.email = validateEmail(fields.email)
+        if (shouldValidate('password')) newErrors.password = validatePassword(fields.password)
+        if (shouldValidate('confirmPassword')) newErrors.confirmPassword = !fields.confirmPassword
             ? "Confirma tu contraseña"
             : fields.confirmPassword !== fields.password
             ? "Las contraseñas no coinciden"
             : undefined
-        }
-        setErrors(newErrors)
+        if (shouldValidate('nombre')) newErrors.nombre = validateAlphaField(fields.nombre, "El nombre")
+        if (shouldValidate('apellido')) newErrors.apellido = validateAlphaField(fields.apellido, "El apellido")
+        if (shouldValidate('profesion')) newErrors.profesion = validateAlphaField(fields.profesion, "La profesión")
+        if (shouldValidate('biografia')) newErrors.biografia = validateBiografia(fields.biografia)
+
+        setErrors(prev => ({ ...prev, ...newErrors }))
         return Object.values(newErrors).every(e => e === undefined)
     }
 
@@ -111,5 +129,5 @@ export const useRegisterForm = () => {
     }
 }
 
-    return { fields, errors, toast, handleChange, handleSubmit }
+    return { fields, errors, toast, handleChange, handleSubmit, validate }
 }

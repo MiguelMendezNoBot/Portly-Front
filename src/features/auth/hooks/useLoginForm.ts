@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import {loginUser} from "../../../services/authService"
+import {loginUser} from "../services/authService"
 import { useToast } from "../../../hooks/useToast"
 import { saveToken, saveUsuarioId } from "../../../utils/storage"
 

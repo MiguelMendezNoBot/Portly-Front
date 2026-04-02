@@ -1,23 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { LoginPage } from './pages/LoginPage';
-import { AuthCallbackPage } from './pages/AuthCallbackPage';
-
-const path = window.location.pathname;
-
-const App = () => {
-  if (path === '/auth/callback') {
-    return <AuthCallbackPage />;
-  }
-  return <LoginPage />;
-};
+import { AppRouter } from './router/AppRouter';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <App />
+      <AppRouter />
     </StrictMode>
   );
 } else {
