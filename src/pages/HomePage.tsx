@@ -1,7 +1,7 @@
 import { Navbar } from '../features/home/components/Navbar';
 import { HeroSection } from '../features/home/components/HeroSection';
 import { UserTab } from '../features/home/components/UserTab';
-import PestanaEsquina from '../components/PestanaEsquina';
+import PestanaEsquina from '../components/CornerTab';
 
 export const HomePage = () => {
   return (
