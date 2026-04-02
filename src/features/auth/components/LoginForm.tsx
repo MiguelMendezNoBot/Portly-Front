@@ -145,7 +145,7 @@ export function LoginForm() {
         </form>
 
         <p className="text-center text-sm text-gray-600 mt-8">
-          ¿Nuevo en la plataforma? <Link to="/auth/register" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</Link>
+          ¿Nuevo en la plataforma? <Link to="/register" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</Link>
         </p>
       </div>
     </div>

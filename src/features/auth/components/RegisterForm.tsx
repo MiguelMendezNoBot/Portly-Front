@@ -90,7 +90,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
 
                     <div className="text-center mt-2">
                         <span className="text-gray-500 text-sm">¿Ya tienes cuenta? </span>
-                        <Link to="/auth/login" className="text-[#6C63FF] font-medium text-sm cursor-pointer hover:underline">Iniciar Sesión</Link>
+                        <Link to="/login" className="text-[#6C63FF] font-medium text-sm cursor-pointer hover:underline">Iniciar Sesión</Link>
                     </div>
                 </form>
             </div>

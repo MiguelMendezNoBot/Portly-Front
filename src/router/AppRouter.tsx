@@ -10,13 +10,13 @@ export const AppRouter = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/auth/login" element={<LoginPage />} />
-                <Route path="/auth/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/auth/verify-code" element={<VerifyCodePage />} />
-                <Route path="/auth/reset-password" element={<NewPasswordPage />} />
-                <Route path="*" element={<Navigate to="/auth/login" />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/verify-code" element={<VerifyCodePage />} />
+                <Route path="/reset-password" element={<NewPasswordPage />} />
+                <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
         </BrowserRouter>
     )
