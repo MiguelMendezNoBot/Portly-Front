@@ -1,69 +1,68 @@
-const BASE_URL = 'http://localhost:8080';
+import type { RegisterData, LoginData, AuthResponse } from "../types/authTypes"
 
-// ... tus otras funciones como registerUser ...
+const BASE_URL = import.meta.env.VITE_API_URL  // ← usas la tuya, no el hardcodeado
+
+export const registerUser = async (data: RegisterData): Promise<AuthResponse> => {
+    const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    const json = await response.json()
+    if (!response.ok) {
+        throw { status: response.status, message: json.message }
+    }
+    return json
+}
+
+export const loginUser = async (data: LoginData): Promise<AuthResponse> => {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    const json = await response.json()
+    if (!response.ok) {
+        throw { status: response.status, message: json.message }
+    }
+    return json
+}
 
 export const forgotPassword = async (email: string) => {
-  const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    // Enviamos el JSON exacto que espera tu DTO en Spring Boot
-    body: JSON.stringify({ email: email }),
-  });
-
-  const json = await response.json().catch(() => ({})); // Captura por si el backend no devuelve JSON
-
-  if (!response.ok) {
-    // Lanza el error para que lo capture el frontend
-    throw {
-      status: response.status,
-      message: json.message || 'No se encontró una cuenta con este correo.',
-    };
-  }
-
-  return json;
-};
+    const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+    })
+    const json = await response.json().catch(() => ({}))
+    if (!response.ok) {
+        throw { status: response.status, message: json.message || 'No se encontró una cuenta con este correo.' }
+    }
+    return json
+}
 
 export const verifyCode = async (email: string, codigo: string) => {
-  const response = await fetch(`${BASE_URL}/auth/verify-code`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    // Enviamos el JSON exacto que espera tu VerifyCodeRequest en Spring Boot
-    body: JSON.stringify({ email, codigo }),
-  });
+    const response = await fetch(`${BASE_URL}/auth/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, codigo }),
+    })
+    const json = await response.json().catch(() => ({}))
+    if (!response.ok) {
+        throw { status: response.status, message: json.message || 'El código es incorrecto o ha expirado.' }
+    }
+    return json
+}
 
-  const json = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    // Lanzamos el error con el mensaje de tu InvalidCodeException o CodeExpiredException
-    throw {
-      status: response.status,
-      message: json.message || 'El código es incorrecto o ha expirado.',
-    };
-  }
-
-  return json;
-};
-
-export const resetPassword = async (
-  email: string,
-  codigo: string,
-  nuevaPassword: string
-) => {
-  const response = await fetch(`${BASE_URL}/auth/reset-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    // El JSON exacto que espera tu ResetPasswordRequest
-    body: JSON.stringify({ email, codigo, nuevaPassword }),
-  });
-
-  const json = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw {
-      status: response.status,
-      message: json.message || 'Error al cambiar la contraseña.',
-    };
-  }
-
-  return json;
-};
+export const resetPassword = async (email: string, codigo: string, nuevaPassword: string) => {
+    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, codigo, nuevaPassword }),
+    })
+    const json = await response.json().catch(() => ({}))
+    if (!response.ok) {
+        throw { status: response.status, message: json.message || 'Error al cambiar la contraseña.' }
+    }
+    return json
+}
