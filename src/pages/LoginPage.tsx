@@ -1,5 +1,5 @@
 import { LoginForm } from '../features/auth/components/LoginForm';
-import BotonInvitado from '../components/BotonInicio';
+import BotonInicio from '../components/BotonInicio';
 
 
 export default function LoginPage() {
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
 
         {/* Tu pestaña superior derecha (se anclará a la esquina de este contenedor) */}
-        <BotonInvitado texto="Volver al inicio" />
+        <BotonInicio texto="Volver al inicio" />
 
         {/* Tu formulario de login centrado (que ahora es solo la tarjeta blanca) */}
         <LoginForm />

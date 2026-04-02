@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
+import { Link } from 'react-router-dom';
 
 const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
 
@@ -27,9 +28,7 @@ export function LoginForm() {
   };
 
   return (
-    // CAMBIO IMPORTANTE: Quitamos el fondo oscuro exterior.
-    // Ahora el componente es directamente la TARJETA BLANCA.
-    // Añadimos 'z-10' para que esté sobre las líneas decorativas.
+    // TARJETA BLANCA PRINCIPAL
     <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative font-sans text-gray-900 mx-4">
       
       <div className="text-center mb-8">
@@ -37,7 +36,7 @@ export function LoginForm() {
         <p className="text-gray-600 text-sm">Ingresa en la plataforma con tus redes profesionales</p>
       </div>
 
-      {/* Botones Sociales Horizontales (CAMBIO PARA EL DISEÑO) */}
+      {/* Botones Sociales Horizontales */}
       <div className="flex justify-between gap-4 mb-8">
         <button
           type="button"
@@ -77,7 +76,7 @@ export function LoginForm() {
             className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={handleEmailKeyDown} // Conectamos el detector de teclas
+            onKeyDown={handleEmailKeyDown}
             required
           />
         </div>
@@ -85,12 +84,14 @@ export function LoginForm() {
         <div className="relative">
           <div className="flex justify-between items-center mb-1">
             <label className="block text-sm font-bold">Contraseña</label>
-            <a href="#" className="text-sm font-bold text-gray-900 hover:text-indigo-600">¿Olvidaste tu contraseña?</a>
+            <Link to="/forgot-password" className="text-sm font-bold text-gray-900 hover:text-indigo-600">
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
           
           <div className="relative">
             <input 
-              ref={passwordInputRef} // Conectamos el control remoto
+              ref={passwordInputRef}
               type={showPassword ? "text" : "password"} 
               placeholder="••••••••"
               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 pr-12 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
@@ -117,8 +118,8 @@ export function LoginForm() {
           </div>
         </div>
 
-        <button 
-          type="submit" // Importante: debe ser tipo submit
+        <button
+          type="submit"
           className="w-full bg-[#6B72FF] hover:bg-[#585fe6] text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg shadow-indigo-200"
         >
           Iniciar Sesion
@@ -126,7 +127,7 @@ export function LoginForm() {
       </form>
 
       <p className="text-center text-sm text-gray-600 mt-8">
-        ¿Nuevo en la plataforma? <a href="#" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</a>
+        ¿Nuevo en la plataforma? <Link to="/register" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</Link>
       </p>
     </div>
   );
