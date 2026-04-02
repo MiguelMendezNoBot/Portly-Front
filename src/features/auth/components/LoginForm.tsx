@@ -1,11 +1,5 @@
 import { useState, useRef } from 'react';
-import {
-  GoogleIcon,
-  GitHubIcon,
-  LinkedInIcon,
-  EyeIcon,
-  EyeOffIcon,
-} from '../../../components/SocialIcons';
+import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
 import { Link } from 'react-router-dom';
 
 const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
@@ -151,10 +145,7 @@ export function LoginForm() {
         </form>
 
         <p className="text-center text-sm text-gray-600 mt-8">
-          ¿Nuevo en la plataforma?{' '}
-          <a href="#" className="text-[#6B72FF] font-bold hover:underline">
-            Crea una cuenta
-          </a>
+          ¿Nuevo en la plataforma? <Link to="/register" className="text-[#6B72FF] font-bold hover:underline">Crea una cuenta</Link>
         </p>
       </div>
     </div>
