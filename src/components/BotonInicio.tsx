@@ -2,7 +2,7 @@ interface Props {
   texto?: string;
 }
 
-export default function BotonInvitado({ texto = "EXPLORAR COMO INVITADO" }: Props) {
+export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO" }: Props) {
   return (
     // Contenedor principal anclado a la esquina superior derecha
     <div className="absolute top-0 right-0 z-20">
