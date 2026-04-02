@@ -10,6 +10,8 @@ export function AuthCallbackPage() {
 
     if (token) {
       localStorage.setItem('token', token);
+      const email = params.get('email');
+      if (email) localStorage.setItem('email', decodeURIComponent(email));
       window.location.replace('/');
     } else if (errorParam) {
       setError(decodeURIComponent(errorParam));

@@ -5,8 +5,8 @@ import PestanaEsquina from '../components/CornerTab';
 
 export const HomePage = () => {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
-      <div className="relative w-full max-w-6xl bg-[#0f1629] rounded-[32px] shadow-2xl overflow-hidden">
+    <div className="bg-white p-3 min-h-screen font-sans">
+      <div className="relative bg-[#0d152b] rounded-[20px] min-h-[calc(100vh-25px)] overflow-hidden">
         <PestanaEsquina>
           <UserTab />
         </PestanaEsquina>

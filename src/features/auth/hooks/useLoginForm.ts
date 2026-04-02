@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {loginUser} from "../services/authService"
 import { useToast } from "../../../hooks/useToast"
-import { saveToken, saveUsuarioId } from "../../../utils/storage"
+import { saveToken, saveUsuarioId, saveEmail } from "../../../utils/storage"
 
 interface FormFields {
     email: string
@@ -43,6 +43,7 @@ export const useLoginForm = () => {
             })
             saveToken(data.token)
             saveUsuarioId(data.usuarioId)
+            saveEmail(data.email)
             showToast("¡Bienvenido!", "success")
             setTimeout(() => navigate("/dashboard"), 1500)
         } catch (error: any) {

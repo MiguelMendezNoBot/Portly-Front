@@ -1,24 +1,23 @@
-interface JwtPayload {
-  sub?: string;
-  name?: string;
-  email?: string;
-  nombre?: string;
-  apellido?: string;
-  [key: string]: unknown;
-}
-
 interface AuthUser {
   displayName: string;
   email: string;
 }
 
-function decodeJwt(token: string): JwtPayload | null {
+function decodeJwtEmail(token: string): string | null {
   try {
-    const payload = token.split('.')[1];
-    return JSON.parse(atob(payload));
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const candidate = payload.email || payload.sub || '';
+    return String(candidate).includes('@') ? String(candidate) : null;
   } catch {
     return null;
   }
+}
+
+function emailToDisplayName(email: string): string {
+  const local = email.split('@')[0];
+  return local
+    .replace(/[._-]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function useAuth(): { user: AuthUser | null; logout: () => void } {
@@ -26,22 +25,19 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
 
   if (!token) return { user: null, logout: () => {} };
 
-  const payload = decodeJwt(token);
-  if (!payload) return { user: null, logout: () => {} };
+  const email =
+    localStorage.getItem('email') ||
+    decodeJwtEmail(token) ||
+    '';
 
-  const fullName =
-    payload.name ||
-    [payload.nombre, payload.apellido].filter(Boolean).join(' ') ||
-    payload.sub ||
-    'Usuario';
+  const displayName = email ? emailToDisplayName(email).toUpperCase() : 'USUARIO';
 
-  const user: AuthUser = {
-    displayName: String(fullName).toUpperCase(),
-    email: String(payload.email || payload.sub || ''),
-  };
+  const user: AuthUser = { displayName, email };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('usuarioId');
+    localStorage.removeItem('email');
     window.location.href = '/login';
   };
 

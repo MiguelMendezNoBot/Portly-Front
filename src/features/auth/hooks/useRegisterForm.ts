@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { registerUser } from "../services/authService"
 import { useToast } from "../../../hooks/useToast"
-import { saveToken, saveUsuarioId } from "../../../utils/storage"
+import { saveToken, saveUsuarioId, saveEmail } from "../../../utils/storage"
 
 interface FormFields {
     nombre: string
@@ -118,7 +118,8 @@ export const useRegisterForm = () => {
         })
 
         saveToken(data.token)
-        saveUsuarioId(data.usuarioId) 
+        saveUsuarioId(data.usuarioId)
+        saveEmail(data.email) 
         showToast("¡Cuenta creada exitosamente!", "success")
 
     } catch (error: any) {
