@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { RegisterPage } from "../pages/RegisterPage"
-import { LoginPage } from "../pages/LoginPage"
+import  LoginPage  from "../pages/LoginPage"
 import { AuthCallbackPage } from "../pages/AuthCallbackPage"
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage"
 import { VerifyCodePage } from "../pages/VerifyCodePage"
