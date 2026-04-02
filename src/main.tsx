@@ -10,11 +10,13 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { VerifyCodePage } from './pages/VerifyCodePage';
 import { NewPasswordPage } from './pages/NewPasswordPage';
+import { HomePage } from './pages/HomePage';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/register" element={<RegisterPage />} />
