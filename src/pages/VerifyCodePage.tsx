@@ -1,4 +1,4 @@
-import PestanaEsquina from '../components/PestanaEsquina';
+import CornerTab from '../components/CornerTab';
 import { VerifyCodeForm } from '../features/auth/components/VerifyCodeForm';
 
 export const VerifyCodePage = () => {
@@ -8,7 +8,7 @@ export const VerifyCodePage = () => {
       <div className="bg-gradient-to-br from-[#0d152b] to-[#1a2e5d] rounded-[20px] min-h-[calc(100vh-25px)] flex items-center justify-center py-6 relative overflow-hidden">
         <VerifyCodeForm />
         {/* Reutilizando PestanaEsquina con el texto exacto */}
-        <PestanaEsquina texto="*CUADRITO CON ANIMACION*" />
+        <CornerTab texto="*CUADRITO CON ANIMACION*" />
       </div>
     </div>
   );
