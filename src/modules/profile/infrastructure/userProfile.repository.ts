@@ -2,103 +2,114 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
+import { getToken } from '../../../infrastructure/storage/storage';
 
 // ─── Base URL del backend ────────────────────────────────────────────────────
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
-// ─── Mock (se usa mientras el backend no esté disponible) ────────────────────
-const MOCK_PROFILE: UserProfileEntity = {
-  id: '1',
-  firstName: 'Victor',
-  lastName: 'Terrazas',
-  email: 'victorterrazas@linx.soft',
-  profession: 'UI/UX Designer & Creative Strategist',
-  bio: 'Diseñador multidisciplinario enfocado en crear experiencias digitales inmersivas. Me apasiona la intersección entre la tecnología y el arte visual, buscando siempre el equilibrio entre funcionalidad y estética neon-futurista.',
-  avatarUrl: undefined,
-  visibility: {
-    showEmail: true,
-    showProfession: true,
-    showBio: false,
-  },
-  socialLinks: {
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function authHeaders(): Record<string, string> {
+  const token = getToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+// Mapea la respuesta del backend (español) al formato del frontend (inglés)
+function mapBackendToFrontend(data: any): UserProfileEntity {
+  const socialLinks: UserProfileEntity['socialLinks'] = {
     github: '',
     linkedin: '',
     instagram: '',
     facebook: '',
     youtube: '',
-  },
-};
+  };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-async function handleResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(error || `HTTP ${res.status}`);
+  if (data.enlaces && Array.isArray(data.enlaces)) {
+    for (const enlace of data.enlaces) {
+      const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
+      if (plataforma in socialLinks) {
+        (socialLinks as any)[plataforma] = enlace.direccionEnlace || '';
+      }
+    }
   }
-  return res.json() as Promise<T>;
+
+  // Extraer proveedores vinculados
+  const connectedProviders: string[] = [];
+  if (data.proveedores && Array.isArray(data.proveedores)) {
+    for (const p of data.proveedores) {
+      connectedProviders.push((p.nombreProveedor || '').toLowerCase());
+    }
+  }
+
+  return {
+    id: data.idUsuario || '',
+    firstName: data.nombre || '',
+    lastName: data.apellido || '',
+    email: data.email || '',
+    profession: data.titularProfesional || '',
+    bio: data.acercaDeMi || '',
+    avatarUrl: data.enlaceFoto || undefined,
+    visibility: {
+      showEmail: true,
+      showProfession: true,
+      showBio: true,
+    },
+    socialLinks,
+    connectedProviders,
+  };
+}
+
+// Mapea el DTO del frontend (inglés) al formato del backend (español)
+function mapFrontendToBackend(dto: UpdateUserProfileDTO): any {
+  return {
+    nombre: dto.firstName,
+    apellido: dto.lastName,
+    titularProfesional: dto.profession,
+    acercaDeMi: dto.bio,
+  };
 }
 
 // ─── Repository ───────────────────────────────────────────────────────────────
 export const userProfileRepository = {
-  /**
-   * Obtiene el perfil del usuario autenticado.
-   * Mientras el backend no esté disponible, devuelve el mock.
-   */
   async getProfile(): Promise<UserProfileEntity> {
-    try {
-      const res = await fetch(`${API_BASE}/api/profile/me`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-      return handleResponse<UserProfileEntity>(res);
-    } catch {
-      // Devuelve el mock si el backend no responde
-      console.warn(
-        '[userProfileRepository] Backend no disponible, usando mock.'
-      );
-      return Promise.resolve(MOCK_PROFILE);
+    const res = await fetch(`${API_BASE}/api/profile`, {
+      method: 'GET',
+      headers: authHeaders(),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Error ${res.status} al cargar perfil`);
     }
+
+    const data = await res.json();
+    return mapBackendToFrontend(data);
   },
 
-  /**
-   * Actualiza el perfil del usuario autenticado.
-   */
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
-    try {
-      const res = await fetch(`${API_BASE}/api/profile/me`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(dto),
-      });
-      return handleResponse<UserProfileEntity>(res);
-    } catch {
-      console.warn(
-        '[userProfileRepository] Backend no disponible, simulando update.'
-      );
-      return Promise.resolve({ ...MOCK_PROFILE, ...dto } as UserProfileEntity);
+    const body = mapFrontendToBackend(dto);
+
+    const res = await fetch(`${API_BASE}/api/profile`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Error ${res.status} al guardar perfil`);
     }
+
+    const data = await res.json();
+    return mapBackendToFrontend(data);
   },
 
-  /**
-   * Actualiza el avatar del usuario (multipart/form-data).
-   */
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
-    const form = new FormData();
-    form.append('avatar', file);
-    try {
-      const res = await fetch(`${API_BASE}/api/profile/me/avatar`, {
-        method: 'POST',
-        credentials: 'include',
-        body: form,
-      });
-      return handleResponse<{ avatarUrl: string }>(res);
-    } catch {
-      console.warn(
-        '[userProfileRepository] Backend no disponible, usando mock avatar.'
-      );
-      return Promise.resolve({ avatarUrl: URL.createObjectURL(file) });
-    }
+    // No hay endpoint de upload todavía, se usa URL local temporal
+    const localUrl = URL.createObjectURL(file);
+    return { avatarUrl: localUrl };
   },
 };

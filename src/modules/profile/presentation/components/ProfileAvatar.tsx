@@ -15,24 +15,15 @@ export default function ProfileAvatar({
 }: ProfileAvatarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const initials = name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) onFileChange(file);
   }
 
   return (
-    <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[12px] overflow-hidden">
-      {/* Background shadow layer */}
+    <div className="relative flex flex-col bg-[#091328] border border-white/5 rounded-[12px] overflow-hidden">
       <div className="absolute w-full h-full bg-white/1 pointer-events-none rounded-[12px]" />
 
-      {/* Content */}
       <div className="relative p-8 flex flex-col items-center gap-6">
         {/* Avatar clickeable */}
         <div
@@ -45,11 +36,12 @@ export default function ProfileAvatar({
                 src={avatarUrl}
                 alt={name}
                 className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+                crossOrigin="anonymous"
                 role="img"
                 aria-label={`Foto de perfil de ${name}`}
               />
             ) : (
-              /* Avatar placeholder SVG */
               <div className="w-full h-full bg-gradient-to-br from-[#a3a6ff] to-[#a28efc] flex items-center justify-center">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
                   <circle cx="32" cy="24" r="14" fill="white" opacity="0.3" />
@@ -63,7 +55,6 @@ export default function ProfileAvatar({
             )}
           </div>
 
-          {/* Botón de cámara */}
           <button
             type="button"
             className="
@@ -100,7 +91,6 @@ export default function ProfileAvatar({
           />
         </div>
 
-        {/* Nombre y profesión */}
         <div className="text-center">
           <h3 className="text-[#e5e7f6] font-bold text-xl">{name}</h3>
           <p className="text-[#a7aab9] text-sm mt-1 leading-snug line-clamp-2">

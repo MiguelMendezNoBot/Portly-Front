@@ -1,6 +1,7 @@
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
+import { getToken } from '../../../../infrastructure/storage/storage';
 
-// SVG Icons para redes sociales
+
 function GithubIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -63,49 +64,79 @@ function YoutubeIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 type SocialKey = keyof UserProfileEntity['socialLinks'];
+
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
 interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];
+  connectedProviders: string[];
   onChange: (key: SocialKey, value: string) => void;
 }
 
 export default function SocialLinksForm({
   links,
+  connectedProviders,
   onChange,
 }: SocialLinksFormProps) {
+  const isGithubConnected = connectedProviders.includes('github');
+  const isLinkedinConnected = connectedProviders.includes('linkedin');
+
+  function handleVincular(provider: string) {
+    const token = getToken();
+    if (!token) {
+      alert('Debes iniciar sesión para vincular una cuenta.');
+      return;
+    }
+    // Redirige al endpoint de VINCULACIÓN (no login) del backend
+    window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
+  }
+
   return (
     <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
-      {/* Header with border bottom */}
       <div className="px-8 py-8 border-b border-white/5">
         <h2 className="text-[#e5e7f6] font-bold text-xl">Redes Sociales</h2>
       </div>
 
-      {/* Content */}
       <div className="px-8 py-8 flex flex-col gap-8">
-        {/* Botones principales GitHub / LinkedIn */}
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
-            className="
+            disabled={isGithubConnected}
+            onClick={() => !isGithubConnected && handleVincular('github')}
+            className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
-              bg-white/5 border border-white/10 text-white text-sm font-semibold
-              hover:bg-white/10 transition-all duration-200
-            "
+              text-sm font-semibold transition-all duration-200
+              ${isGithubConnected
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'}
+            `}
           >
-            <GithubIcon />
-            Vincular GitHub
+            {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
+            {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
           </button>
           <button
             type="button"
-            className="
+            disabled={isLinkedinConnected}
+            onClick={() => !isLinkedinConnected && handleVincular('linkedin')}
+            className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
-              bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] text-sm font-semibold
-              hover:bg-[#2f2ebe]/35 transition-all duration-200
-            "
+              text-sm font-semibold transition-all duration-200
+              ${isLinkedinConnected
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'}
+            `}
           >
-            <LinkedinIcon />
-            Vincular LinkedIn
+            {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
+            {isLinkedinConnected ? 'LinkedIn conectado' : 'Vincular LinkedIn'}
           </button>
         </div>
 
@@ -139,7 +170,6 @@ export default function SocialLinksForm({
             }[]
           ).map(({ key, icon, placeholder, label }) => (
             <div key={key} className="flex items-center gap-4">
-              {/* Icono con borde */}
               <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
                 {icon}
               </div>

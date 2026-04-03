@@ -34,15 +34,15 @@ export const UserTab = () => {
         CERRAR<br />SESION
       </button>
 
-      {/* User pill */}
-      <div className="flex items-center gap-2 bg-violet-100 border border-violet-200 rounded-full pl-1 pr-4 py-1">
+      {/* User pill → click lleva al perfil */}
+      <Link to="/profile" className="flex items-center gap-2 bg-violet-100 border border-violet-200 rounded-full pl-1 pr-4 py-1 hover:bg-violet-200 transition-colors cursor-pointer">
         <div className="w-8 h-8 rounded-full bg-white border border-violet-200 flex items-center justify-center text-slate-600">
           <UserIcon />
         </div>
         <span className="text-[#6B72FF] text-xs font-bold tracking-wide leading-tight">
           {firstName}<br />{lastName}
         </span>
-      </div>
+      </Link>
     </div>
   );
 };

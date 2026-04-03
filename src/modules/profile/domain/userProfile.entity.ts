@@ -18,6 +18,8 @@ export interface UserProfileEntity {
     facebook?: string;
     youtube?: string;
   };
+  // Proveedores OAuth vinculados (github, linkedin, google)
+  connectedProviders: string[];
 }
 
 export interface UpdateUserProfileDTO {

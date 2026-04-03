@@ -41,8 +41,8 @@ export const AppRouter = () => {
           path="/perfil-profesional"
           element={<div className="text-white p-8">Perfil profesional</div>}
         />
-        <Route path="*" element={<Navigate to="/" />} />{' '}
-      </Routes>{' '}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </BrowserRouter>
   );
 };
