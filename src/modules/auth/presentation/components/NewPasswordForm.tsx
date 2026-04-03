@@ -118,7 +118,7 @@ export const NewPasswordForm = () => {
 
       // Si funciona (200 OK), el backend la cambió. Mandamos al login.
       alert('¡Contraseña restablecida con éxito!'); // Puedes cambiar esto por un toast
-      navigate('/login', { replace: true });
+      navigate('/', { replace: true });
     } catch (err: any) {
       // Si el backend lanza la IllegalArgumentException
       const errorMessage = err.message?.toLowerCase() || '';
