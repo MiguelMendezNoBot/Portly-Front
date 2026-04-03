@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { verifyCode, forgotPassword } from '../services/authService';
+import { verifyCode, forgotPassword } from '../../infrastructure/authService';
 
 // Icono circular de verificación (similar al estilo de candado de image_14.png)
 const CodeIcon = () => (

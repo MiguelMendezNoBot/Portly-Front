@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { registerUser } from "../services/authService"
-import { useToast } from "../../../hooks/useToast"
-import { saveToken, saveUsuarioId, saveEmail } from "../../../utils/storage"
+import { registerUser } from "../infrastructure/authService"
+import { useToast } from "../../../shared/hooks/useToast"
+import { saveToken, saveUsuarioId, saveEmail } from "../../../infrastructure/storage/storage"
 
 interface FormFields {
     nombre: string

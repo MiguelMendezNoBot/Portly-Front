@@ -1,4 +1,4 @@
-import type { RegisterData, LoginData, AuthResponse } from "../types/authTypes"
+import type { RegisterData, LoginData, AuthResponse } from "../domain/authTypes"
 
 const BASE_URL = import.meta.env.VITE_API_URL  // ← usas la tuya, no el hardcodeado
 

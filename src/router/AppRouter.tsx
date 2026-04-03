@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { RegisterPage } from "../pages/RegisterPage"
-import  LoginPage  from "../pages/LoginPage"
-import { AuthCallbackPage } from "../pages/AuthCallbackPage"
-import { ForgotPasswordPage } from "../pages/ForgotPasswordPage"
-import { VerifyCodePage } from "../pages/VerifyCodePage"
-import { NewPasswordPage } from "../pages/NewPasswordPage"
-import { HomePage } from "../pages/HomePage"
+import { RegisterPage } from "../modules/auth/presentation/pages/RegisterPage"
+import  LoginPage  from "../modules/auth/presentation/pages/LoginPage"
+import { AuthCallbackPage } from "../modules/auth/presentation/pages/AuthCallbackPage"
+import { ForgotPasswordPage } from "../modules/auth/presentation/pages/ForgotPasswordPage"
+import { VerifyCodePage } from "../modules/auth/presentation/pages/VerifyCodePage"
+import { NewPasswordPage } from "../modules/auth/presentation/pages/NewPasswordPage"
+import { HomePage } from "../modules/home/presentation/pages/HomePage"
 
 export const AppRouter = () => {
     return (

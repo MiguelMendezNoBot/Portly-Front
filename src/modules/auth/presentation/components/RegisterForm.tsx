@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import {Input} from '../../../components/Input'
-import { useRegisterForm } from '../hooks/useRegisterForm'
-import { GitHubIcon, GoogleIcon, LinkedInIcon } from '../../../components/SocialIcons'
+import {Input} from '../../../../shared/components/Input'
+import { useRegisterForm } from '../../application/useRegisterForm'
+import { GitHubIcon, GoogleIcon, LinkedInIcon } from '../../../../shared/components/SocialIcons'
 import { PROFESIONES } from '../constants/register.constants';
 
 const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
+import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../shared/components/SocialIcons';
 import { Link } from 'react-router-dom';
 
 const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
