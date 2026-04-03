@@ -1,4 +1,14 @@
 import { useEffect, useState } from 'react';
+import { saveToken, saveUsuarioId, saveEmail } from '../utils/storage';
+
+function decodeJwtPayload(token: string): Record<string, string> | null {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
+}
 
 export function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
@@ -9,9 +19,16 @@ export function AuthCallbackPage() {
     const errorParam = params.get('error');
 
     if (token) {
-      localStorage.setItem('token', token);
-      const email = params.get('email');
-      if (email) localStorage.setItem('email', decodeURIComponent(email));
+      const payload = decodeJwtPayload(token);
+      if (!payload) {
+        setError('Token inválido recibido.');
+        return;
+      }
+
+      saveToken(token);
+      if (payload.sub)   saveUsuarioId(payload.sub);
+      if (payload.email) saveEmail(payload.email);
+
       window.location.replace('/');
     } else if (errorParam) {
       setError(decodeURIComponent(errorParam));
