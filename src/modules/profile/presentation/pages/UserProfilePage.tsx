@@ -1,106 +1,25 @@
-import AppShell from '../../../../shared/components/AppShell';
+import type { UpdateUserProfileDTO } from '../../domain/userProfile.entity';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
 import VisibilityToggles from '../components/VisibilityToggles';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
-import type { UpdateUserProfileDTO } from '../../domain/userProfile.entity';
-
-// ── Íconos ────────────────────────────────────────────────────────────────────
-function SaveIcon() {
-  return (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-      <polyline points="17 21 17 13 7 13 7 21" />
-      <polyline points="7 3 7 8 15 8" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
-
-// ── Píldora con botones guardar / descartar ───────────────────────────────────
-interface ActionPillProps {
-  onSave: () => void;
-  onDiscard: () => void;
-  saving: boolean;
-  dirty: boolean;
-}
-
-function ActionPill({ onSave, onDiscard, saving, dirty }: ActionPillProps) {
-  return (
-    /*
-     * Píldora violeta claro que contiene los dos botones circulares.
-     * Coincide visualmente con el "tab" / muesca del polígono.
-     */
-    <div className="flex items-center gap-2 bg-[#c4bef8]/25 border border-[#7c6bec]/40 rounded-full px-2 py-2 backdrop-blur-sm">
-      {/* Botón guardar */}
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={saving || !dirty}
-        title="Guardar cambios"
-        className="
-          w-10 h-10 rounded-full
-          bg-[#7c6bec]/30 border border-[#7c6bec]/60
-          flex items-center justify-center text-[#c4bef8]
-          hover:bg-[#7c6bec]/55 active:scale-95
-          transition-all duration-150
-          disabled:opacity-35 disabled:cursor-not-allowed
-        "
-      >
-        {saving ? (
-          <div className="w-4 h-4 border-2 border-[#c4bef8]/30 border-t-[#c4bef8] rounded-full animate-spin" />
-        ) : (
-          <SaveIcon />
-        )}
-      </button>
-
-      {/* Botón descartar */}
-      <button
-        type="button"
-        onClick={onDiscard}
-        title="Descartar cambios"
-        className="
-          w-10 h-10 rounded-full
-          bg-[#7c6bec]/30 border border-[#7c6bec]/60
-          flex items-center justify-center text-[#c4bef8]
-          hover:bg-[#7c6bec]/55 active:scale-95
-          transition-all duration-150
-        "
-      >
-        <CloseIcon />
-      </button>
-    </div>
-  );
-}
+import BotonInicio from '../../../../shared/components/BotonInicio';
+import Sidebar from '../../../../shared/components/Sidebar';
+import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
 // ── Página ────────────────────────────────────────────────────────────────────
 export function UserProfilePage() {
-  const { profile, loading, saving, saveProfile, uploadAvatar } = useUserProfile();
-  const { form, dirty, setField, setVisibility, setSocialLink, reset } = useProfileForm(profile);
-
-  async function handleSave() {
-    if (!profile) return;
-    await saveProfile(form);
-  }
-
-  function handleDiscard() {
-    if (profile) reset(profile);
-  }
+  const { profile, loading, uploadAvatar } =
+    useUserProfile();
+  const { form, setField, setVisibility, setSocialLink } =
+    useProfileForm(profile);
 
   // ── Loading ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e2e2e8] flex items-center justify-center">
+      <div className="min-h-screen bg-white p-2 md:p-4 box-border flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-2 border-[#7c6bec]/30 border-t-[#7c6bec] rounded-full animate-spin" />
           <p className="text-[#6b7280] text-sm">Cargando perfil…</p>
@@ -114,56 +33,74 @@ export function UserProfilePage() {
   const fullName = `${profile.firstName} ${profile.lastName}`;
 
   return (
-    <AppShell
-      userName={fullName}
-      avatarUrl={profile.avatarUrl}
-      pageTitle="Ajustes de perfil"
-      pageSubtitle="Puedes modificar y editar algunos detalles en este apartado."
-      topRightSlot={
-        <ActionPill
-          onSave={handleSave}
-          onDiscard={handleDiscard}
-          saving={saving}
-          dirty={dirty}
-        />
-      }
-    >
-      {/* Grid de 2 columnas: izquierda fija 290px, derecha flexible */}
-      <div className="grid grid-cols-[290px_1fr] gap-12 p-1">
+    <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
+      <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
+        <BotonInicio texto="Volver al perfil" />
 
-        {/* ── Columna izquierda ── */}
-        <div className="flex flex-col gap-4">
-          <ProfileAvatar
-            name={fullName}
-            profession={form.profession ?? profile.profession}
-            avatarUrl={profile.avatarUrl}
-            onFileChange={uploadAvatar}
-          />
-          <VisibilityToggles
-            visibility={{
-              showEmail:      form.visibility?.showEmail      ?? profile.visibility.showEmail,
-              showProfession: form.visibility?.showProfession ?? profile.visibility.showProfession,
-              showBio:        form.visibility?.showBio        ?? profile.visibility.showBio,
-            }}
-            onChange={setVisibility}
-          />
+        {/* Header con logo pequeño y título a la misma altura */}
+        <div className="flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
+          <PortlyLogoBig />
+          <div>
+            <h1 className="text-white text-2xl font-bold leading-tight">
+              Ajustes de perfil
+            </h1>
+            <p className="text-[#6b7280] text-sm mt-0.5">
+              Puedes modificar y editar algunos detalles en este apartado.
+            </p>
+          </div>
         </div>
 
-        {/* ── Columna derecha ── */}
-        <div className="flex flex-col gap-4">
-          <GeneralInfoForm
-            form={form}
-            profile={profile}
-            onFieldChange={(key, value) =>
-              setField(key as keyof UpdateUserProfileDTO, value)
-            }
-          />
-          <SocialLinksForm
-            links={form.socialLinks ?? profile.socialLinks}
-            onChange={setSocialLink}
-          />
+        {/* Cuerpo: Sidebar + Línea separadora + Contenido */}
+        <div className="flex flex-1 min-h-0 pb-5">
+          {/* Sidebar con borde derecho */}
+          <div className="border-r-2 border-cyan-400">
+            <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
+          </div>
+
+          {/* Contenido scrolleable */}
+          <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden scrollbar-thin px-5">
+            <div className="w-full flex items-center justify-center py-5">
+              <div className="flex gap-12">
+                <div className="w-[280px] flex flex-col gap-8 flex-shrink-0">
+                  <ProfileAvatar
+                    name={fullName}
+                    profession={form.profession ?? profile.profession}
+                    avatarUrl={profile.avatarUrl}
+                    onFileChange={uploadAvatar}
+                  />
+                  <VisibilityToggles
+                    visibility={{
+                      showEmail:
+                        form.visibility?.showEmail ??
+                        profile.visibility.showEmail,
+                      showProfession:
+                        form.visibility?.showProfession ??
+                        profile.visibility.showProfession,
+                      showBio:
+                        form.visibility?.showBio ?? profile.visibility.showBio,
+                    }}
+                    onChange={setVisibility}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-8 w-[583px]">
+                  <GeneralInfoForm
+                    form={form}
+                    profile={profile}
+                    onFieldChange={(key, value) =>
+                      setField(key as keyof UpdateUserProfileDTO, value)
+                    }
+                  />
+                  <SocialLinksForm
+                    links={form.socialLinks ?? profile.socialLinks}
+                    onChange={setSocialLink}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </AppShell>
+    </div>
   );
 }
