@@ -9,14 +9,13 @@ import BotonInicio from '../../../../shared/components/BotonInicio';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
-// ── Página ────────────────────────────────────────────────────────────────────
+
 export function UserProfilePage() {
   const { profile, loading, uploadAvatar } =
     useUserProfile();
   const { form, setField, setVisibility, setSocialLink } =
     useProfileForm(profile);
 
-  // ── Loading ──
   if (loading) {
     return (
       <div className="min-h-screen bg-white p-2 md:p-4 box-border flex items-center justify-center">
@@ -37,7 +36,6 @@ export function UserProfilePage() {
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         <BotonInicio texto="Volver al perfil" />
 
-        {/* Header con logo pequeño y título a la misma altura */}
         <div className="flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
           <div>
@@ -50,14 +48,11 @@ export function UserProfilePage() {
           </div>
         </div>
 
-        {/* Cuerpo: Sidebar + Línea separadora + Contenido */}
         <div className="flex flex-1 min-h-0 pb-5">
-          {/* Sidebar con borde derecho */}
           <div className="border-r-2 border-cyan-400">
             <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
           </div>
 
-          {/* Contenido scrolleable */}
           <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden scrollbar-thin px-5">
             <div className="w-full flex items-center justify-center py-5">
               <div className="flex gap-12">

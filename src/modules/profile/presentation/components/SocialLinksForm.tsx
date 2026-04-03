@@ -1,7 +1,7 @@
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
 import { getToken } from '../../../../infrastructure/storage/storage';
 
-// SVG Icons para redes sociales
+
 function GithubIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -102,14 +102,11 @@ export default function SocialLinksForm({
 
   return (
     <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
-      {/* Header with border bottom */}
       <div className="px-8 py-8 border-b border-white/5">
         <h2 className="text-[#e5e7f6] font-bold text-xl">Redes Sociales</h2>
       </div>
 
-      {/* Content */}
       <div className="px-8 py-8 flex flex-col gap-8">
-        {/* Botones principales GitHub / LinkedIn */}
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
@@ -173,7 +170,6 @@ export default function SocialLinksForm({
             }[]
           ).map(({ key, icon, placeholder, label }) => (
             <div key={key} className="flex items-center gap-4">
-              {/* Icono con borde */}
               <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
                 {icon}
               </div>

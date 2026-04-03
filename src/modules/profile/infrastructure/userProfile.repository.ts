@@ -19,7 +19,6 @@ function authHeaders(): Record<string, string> {
 
 // Mapea la respuesta del backend (español) al formato del frontend (inglés)
 function mapBackendToFrontend(data: any): UserProfileEntity {
-  // Construir socialLinks desde el array de enlaces
   const socialLinks: UserProfileEntity['socialLinks'] = {
     github: '',
     linkedin: '',
@@ -37,7 +36,7 @@ function mapBackendToFrontend(data: any): UserProfileEntity {
     }
   }
 
-  // Extraer proveedores vinculados (github, linkedin, google)
+  // Extraer proveedores vinculados
   const connectedProviders: string[] = [];
   if (data.proveedores && Array.isArray(data.proveedores)) {
     for (const p of data.proveedores) {
@@ -75,9 +74,6 @@ function mapFrontendToBackend(dto: UpdateUserProfileDTO): any {
 
 // ─── Repository ───────────────────────────────────────────────────────────────
 export const userProfileRepository = {
-  /**
-   * Obtiene el perfil del usuario autenticado desde GET /api/profile
-   */
   async getProfile(): Promise<UserProfileEntity> {
     const res = await fetch(`${API_BASE}/api/profile`, {
       method: 'GET',
@@ -93,9 +89,6 @@ export const userProfileRepository = {
     return mapBackendToFrontend(data);
   },
 
-  /**
-   * Actualiza el perfil del usuario autenticado con PUT /api/profile
-   */
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
     const body = mapFrontendToBackend(dto);
 
@@ -114,12 +107,8 @@ export const userProfileRepository = {
     return mapBackendToFrontend(data);
   },
 
-  /**
-   * Actualiza el avatar (por ahora solo actualiza enlaceFoto via PUT /api/profile)
-   */
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
-    // Por ahora no hay endpoint de upload de archivos en el backend.
-    // Creamos una URL local temporal para previsualizar.
+    // No hay endpoint de upload todavía, se usa URL local temporal
     const localUrl = URL.createObjectURL(file);
     return { avatarUrl: localUrl };
   },
