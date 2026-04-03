@@ -21,7 +21,14 @@ function LinkedinIcon() {
 
 function InstagramIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="2" y="2" width="20" height="20" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
@@ -39,9 +46,20 @@ function FacebookIcon() {
 
 function YoutubeIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z" />
-      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none" />
+      <polygon
+        points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   );
 }
@@ -64,7 +82,11 @@ interface SocialLinksFormProps {
   onChange: (key: SocialKey, value: string) => void;
 }
 
-export default function SocialLinksForm({ links, connectedProviders, onChange }: SocialLinksFormProps) {
+export default function SocialLinksForm({
+  links,
+  connectedProviders,
+  onChange,
+}: SocialLinksFormProps) {
   const isGithubConnected = connectedProviders.includes('github');
   const isLinkedinConnected = connectedProviders.includes('linkedin');
 
@@ -79,71 +101,98 @@ export default function SocialLinksForm({ links, connectedProviders, onChange }:
   }
 
   return (
-    <div className="bg-[#141824] rounded-2xl p-6 border border-white/5 min-w-0">
-      <h2 className="text-white font-semibold text-base mb-5">Redes Sociales</h2>
-
-      {/* Botones principales GitHub / LinkedIn */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        <button
-          type="button"
-          disabled={isGithubConnected}
-          onClick={() => !isGithubConnected && handleVincular('github')}
-          className={`
-            flex items-center justify-center gap-2 py-2.5 rounded-xl
-            text-sm transition-colors
-            ${isGithubConnected
-              ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-              : 'bg-[#0d1117] border border-white/10 text-white hover:border-[#7c6bec]/40 cursor-pointer'}
-          `}
-        >
-          {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
-          {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
-        </button>
-        <button
-          type="button"
-          disabled={isLinkedinConnected}
-          onClick={() => !isLinkedinConnected && handleVincular('linkedin')}
-          className={`
-            flex items-center justify-center gap-2 py-2.5 rounded-xl
-            text-sm transition-colors
-            ${isLinkedinConnected
-              ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-              : 'bg-[#0d1117] border border-[#7c6bec]/40 text-[#b0a8f5] hover:border-[#7c6bec]/70 cursor-pointer'}
-          `}
-        >
-          {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
-          {isLinkedinConnected ? 'LinkedIn conectado' : 'Vincular LinkedIn'}
-        </button>
+    <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
+      {/* Header with border bottom */}
+      <div className="px-8 py-8 border-b border-white/5">
+        <h2 className="text-[#e5e7f6] font-bold text-xl">Redes Sociales</h2>
       </div>
 
-      {/* Inputs de redes sociales */}
-      <div className="flex flex-col gap-3">
-        {(
-          [
-            { key: 'instagram' as SocialKey, icon: <InstagramIcon />, placeholder: 'https://instagram.com/usuario' },
-            { key: 'facebook'  as SocialKey, icon: <FacebookIcon />,  placeholder: 'https://facebook.com/usuario' },
-            { key: 'youtube'   as SocialKey, icon: <YoutubeIcon />,   placeholder: 'https://youtube.com/c/canal' },
-          ] as { key: SocialKey; icon: React.ReactNode; placeholder: string }[]
-        ).map(({ key, icon, placeholder }) => (
-          <div key={key} className="flex items-center gap-3">
-            {/* Icono con borde */}
-            <div className="w-9 h-9 rounded-lg bg-[#0d1117] border border-white/10 flex items-center justify-center text-[#6b7280] shrink-0">
-              {icon}
+      {/* Content */}
+      <div className="px-8 py-8 flex flex-col gap-8">
+        {/* Botones principales GitHub / LinkedIn */}
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            type="button"
+            disabled={isGithubConnected}
+            onClick={() => !isGithubConnected && handleVincular('github')}
+            className={`
+              flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
+              text-sm font-semibold transition-all duration-200
+              ${isGithubConnected
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'}
+            `}
+          >
+            {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
+            {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
+          </button>
+          <button
+            type="button"
+            disabled={isLinkedinConnected}
+            onClick={() => !isLinkedinConnected && handleVincular('linkedin')}
+            className={`
+              flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
+              text-sm font-semibold transition-all duration-200
+              ${isLinkedinConnected
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'}
+            `}
+          >
+            {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
+            {isLinkedinConnected ? 'LinkedIn conectado' : 'Vincular LinkedIn'}
+          </button>
+        </div>
+
+        {/* Inputs de redes sociales */}
+        <div className="flex flex-col gap-4">
+          {(
+            [
+              {
+                key: 'instagram' as SocialKey,
+                icon: <InstagramIcon />,
+                placeholder: 'https://instagram.com/usuario',
+                label: 'Instagram',
+              },
+              {
+                key: 'facebook' as SocialKey,
+                icon: <FacebookIcon />,
+                placeholder: 'https://facebook.com/usuario',
+                label: 'Facebook',
+              },
+              {
+                key: 'youtube' as SocialKey,
+                icon: <YoutubeIcon />,
+                placeholder: 'https://youtube.com/c/canal',
+                label: 'YouTube',
+              },
+            ] as {
+              key: SocialKey;
+              icon: React.ReactNode;
+              placeholder: string;
+              label: string;
+            }[]
+          ).map(({ key, icon, placeholder, label }) => (
+            <div key={key} className="flex items-center gap-4">
+              {/* Icono con borde */}
+              <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
+                {icon}
+              </div>
+              <input
+                type="url"
+                value={links[key] ?? ''}
+                onChange={(e) => onChange(key, e.target.value)}
+                placeholder={placeholder}
+                aria-label={`URL de ${label}`}
+                className="
+                  flex-1 bg-[#000000] border border-white/8 rounded-[12px] px-4 py-3
+                  text-white text-sm placeholder-[#6b7280]
+                  focus:outline-none focus:border-white/16 focus:ring-0
+                  transition-colors
+                "
+              />
             </div>
-            <input
-              type="url"
-              value={links[key] ?? ''}
-              onChange={(e) => onChange(key, e.target.value)}
-              placeholder={placeholder}
-              className="
-                flex-1 bg-[#0d1117] border border-white/8 rounded-xl px-4 py-2.5
-                text-white text-sm placeholder-[#4b5563]
-                focus:outline-none focus:border-[#7c6bec]/60 focus:ring-1 focus:ring-[#7c6bec]/30
-                transition-colors
-              "
-            />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

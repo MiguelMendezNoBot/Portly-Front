@@ -20,7 +20,7 @@ export const AppRouter = () => {
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/perfil-usuario" element={<UserProfilePage />} />
         <Route
           path="/inicio"
           element={<div className="text-white p-8">Inicio</div>}
@@ -41,6 +41,7 @@ export const AppRouter = () => {
           path="/perfil-profesional"
           element={<div className="text-white p-8">Perfil profesional</div>}
         />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
