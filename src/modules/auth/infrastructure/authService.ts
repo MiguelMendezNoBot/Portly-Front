@@ -1,6 +1,6 @@
 import type { RegisterData, LoginData, AuthResponse } from "../domain/authTypes"
 
-const BASE_URL = import.meta.env.VITE_API_URL  // ← usas la tuya, no el hardcodeado
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
 export const registerUser = async (data: RegisterData): Promise<AuthResponse> => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
