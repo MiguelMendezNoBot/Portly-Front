@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../shared/components/SocialIcons';
 import { Link } from 'react-router-dom';
+import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../shared/components/SocialIcons';
+import { OAUTH_URLS } from '../presentation/constants/oauth.constants';
 
-const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -36,25 +36,35 @@ export function LoginForm() {
         <p className="text-gray-600 text-sm">Ingresa en la plataforma con tus redes profesionales</p>
       </div>
 
-      {/* Botones Sociales Horizontales */}
-      <div className="flex justify-between gap-4 mb-8">
-        <button
-          type="button"
-          onClick={() => { window.location.href = GOOGLE_AUTH_URL; }}
-          className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
-        >
-          <GoogleIcon className="w-5 h-5" />
-          Google
-        </button>
-        <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors">
-          <GitHubIcon className="w-5 h-5" />
-          GitHub
-        </button>
-        <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors">
-          <LinkedInIcon className="w-5 h-5 text-[#0077B5]" />
-          LinkedIn
-        </button>
-      </div>
+        {/* Botones Sociales */}
+        <div className="space-y-4 mb-8">
+          <button
+            type="button"
+            onClick={() => { window.location.href = OAUTH_URLS.google; }}
+            className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+          >
+            <GoogleIcon className="w-5 h-5" />
+            Google
+          </button>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => { window.location.href = OAUTH_URLS.github; }}
+              className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <GitHubIcon className="w-5 h-5" />
+              GitHub
+            </button>
+            <button
+              type="button"
+              onClick={() => { window.location.href = OAUTH_URLS.linkedin; }}
+              className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <LinkedInIcon className="w-5 h-5 text-[#0077B5]" />
+              LinkedIn
+            </button>
+          </div>
+        </div>
 
       {/* Divisor */}
       <div className="relative mb-6">

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { registerUser } from "../infrastructure/authService"
 import { useToast } from "../../../shared/hooks/useToast"
 import { saveToken, saveUsuarioId, saveEmail } from "../../../infrastructure/storage/storage"
@@ -64,6 +65,7 @@ const fieldsByStep: Record<number, (keyof FormFields)[]> = {
 }
 
 export const useRegisterForm = () => {
+    const navigate = useNavigate()
     const [fields, setFields] = useState<FormFields>({
         nombre: "", apellido: "", profesion: "",biografia:"",
         email: "", password: "", confirmPassword: ""
@@ -119,8 +121,9 @@ export const useRegisterForm = () => {
 
         saveToken(data.token)
         saveUsuarioId(data.usuarioId)
-        saveEmail(data.email) 
+        saveEmail(data.email)
         showToast("¡Cuenta creada exitosamente!", "success")
+        navigate("/")
 
     } catch (error: any) {
         if (error.status === 409 || error.message?.toLowerCase().includes("correo")) {

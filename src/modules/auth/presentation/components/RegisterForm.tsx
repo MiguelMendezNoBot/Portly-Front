@@ -3,8 +3,7 @@ import {Input} from '../../../../shared/components/Input'
 import { useRegisterForm } from '../../application/useRegisterForm'
 import { GitHubIcon, GoogleIcon, LinkedInIcon } from '../../../../shared/components/SocialIcons'
 import { PROFESIONES } from '../constants/register.constants';
-
-const GOOGLE_AUTH_URL = 'http://localhost:8080/auth/google';
+import { OAUTH_URLS } from '../constants/oauth.constants';
 
 interface RegisterFormProps {
     step: number
@@ -51,13 +50,13 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                             <div className="flex items-center gap-4 mt-2">
                                 <span className="text-xs font-normal text-gray-800 mr-3">O continua con:</span>
                                 <div className="flex items-center gap-5">
-                                    <button type="button" onClick={() => window.location.href = GOOGLE_AUTH_URL} className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-100 transition-colors">
+                                    <button type="button" onClick={() => window.location.href = OAUTH_URLS.google} className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-100 transition-colors">
                                         <GoogleIcon className="w-6 h-6" />
                                     </button>
-                                    <button type="button" className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 transition-colors">
+                                    <button type="button" onClick={() => window.location.href = OAUTH_URLS.github} className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 transition-colors">
                                         <GitHubIcon className="w-8 h-8" />
                                     </button>
-                                    <button type="button" className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 transition-colors">
+                                    <button type="button" onClick={() => window.location.href = OAUTH_URLS.linkedin} className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 transition-colors">
                                         <LinkedInIcon className="w-8 h-8 text-[#0077B5]" />
                                     </button>
                                 </div>
