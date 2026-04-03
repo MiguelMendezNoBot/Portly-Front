@@ -15,13 +15,6 @@ export default function ProfileAvatar({
 }: ProfileAvatarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const initials = name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) onFileChange(file);
@@ -33,7 +26,7 @@ export default function ProfileAvatar({
       <div className="relative group cursor-pointer" onClick={() => inputRef.current?.click()}>
         <div className="w-28 h-28 rounded-2xl bg-[#7c6bec]/20 border border-[#7c6bec]/30 flex items-center justify-center overflow-hidden">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" referrerPolicy="no-referrer" crossOrigin="anonymous" />
           ) : (
             /* Avatar placeholder SVG */
             <svg width="64" height="64" viewBox="0 0 64 64" fill="none">

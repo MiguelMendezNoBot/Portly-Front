@@ -19,8 +19,8 @@ export const AppRouter = () => {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
-        <Route path="*" element={<Navigate to="/" />} />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route path="*" element={<Navigate to="/" />} />
         <Route
           path="/inicio"
           element={<div className="text-white p-8">Inicio</div>}

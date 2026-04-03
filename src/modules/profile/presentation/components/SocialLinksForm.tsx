@@ -1,4 +1,5 @@
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
+import { getToken } from '../../../../infrastructure/storage/storage';
 
 // SVG Icons para redes sociales
 function GithubIcon() {
@@ -45,14 +46,38 @@ function YoutubeIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 type SocialKey = keyof UserProfileEntity['socialLinks'];
+
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
 interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];
+  connectedProviders: string[];
   onChange: (key: SocialKey, value: string) => void;
 }
 
-export default function SocialLinksForm({ links, onChange }: SocialLinksFormProps) {
+export default function SocialLinksForm({ links, connectedProviders, onChange }: SocialLinksFormProps) {
+  const isGithubConnected = connectedProviders.includes('github');
+  const isLinkedinConnected = connectedProviders.includes('linkedin');
+
+  function handleVincular(provider: string) {
+    const token = getToken();
+    if (!token) {
+      alert('Debes iniciar sesión para vincular una cuenta.');
+      return;
+    }
+    // Redirige al endpoint de VINCULACIÓN (no login) del backend
+    window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
+  }
+
   return (
     <div className="bg-[#141824] rounded-2xl p-6 border border-white/5 min-w-0">
       <h2 className="text-white font-semibold text-base mb-5">Redes Sociales</h2>
@@ -61,25 +86,33 @@ export default function SocialLinksForm({ links, onChange }: SocialLinksFormProp
       <div className="grid grid-cols-2 gap-3 mb-5">
         <button
           type="button"
-          className="
+          disabled={isGithubConnected}
+          onClick={() => !isGithubConnected && handleVincular('github')}
+          className={`
             flex items-center justify-center gap-2 py-2.5 rounded-xl
-            bg-[#0d1117] border border-white/10 text-white text-sm
-            hover:border-[#7c6bec]/40 transition-colors
-          "
+            text-sm transition-colors
+            ${isGithubConnected
+              ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+              : 'bg-[#0d1117] border border-white/10 text-white hover:border-[#7c6bec]/40 cursor-pointer'}
+          `}
         >
-          <GithubIcon />
-          Vincular GitHub
+          {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
+          {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
         </button>
         <button
           type="button"
-          className="
+          disabled={isLinkedinConnected}
+          onClick={() => !isLinkedinConnected && handleVincular('linkedin')}
+          className={`
             flex items-center justify-center gap-2 py-2.5 rounded-xl
-            bg-[#0d1117] border border-[#7c6bec]/40 text-[#b0a8f5] text-sm
-            hover:border-[#7c6bec]/70 transition-colors
-          "
+            text-sm transition-colors
+            ${isLinkedinConnected
+              ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+              : 'bg-[#0d1117] border border-[#7c6bec]/40 text-[#b0a8f5] hover:border-[#7c6bec]/70 cursor-pointer'}
+          `}
         >
-          <LinkedinIcon />
-          Vincular LinkedIn
+          {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
+          {isLinkedinConnected ? 'LinkedIn conectado' : 'Vincular LinkedIn'}
         </button>
       </div>
 

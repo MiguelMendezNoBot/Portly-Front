@@ -70,7 +70,7 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
       <div className="flex items-center gap-3 px-2">
         <div className="w-9 h-9 rounded-full bg-[#7c6bec]/30 flex items-center justify-center shrink-0 overflow-hidden border border-[#7c6bec]/40">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+            <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           ) : (
             <span className="text-[#b0a8f5] text-sm font-semibold">{initials}</span>
           )}

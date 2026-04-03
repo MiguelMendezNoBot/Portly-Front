@@ -160,6 +160,7 @@ export function UserProfilePage() {
           />
           <SocialLinksForm
             links={form.socialLinks ?? profile.socialLinks}
+            connectedProviders={profile.connectedProviders}
             onChange={setSocialLink}
           />
         </div>
