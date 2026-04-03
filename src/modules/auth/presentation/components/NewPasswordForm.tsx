@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { EyeIcon, EyeOffIcon } from '../../../components/SocialIcons';
-import { resetPassword } from '../services/authService'; // Tu servicio
+import { EyeIcon, EyeOffIcon } from '../../../../shared/components/SocialIcons';
+import { resetPassword } from '../../infrastructure/authService'; // Tu servicio
 
 // --- Iconos SVGs ---
 const CheckmarkIcon = () => (

@@ -1,5 +1,5 @@
-import { LoginForm } from '../features/auth/components/LoginForm';
-import BotonInicio from '../components/BotonInicio';
+import { LoginForm } from '../components/LoginForm';
+import BotonInicio from '../../../../shared/components/BotonInicio';
 
 
 export default function LoginPage() {

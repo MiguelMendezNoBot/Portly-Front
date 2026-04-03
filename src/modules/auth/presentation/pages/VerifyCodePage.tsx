@@ -1,5 +1,5 @@
-import CornerTab from '../components/CornerTab';
-import { VerifyCodeForm } from '../features/auth/components/VerifyCodeForm';
+import CornerTab from '../../../../shared/components/CornerTab';
+import { VerifyCodeForm } from '../components/VerifyCodeForm';
 
 export const VerifyCodePage = () => {
   return (

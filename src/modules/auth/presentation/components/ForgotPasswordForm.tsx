@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Input } from '../../../components/Input';
-import { forgotPassword } from '../services/authService';
+import { Input } from '../../../../shared/components/Input';
+import { forgotPassword } from '../../infrastructure/authService';
 import { useNavigate, Link } from 'react-router-dom';
 
 // Icono circular del candado
