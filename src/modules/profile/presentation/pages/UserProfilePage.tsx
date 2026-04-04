@@ -1,20 +1,29 @@
 import type { UpdateUserProfileDTO } from '../../domain/userProfile.entity';
+import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
 import VisibilityToggles from '../components/VisibilityToggles';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
-import BotonInicio from '../../../../shared/components/BotonInicio';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
 
 export function UserProfilePage() {
-  const { profile, loading, uploadAvatar } =
+  const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
-  const { form, setField, setVisibility, setSocialLink } =
+  const { form, dirty, setField, setVisibility, setSocialLink } =
     useProfileForm(profile);
+  const navigate = useNavigate();
+
+  async function handleSave() {
+    try {
+      await saveProfile(form);
+    } catch (error) {
+      alert('No se pudo guardar el perfil.');
+    }
+  }
 
   if (loading) {
     return (
@@ -34,7 +43,53 @@ export function UserProfilePage() {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
-        <BotonInicio texto="Volver al perfil" />
+        {/* Top Action Buttons */}
+        <div className="absolute top-0 right-0 z-20">
+          <div className="relative bg-white pt-4 pb-6 pl-8 pr-6 rounded-bl-[2.5rem]">
+            {/* Curvas suavizadas */}
+            <div className="absolute top-0 -left-6 w-6 h-6 bg-white overflow-hidden pointer-events-none">
+              <div className="w-full h-full bg-[#0f111a] rounded-tr-[1.5rem]"></div>
+            </div>
+            <div className="absolute -bottom-6 right-0 w-6 h-6 bg-white overflow-hidden pointer-events-none">
+              <div className="w-full h-full bg-[#0f111a] rounded-tr-[1.5rem]"></div>
+            </div>
+
+            <div className="bg-[#9fa2ff] flex items-center justify-center gap-4 px-6 py-2 rounded-full shadow-sm">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving || !dirty}
+                className={`w-[42px] h-[42px] rounded-[14px] flex items-center justify-center transition-all stroke-[2.5px] ${
+                  saving || !dirty
+                    ? 'bg-[#1c1154]/40 cursor-not-allowed text-[#9fa2ff]/50'
+                    : 'bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 text-[#9fa2ff] cursor-pointer shadow-lg'
+                }`}
+                title="Guardar perfil"
+              >
+                {saving ? (
+                  <div className="w-5 h-5 border-2 border-[#9fa2ff] border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="w-[42px] h-[42px] rounded-[14px] bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 flex items-center justify-center text-[#9fa2ff] transition-all cursor-pointer shadow-lg stroke-[2.5px]"
+                title="Cerrar y volver al inicio"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div className="flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
