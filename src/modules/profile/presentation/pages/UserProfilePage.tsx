@@ -5,16 +5,15 @@ import ProfileAvatar from '../components/ProfileAvatar';
 import VisibilityToggles from '../components/VisibilityToggles';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
+import CircleButton from '../components/CircleButton';
 import BotonInicio from '../../../../shared/components/BotonInicio';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
 
 export function UserProfilePage() {
-  const { profile, loading, uploadAvatar } =
-    useUserProfile();
-  const { form, setField, setVisibility, setSocialLink } =
-    useProfileForm(profile);
+  const { profile, loading, uploadAvatar } = useUserProfile();
+  const { form, setField, setVisibility, setSocialLink } = useProfileForm(profile);
 
   if (loading) {
     return (
@@ -34,7 +33,22 @@ export function UserProfilePage() {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
-        <BotonInicio texto="Volver al perfil" />
+
+        {/* Dos CircleButton dentro del BotonInicio, uno al lado del otro */}
+        <BotonInicio>
+          <div className="flex items-center gap-3">
+            <CircleButton
+              icon="G"
+              ariaLabel="Acción G"
+              onClick={() => {/* TODO: acción real */}}
+            />
+            <CircleButton
+              icon="X"
+              ariaLabel="Cerrar"
+              onClick={() => {/* TODO: acción real */}}
+            />
+          </div>
+        </BotonInicio>
 
         <div className="flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
