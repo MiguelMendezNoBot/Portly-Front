@@ -1,14 +1,14 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useLoginForm } from '../../application/useLoginForm'
+import { Toast } from '../../../../shared/components/Toast'
 import { GoogleIcon, GitHubIcon, LinkedInIcon, EyeIcon, EyeOffIcon } from '../../../../shared/components/SocialIcons';
 import { OAUTH_URLS } from '../constants/oauth.constants';
 
 
 export function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
+  const { fields, errors, toast, handleChange, handleSubmit } = useLoginForm()
   // Control remoto para el input de contraseña
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -20,17 +20,10 @@ export function LoginForm() {
     }
   };
 
-  // Función que maneja el envío final
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Enviando datos al servidor...', { email, password });
-    alert('¡Procesando inicio de sesión!');
-  };
-
   return (
     // TARJETA BLANCA PRINCIPAL
     <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative font-sans text-gray-900 mx-4">
-      
+      <Toast toast={toast} />
       <div className="text-center mb-8">
         <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
         <p className="text-gray-600 text-sm">Ingresa en la plataforma con tus redes profesionales</p>
@@ -77,18 +70,19 @@ export function LoginForm() {
       </div>
 
       {/* Formulario */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div>
           <label className="block text-sm font-bold mb-1">Correo Electronico</label>
           <input 
             type="email" 
             placeholder="nombre@dominio.com"
             className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={fields.email}
+            onChange={handleChange('email')}
             onKeyDown={handleEmailKeyDown}
             required
           />
+          {errors.email && <span className="text-red-500 text-[11px]">{errors.email}</span>}
         </div>
 
         <div className="relative">
@@ -105,11 +99,11 @@ export function LoginForm() {
               type={showPassword ? "text" : "password"} 
               placeholder="••••••••"
               className="w-full border border-gray-300 rounded-xl px-4 py-3.5 pr-12 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={fields.password}
+              onChange={handleChange('password')}
               required
             />
-            
+            {errors.password && <span className="text-red-500 text-[11px]">{errors.password}</span>}
             <button 
               type="button" 
               onMouseDown={(e) => {
