@@ -8,6 +8,7 @@ import SocialLinksForm from '../components/SocialLinksForm';
 import BotonInicio from '../../../../shared/components/BotonInicio';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
+import { ChangePasswordForm } from '../components/ChangePasswordForm';
 
 
 export function UserProfilePage() {
@@ -91,6 +92,7 @@ export function UserProfilePage() {
                     connectedProviders={profile.connectedProviders}
                     onChange={setSocialLink}
                   />
+                  <ChangePasswordForm />
                 </div>
               </div>
             </div>
