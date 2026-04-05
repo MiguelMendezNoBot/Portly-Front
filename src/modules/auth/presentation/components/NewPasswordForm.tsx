@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from '../../../../shared/components/SocialIcons';
-import { resetPassword } from '../../infrastructure/authService'; // Tu servicio
+import { resetPassword } from '../../infrastructure/authService';
+import { useToast } from '../../../../shared/hooks/useToast';
+import { Toast } from '../../../../shared/components/Toast';
 
 // --- Iconos SVGs ---
 const CheckmarkIcon = () => (
@@ -70,6 +72,7 @@ export const NewPasswordForm = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast, showToast } = useToast();
 
   // Obtenemos los datos pasados desde VerifyCodeForm
   const email = location.state?.email;
@@ -116,9 +119,8 @@ export const NewPasswordForm = () => {
       // Llamamos a tu endpoint pasándole el JSON requerido
       await resetPassword(email, codigo, password);
 
-      // Si funciona (200 OK), el backend la cambió. Mandamos al login.
-      alert('¡Contraseña restablecida con éxito!'); // Puedes cambiar esto por un toast
-      navigate('/', { replace: true });
+      showToast('¡Contraseña restablecida con éxito!', 'success');
+      setTimeout(() => navigate('/', { replace: true }), 1500);
     } catch (err: any) {
       // Si el backend lanza la IllegalArgumentException
       const errorMessage = err.message?.toLowerCase() || '';
@@ -167,6 +169,7 @@ export const NewPasswordForm = () => {
 
   return (
     <div className="w-[85%] sm:w-full max-w-sm mx-auto px-5 sm:px-10 py-10 bg-white rounded-[35px] relative shadow-lg flex flex-col items-center">
+      <Toast toast={toast} />
       <div className="pb-8 text-center">
         <h1 className="font-bold text-3xl leading-tight">Nueva Contraseña</h1>
         <h2 className="text-gray-500 font-normal text-[13px] mt-4 px-2">

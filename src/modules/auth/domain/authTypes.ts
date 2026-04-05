@@ -15,7 +15,7 @@ export interface LoginData {
 
 export interface AuthResponse {
     token: string
-    usuarioId: string
+    idUsuario: string
     email: string
     rol: string
 }

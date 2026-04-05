@@ -42,10 +42,10 @@ export const useLoginForm = () => {
                 contraseña: fields.password
             })
             saveToken(data.token)
-            saveUsuarioId(data.usuarioId)
+            saveUsuarioId(data.idUsuario)
             saveEmail(data.email)
             showToast("¡Bienvenido!", "success")
-            setTimeout(() => navigate("/dashboard"), 1500)
+            setTimeout(() => navigate("/"), 1500)
         } catch (error: any) {
             showToast("Credenciales inválidas", "error")
         }

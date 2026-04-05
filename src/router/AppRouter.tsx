@@ -20,26 +20,25 @@ export const AppRouter = () => {
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
-        <Route path="/perfil-usuario" element={<UserProfilePage />} />
         <Route
-          path="/inicio"
-          element={<div className="text-white p-8">Inicio</div>}
+          path="/home"
+          element={<div className="text-white p-8">Home</div>}
         />
         <Route
-          path="/tablero"
-          element={<div className="text-white p-8">Tablero</div>}
+          path="/dashboard"
+          element={<div className="text-white p-8">Dashboard</div>}
         />
         <Route
-          path="/mis-portafolios"
-          element={<div className="text-white p-8">Mis portafolios</div>}
+          path="/portfolios"
+          element={<div className="text-white p-8">Portfolios</div>}
         />
         <Route
-          path="/analiticas"
-          element={<div className="text-white p-8">Analíticas</div>}
+          path="/analytics"
+          element={<div className="text-white p-8">Analytics</div>}
         />
         <Route
-          path="/perfil-profesional"
-          element={<div className="text-white p-8">Perfil profesional</div>}
+          path="/professional-profile"
+          element={<div className="text-white p-8">Professional Profile</div>}
         />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
