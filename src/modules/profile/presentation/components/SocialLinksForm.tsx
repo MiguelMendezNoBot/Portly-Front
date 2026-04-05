@@ -1,7 +1,6 @@
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
 import { getToken } from '../../../../infrastructure/storage/storage';
 
-
 function GithubIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -66,7 +65,14 @@ function YoutubeIcon() {
 
 function CheckIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
@@ -102,11 +108,13 @@ export default function SocialLinksForm({
 
   return (
     <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
-      <div className="px-8 py-8 border-b border-white/5">
-        <h2 className="text-[#e5e7f6] font-bold text-xl">Redes Sociales</h2>
+      <div className="px-4 sm:px-8 py-6 sm:py-8 border-b border-white/5">
+        <h2 className="text-[#e5e7f6] font-bold text-lg sm:text-xl">
+          Redes Sociales
+        </h2>
       </div>
 
-      <div className="px-8 py-8 flex flex-col gap-8">
+      <div className="px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
@@ -115,9 +123,11 @@ export default function SocialLinksForm({
             className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
               text-sm font-semibold transition-all duration-200
-              ${isGithubConnected
-                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-                : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'}
+              ${
+                isGithubConnected
+                  ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                  : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'
+              }
             `}
           >
             {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
@@ -130,9 +140,11 @@ export default function SocialLinksForm({
             className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
               text-sm font-semibold transition-all duration-200
-              ${isLinkedinConnected
-                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-                : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'}
+              ${
+                isLinkedinConnected
+                  ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                  : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'
+              }
             `}
           >
             {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
@@ -169,7 +181,7 @@ export default function SocialLinksForm({
               label: string;
             }[]
           ).map(({ key, icon, placeholder, label }) => (
-            <div key={key} className="flex items-center gap-4">
+            <div key={key} className="flex items-center gap-2 sm:gap-4">
               <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
                 {icon}
               </div>
@@ -180,10 +192,11 @@ export default function SocialLinksForm({
                 placeholder={placeholder}
                 aria-label={`URL de ${label}`}
                 className="
-                  flex-1 bg-[#000000] border border-white/8 rounded-[12px] px-4 py-3
+                  w-full min-w-0 bg-[#000000] border border-white/8 rounded-[12px] px-3 sm:px-4 py-3
                   text-white text-sm placeholder-[#6b7280]
                   focus:outline-none focus:border-white/16 focus:ring-0
                   transition-colors
+                  truncate sm:truncate overflow-x-hidden
                 "
               />
             </div>

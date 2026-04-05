@@ -84,16 +84,16 @@ const icons = {
 };
 
 const navItems = [
-  { to: '/home', label: 'Home', icon: icons.home },
-  { to: '/dashboard', label: 'Dashboard', icon: icons.grid },
-  { to: '/portfolios', label: 'Portfolios', icon: icons.folder },
-  { to: '/analytics', label: 'Analytics', icon: icons.chart },
+  { to: '/home', label: 'Inicio', icon: icons.home },
+  { to: '/dashboard', label: 'Tablero', icon: icons.grid },
+  { to: '/portfolios', label: 'Mis portafolios', icon: icons.folder },
+  { to: '/analytics', label: 'Analiticas', icon: icons.chart },
   {
     to: '/professional-profile',
-    label: 'Professional Profile',
+    label: 'Perfil profesional',
     icon: icons.badge,
   },
-  { to: '/profile', label: 'Profile', icon: icons.user },
+  { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
 ];
 
 interface SidebarProps {
