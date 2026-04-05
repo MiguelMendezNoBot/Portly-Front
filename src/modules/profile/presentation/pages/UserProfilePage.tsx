@@ -6,6 +6,8 @@ import ProfileAvatar from '../components/ProfileAvatar';
 import VisibilityToggles from '../components/VisibilityToggles';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
+import CircleButton from '../components/CircleButton';
+import BotonInicio from '../../../../shared/components/BotonInicio';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
@@ -43,6 +45,22 @@ export function UserProfilePage() {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
+
+        {/* Dos CircleButton dentro del BotonInicio, uno al lado del otro */}
+        <BotonInicio>
+          <div className="flex items-center gap-3">
+            <CircleButton
+              icon="G"
+              ariaLabel="Acción G"
+              onClick={() => {/* TODO: acción real */}}
+            />
+            <CircleButton
+              icon="X"
+              ariaLabel="Cerrar"
+              onClick={() => {/* TODO: acción real */}}
+            />
+          </div>
+        </BotonInicio>
         {/* Top Action Buttons */}
         <div className="absolute top-0 right-0 z-20">
           <div className="relative bg-white pt-4 pb-6 pl-8 pr-6 rounded-bl-[2.5rem]">
