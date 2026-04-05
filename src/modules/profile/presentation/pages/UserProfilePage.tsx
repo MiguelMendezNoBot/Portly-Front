@@ -11,8 +11,10 @@ import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 
 export function UserProfilePage() {
-  const { profile, loading, saving, uploadAvatar, saveProfile } = useUserProfile();
-  const { form, dirty, setField, setVisibility, setSocialLink } = useProfileForm(profile);
+  const { profile, loading, saving, uploadAvatar, saveProfile } =
+    useUserProfile();
+  const { form, dirty, setField, setVisibility, setSocialLink } =
+    useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -42,10 +44,10 @@ export function UserProfilePage() {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
-
         {/* ── TOP BAR ─────────────────────────────────────────────────────── */}
 
         {/* MÓVIL: barra blanca ancho completo con esquinas superiores redondeadas */}
+        {/* MÓVIL: barra blanca ancho completo */}
         <div className="md:hidden relative bg-white w-full flex items-center justify-between px-5 pt-4 pb-5 rounded-t-[2rem] z-20 shrink-0">
           {/* Botón menú (izquierda) */}
           <button
@@ -54,17 +56,19 @@ export function UserProfilePage() {
             className="w-10 h-10 rounded-full bg-[#9fa2ff] flex items-center justify-center text-[#1c1154] shadow"
             aria-label="Abrir menú"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-
-          {/* Logo solo imagen (centro) */}
-          <div className="bg-white rounded-xl p-1.5 shadow-sm">
-            <img src="/portly_logo.png" alt="Portly" className="w-8 h-8" />
-          </div>
 
           {/* Píldora con botones (derecha) */}
           <div className="bg-[#9fa2ff] flex items-center gap-2 px-3 py-1.5 rounded-full shadow-sm">
@@ -82,7 +86,14 @@ export function UserProfilePage() {
               {saving ? (
                 <div className="w-4 h-4 border-2 border-[#9fa2ff] border-t-transparent rounded-full animate-spin" />
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                   <polyline points="17 21 17 13 7 13 7 21" />
                   <polyline points="7 3 7 8 15 8" />
@@ -95,7 +106,14 @@ export function UserProfilePage() {
               className="w-9 h-9 rounded-[10px] bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 flex items-center justify-center text-[#9fa2ff] transition-all cursor-pointer shadow-lg"
               title="Cerrar y volver al inicio"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -127,7 +145,14 @@ export function UserProfilePage() {
                 {saving ? (
                   <div className="w-5 h-5 border-2 border-[#9fa2ff] border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                     <polyline points="17 21 17 13 7 13 7 21" />
                     <polyline points="7 3 7 8 15 8" />
@@ -140,7 +165,14 @@ export function UserProfilePage() {
                 className="w-[42px] h-[42px] rounded-[14px] bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 flex items-center justify-center text-[#9fa2ff] transition-all cursor-pointer shadow-lg"
                 title="Cerrar y volver al inicio"
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -153,15 +185,23 @@ export function UserProfilePage() {
         <div className="hidden md:flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
           <div>
-            <h1 className="text-white text-2xl font-bold leading-tight">Ajustes de perfil</h1>
-            <p className="text-[#6b7280] text-sm mt-0.5">Puedes modificar y editar algunos detalles en este apartado.</p>
+            <h1 className="text-white text-2xl font-bold leading-tight">
+              Ajustes de perfil
+            </h1>
+            <p className="text-[#6b7280] text-sm mt-0.5">
+              Puedes modificar y editar algunos detalles en este apartado.
+            </p>
           </div>
         </div>
 
         {/* ── HEADER MÓVIL (título debajo de la barra) ────────────────────── */}
         <div className="md:hidden px-5 pt-3 pb-2 shrink-0">
-          <h1 className="text-white text-lg font-bold leading-tight">Ajustes de perfil</h1>
-          <p className="text-[#6b7280] text-xs mt-0.5">Puedes modificar y editar algunos detalles.</p>
+          <h1 className="text-white text-lg font-bold leading-tight">
+            Ajustes de perfil
+          </h1>
+          <p className="text-[#6b7280] text-xs mt-0.5">
+            Puedes modificar y editar algunos detalles.
+          </p>
         </div>
 
         {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
@@ -183,9 +223,14 @@ export function UserProfilePage() {
                   />
                   <VisibilityToggles
                     visibility={{
-                      showEmail: form.visibility?.showEmail ?? profile.visibility.showEmail,
-                      showProfession: form.visibility?.showProfession ?? profile.visibility.showProfession,
-                      showBio: form.visibility?.showBio ?? profile.visibility.showBio,
+                      showEmail:
+                        form.visibility?.showEmail ??
+                        profile.visibility.showEmail,
+                      showProfession:
+                        form.visibility?.showProfession ??
+                        profile.visibility.showProfession,
+                      showBio:
+                        form.visibility?.showBio ?? profile.visibility.showBio,
                     }}
                     onChange={setVisibility}
                   />
@@ -194,7 +239,9 @@ export function UserProfilePage() {
                   <GeneralInfoForm
                     form={form}
                     profile={profile}
-                    onFieldChange={(key, value) => setField(key as keyof UpdateUserProfileDTO, value)}
+                    onFieldChange={(key, value) =>
+                      setField(key as keyof UpdateUserProfileDTO, value)
+                    }
                   />
                   <SocialLinksForm
                     links={form.socialLinks ?? profile.socialLinks}
@@ -210,18 +257,24 @@ export function UserProfilePage() {
         {/* ── SIDEBAR DRAWER MÓVIL ────────────────────────────────────────── */}
         {sidebarOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — absolute, dentro del contenedor oscuro */}
             <div
-              className="md:hidden fixed inset-0 bg-black/60 z-30 backdrop-blur-sm"
+              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            {/* Drawer */}
-            <div className="md:hidden fixed top-0 left-0 h-full w-72 bg-[#0f111a] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
+            {/* Drawer — absolute, dentro del contenedor oscuro */}
+            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-[#0f111a] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
               {/* Header del drawer */}
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <img src="/portly_logo.png" alt="Portly" className="w-8 h-8" />
-                  <span className="text-white font-bold text-base tracking-wide">Portly</span>
+                  <img
+                    src="/portly_logo.png"
+                    alt="Portly"
+                    className="w-8 h-8"
+                  />
+                  <span className="text-white font-bold text-base tracking-wide">
+                    Portly
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -229,7 +282,14 @@ export function UserProfilePage() {
                   className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
                   aria-label="Cerrar menú"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
@@ -242,7 +302,6 @@ export function UserProfilePage() {
             </div>
           </>
         )}
-
       </div>
     </div>
   );
