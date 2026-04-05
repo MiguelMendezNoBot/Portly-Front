@@ -108,8 +108,24 @@ export const userProfileRepository = {
   },
 
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
-    // No hay endpoint de upload todavía, se usa URL local temporal
-    const localUrl = URL.createObjectURL(file);
-    return { avatarUrl: localUrl };
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${API_BASE}/api/upload`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Error ${res.status} al subir avatar`);
+    }
+
+    const data = await res.json();
+    return { avatarUrl: data.avatarUrl || data.url };
   },
 };
