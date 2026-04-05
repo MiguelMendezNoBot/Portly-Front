@@ -46,14 +46,13 @@ export function UserProfilePage() {
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         {/* ── TOP BAR ─────────────────────────────────────────────────────── */}
 
-        {/* MÓVIL: barra blanca ancho completo con esquinas superiores redondeadas */}
-        {/* MÓVIL: barra blanca ancho completo */}
-        <div className="md:hidden relative bg-white w-full flex items-center justify-between px-5 pt-4 pb-5 rounded-t-[2rem] z-20 shrink-0">
+        {/* MÓVIL: botones flotantes sobre el contenedor oscuro */}
+        <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           {/* Botón menú (izquierda) */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="w-10 h-10 rounded-full bg-[#9fa2ff] flex items-center justify-center text-[#1c1154] shadow"
+            className="w-11 h-11 rounded-full bg-[#9fa2ff] flex items-center justify-center text-[#1c1154] shadow-lg"
             aria-label="Abrir menú"
           >
             <svg
@@ -71,7 +70,7 @@ export function UserProfilePage() {
           </button>
 
           {/* Píldora con botones (derecha) */}
-          <div className="bg-[#9fa2ff] flex items-center gap-2 px-3 py-1.5 rounded-full shadow-sm">
+          <div className="bg-[#9fa2ff] flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg">
             <button
               type="button"
               onClick={handleSave}
@@ -194,8 +193,8 @@ export function UserProfilePage() {
           </div>
         </div>
 
-        {/* ── HEADER MÓVIL (título debajo de la barra) ────────────────────── */}
-        <div className="md:hidden px-5 pt-3 pb-2 shrink-0">
+        {/* ── HEADER MÓVIL ── */}
+        <div className="md:hidden px-5 pt-16 pb-2 shrink-0">
           <h1 className="text-white text-lg font-bold leading-tight">
             Ajustes de perfil
           </h1>
