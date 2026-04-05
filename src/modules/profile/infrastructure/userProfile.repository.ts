@@ -2,20 +2,7 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
-import { getToken } from '../../../infrastructure/storage/storage';
-
-// ─── Base URL del backend ────────────────────────────────────────────────────
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function authHeaders(): Record<string, string> {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
+import { httpClient } from '../../../infrastructure/http/httpClient';
 
 // Mapea la respuesta del backend (español) al formato del frontend (inglés)
 function mapBackendToFrontend(data: any): UserProfileEntity {
@@ -75,35 +62,12 @@ function mapFrontendToBackend(dto: UpdateUserProfileDTO): any {
 // ─── Repository ───────────────────────────────────────────────────────────────
 export const userProfileRepository = {
   async getProfile(): Promise<UserProfileEntity> {
-    const res = await fetch(`${API_BASE}/api/profile`, {
-      method: 'GET',
-      headers: authHeaders(),
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || `Error ${res.status} al cargar perfil`);
-    }
-
-    const data = await res.json();
+    const data = await httpClient.getAuth<any>('/api/profile', 'Error al cargar perfil');
     return mapBackendToFrontend(data);
   },
 
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
-    const body = mapFrontendToBackend(dto);
-
-    const res = await fetch(`${API_BASE}/api/profile`, {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || `Error ${res.status} al guardar perfil`);
-    }
-
-    const data = await res.json();
+    const data = await httpClient.putAuth<any>('/api/profile', mapFrontendToBackend(dto), 'Error al guardar perfil');
     return mapBackendToFrontend(data);
   },
 
