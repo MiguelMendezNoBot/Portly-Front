@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { saveToken, saveUsuarioId, saveEmail } from '../utils/storage';
+import { saveToken, saveUsuarioId, saveEmail } from '../../../../infrastructure/storage/storage';
 
 function decodeJwtPayload(token: string): Record<string, string> | null {
   try {
