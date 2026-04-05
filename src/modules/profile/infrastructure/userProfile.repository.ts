@@ -71,9 +71,7 @@ export const userProfileRepository = {
     return mapBackendToFrontend(data);
   },
 
-  async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
-    // No hay endpoint de upload todavía, se usa URL local temporal
-    const localUrl = URL.createObjectURL(file);
-    return { avatarUrl: localUrl };
+  async updateAvatar(_file: File): Promise<{ avatarUrl: string }> {
+    throw new Error('La subida de avatar no está implementada aún.');
   },
 };
