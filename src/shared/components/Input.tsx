@@ -53,6 +53,9 @@ export const Input = ({label, type = 'text', placeholder, textArea, required, va
                     {isPassword && (
                         <button
                             type="button"
+                            onMouseDown={(e) => {
+                            e.preventDefault();
+                            setShowPassword(!showPassword); }}
                             onClick={() => setShowPassword(prev => !prev)}
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
