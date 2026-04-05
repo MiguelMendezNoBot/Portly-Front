@@ -2,13 +2,27 @@ import { ReactNode } from 'react';
 
 interface Props {
     texto?: string;
-    children?: React.ReactNode
+    children?: React.ReactNode;
+    bgColor?: string;
 }
 
-const CornerTab = ({ texto = "cuadro de animacion",children }:Props) => {
+const CornerTab = ({ texto = "cuadro de animacion", children, bgColor = "#0d152b" }: Props) => {
     return (
-    <div className="absolute top-0 right-0 z-10  bg-white text-black px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] rounded-bl-[40px] sm:rounded-bl-[2rem] max-w-[80%]">
-        {children ?? texto}
+    <div className="absolute top-0 right-0 z-10">
+        <div className="relative bg-white pt-3 pb-5 pl-6 pr-5 rounded-bl-[2.5rem]">
+
+            {/* Curva invertida SUPERIOR IZQUIERDA */}
+            <div className="absolute top-0 -left-6 w-6 h-6 overflow-hidden pointer-events-none" style={{ backgroundColor: 'white' }}>
+                <div className="w-full h-full rounded-tr-[1.5rem]" style={{ backgroundColor: bgColor }}></div>
+            </div>
+
+            {/* Curva invertida INFERIOR DERECHA */}
+            <div className="absolute -bottom-6 right-0 w-6 h-6 overflow-hidden pointer-events-none" style={{ backgroundColor: 'white' }}>
+                <div className="w-full h-full rounded-tr-[1.5rem]" style={{ backgroundColor: bgColor }}></div>
+            </div>
+
+            {children ?? texto}
+        </div>
     </div>
     );
 };
