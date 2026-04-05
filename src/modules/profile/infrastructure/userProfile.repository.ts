@@ -3,6 +3,9 @@ import type {
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
 import { httpClient } from '../../../infrastructure/http/httpClient';
+import { getToken } from '../../../infrastructure/storage/storage';
+
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // Mapea la respuesta del backend (español) al formato del frontend (inglés)
 function mapBackendToFrontend(data: any): UserProfileEntity {
@@ -71,7 +74,23 @@ export const userProfileRepository = {
     return mapBackendToFrontend(data);
   },
 
-  async updateAvatar(_file: File): Promise<{ avatarUrl: string }> {
-    throw new Error('La subida de avatar no está implementada aún.');
+  async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${API_BASE}/api/profile/avatar`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Error ${res.status} al subir imagen`);
+    }
+
+    const data = await res.json();
+    return { avatarUrl: data.avatarUrl };
   },
 };

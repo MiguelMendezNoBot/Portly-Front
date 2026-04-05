@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 interface ProfileAvatarProps {
   name: string;
   profession: string;
   avatarUrl?: string;
   onFileChange: (file: File) => void;
+  uploading?: boolean;
 }
 
 export default function ProfileAvatar({
@@ -12,12 +13,24 @@ export default function ProfileAvatar({
   profession,
   avatarUrl,
   onFileChange,
+  uploading = false,
 }: ProfileAvatarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [sizeError, setSizeError] = useState<string | null>(null);
+  const MAX_SIZE_MB = 5;
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) onFileChange(file);
+    if (!file) return;
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setSizeError(`La foto debe ser menor a ${MAX_SIZE_MB} MB.`);
+      e.target.value = '';
+      return;
+    }
+
+    setSizeError(null);
+    onFileChange(file);
   }
 
   return (
@@ -53,16 +66,27 @@ export default function ProfileAvatar({
                 </svg>
               </div>
             )}
+
+            {/* Overlay de carga */}
+            {uploading && (
+              <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <div className="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
           </div>
 
           <button
             type="button"
-            className="
+            disabled={uploading}
+            className={`
               absolute -bottom-2 -right-2 w-10 h-10 rounded-[12px]
-              bg-[#8a4cfc] flex items-center justify-center 
-              shadow-lg hover:bg-[#9b5ffd] transition-colors
-              border border-white/5
-            "
+              flex items-center justify-center 
+              shadow-lg border border-white/5 transition-colors
+              ${uploading
+                ? 'bg-[#8a4cfc]/40 cursor-not-allowed'
+                : 'bg-[#8a4cfc] hover:bg-[#9b5ffd] cursor-pointer'
+              }
+            `}
             onClick={(e) => {
               e.stopPropagation();
               inputRef.current?.click();
@@ -96,6 +120,11 @@ export default function ProfileAvatar({
           <p className="text-[#a7aab9] text-sm mt-1 leading-snug line-clamp-2">
             {profession || 'Sin profesión'}
           </p>
+          {sizeError && (
+            <p className="mt-2 text-xs text-red-400 font-medium">
+              ⚠ {sizeError}
+            </p>
+          )}
         </div>
       </div>
     </div>
