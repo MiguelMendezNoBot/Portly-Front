@@ -42,7 +42,7 @@ export const useLoginForm = () => {
                 contraseña: fields.password
             })
             saveToken(data.token)
-            saveUsuarioId(data.usuarioId)
+            saveUsuarioId(data.idUsuario)
             saveEmail(data.email)
             showToast("¡Bienvenido!", "success")
             setTimeout(() => navigate("/"), 1500)

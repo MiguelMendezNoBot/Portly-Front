@@ -120,7 +120,7 @@ export const useRegisterForm = () => {
         })
 
         saveToken(data.token)
-        saveUsuarioId(data.usuarioId)
+        saveUsuarioId(data.idUsuario)
         saveEmail(data.email)
         showToast("¡Cuenta creada exitosamente!", "success")
         navigate("/")
