@@ -122,7 +122,7 @@ export function UserProfilePage() {
         </div>
 
         <div className="flex flex-1 min-h-0 pb-5">
-          <div className="border-r-2 border-cyan-400">
+          <div className="border-r-2 border-gray-800">
             <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
           </div>
 
