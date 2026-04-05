@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useUserProfile } from '../../application/useUserProfile';
+import { userProfileRepository } from '../../infrastructure/userProfile.repository';
 
 // Iconos
 const EyeIcon = ({ className }: { className?: string }) => (
@@ -15,7 +17,9 @@ const EyeOffIcon = ({ className }: { className?: string }) => (
 );
 
 export const ChangePasswordForm = () => {
-    // ✅ Todos los estados ADENTRO del componente
+    // Traemos el perfil para poder sacar el correo
+    const { profile } = useUserProfile();
+
     const [isLoading, setIsLoading] = useState(false);
 
     // Estados para los valores
@@ -40,13 +44,11 @@ export const ChangePasswordForm = () => {
         let isValid = true;
         const newErrors = { current: '', new: '', confirm: '' };
 
-        // 1. Validar contraseña actual
         if (!currentPassword) {
             newErrors.current = 'Debes ingresar tu contraseña actual.';
             isValid = false;
         }
 
-        // 2. Validar requisitos de la nueva contraseña
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$*\-/~]).{8,}$/;
         
         if (!newPassword) {
@@ -60,7 +62,6 @@ export const ChangePasswordForm = () => {
             isValid = false;
         }
 
-        // 3. Validar que las contraseñas coincidan
         if (newPassword !== confirmPassword) {
             newErrors.confirm = 'Las contraseñas no coinciden.';
             isValid = false;
@@ -73,37 +74,26 @@ export const ChangePasswordForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        // 1. Ejecutamos la validación
         if (!validateForm()) return;
 
-        // 2. Activamos el estado de carga
+        // Validamos que exista un correo cargado en el perfil
+        if (!profile?.email) {
+            setErrors(prev => ({ ...prev, current: 'No se pudo obtener tu correo electrónico. Recarga la página.' }));
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            // URL simulada por ahora
-            const url = 'https://tu-api.com/api/usuarios/cambiar-contrasena';
-            const token = localStorage.getItem('token'); 
-
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                },
-                body: JSON.stringify({
-                    contrasenaActual: currentPassword,
-                    nuevaContrasena: newPassword
-                })
+            // Llamamos a nuestro repositorio, enviando el correo y las claves
+            await userProfileRepository.changePassword({
+                email: profile.email,
+                contrasenaActual: currentPassword,
+                nuevaContrasena: newPassword
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Error al actualizar la contraseña');
-            }
-
             // Éxito
-            console.log("¡Éxito!", data);
+            alert("¡Contraseña actualizada correctamente!");
             
             // Limpiamos los recuadros
             setCurrentPassword('');
@@ -116,7 +106,6 @@ export const ChangePasswordForm = () => {
             console.error("Error en la petición:", error);
             setErrors(prev => ({ ...prev, current: error.message || 'Error de conexión' }));
         } finally {
-            // Quitamos el estado de carga
             setIsLoading(false);
         }
     };

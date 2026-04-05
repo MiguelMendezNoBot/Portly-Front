@@ -1,9 +1,8 @@
 import type {
   UserProfileEntity,
-  UpdateUserProfileDTO,
+  UpdateUserProfileDTO,ChangePasswordDTO 
 } from '../domain/userProfile.entity';
 import { getToken } from '../../../infrastructure/storage/storage';
-
 // ─── Base URL del backend ────────────────────────────────────────────────────
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
@@ -59,6 +58,8 @@ function mapBackendToFrontend(data: any): UserProfileEntity {
     },
     socialLinks,
     connectedProviders,
+    // Aquí mapeamos el dato nuevo que enviará el backend
+    hasLocalPassword: data.tieneContrasenaLocal ?? false,
   };
 }
 
@@ -112,4 +113,24 @@ export const userProfileRepository = {
     const localUrl = URL.createObjectURL(file);
     return { avatarUrl: localUrl };
   },
+  changePassword: async (dto: ChangePasswordDTO): Promise<void> => {
+    const token = localStorage.getItem('token'); 
+    
+    // Cambia esta URL por la real de tu compañero de backend cuando esté lista
+    const url = 'https://tu-api.com/api/usuarios/cambiar-contrasena'; 
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify(dto) // Aquí se mandan el email y las dos contraseñas
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.message || 'Error al actualizar la contraseña');
+    }
+  }
 };

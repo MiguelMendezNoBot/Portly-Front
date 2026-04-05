@@ -12,14 +12,16 @@ export interface UserProfileEntity {
     showBio: boolean;
   };
   socialLinks: {
-    github?: string;
-    linkedin?: string;
-    instagram?: string;
-    facebook?: string;
-    youtube?: string;
+    github: string;
+    linkedin: string;
+    instagram: string;
+    facebook: string;
+    youtube: string;
   };
-  // Proveedores OAuth vinculados (github, linkedin, google)
   connectedProviders: string[];
+  
+  // Nuestra nueva propiedad para la contraseña
+  hasLocalPassword?: boolean;
 }
 
 export interface UpdateUserProfileDTO {
@@ -27,6 +29,22 @@ export interface UpdateUserProfileDTO {
   lastName?: string;
   profession?: string;
   bio?: string;
-  visibility?: Partial<UserProfileEntity['visibility']>;
-  socialLinks?: Partial<UserProfileEntity['socialLinks']>;
+  avatarUrl?: string;
+  visibility?: {
+    showEmail?: boolean;
+    showProfession?: boolean;
+    showBio?: boolean;
+  };
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    instagram?: string;
+    facebook?: string;
+    youtube?: string;
+  };
+}
+export interface ChangePasswordDTO {
+  email: string;
+  contrasenaActual: string;
+  nuevaContrasena: string;
 }

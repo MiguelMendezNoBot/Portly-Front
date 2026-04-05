@@ -12,10 +12,8 @@ import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import { ChangePasswordForm } from '../components/ChangePasswordForm';
 
 export function UserProfilePage() {
-  const { profile, loading, saving, uploadAvatar, saveProfile } =
-    useUserProfile();
-  const { form, dirty, setField, setVisibility, setSocialLink } =
-    useProfileForm(profile);
+  const { profile, loading, saving, uploadAvatar, saveProfile } = useUserProfile();
+  const { form, dirty, setField, setVisibility, setSocialLink } = useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -49,7 +47,6 @@ export function UserProfilePage() {
 
         {/* MÓVIL: botones flotantes sobre el contenedor oscuro */}
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
-          {/* Botón menú (izquierda) */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -70,7 +67,6 @@ export function UserProfilePage() {
             </svg>
           </button>
 
-          {/* Píldora con botones (derecha) */}
           <div className="bg-[#9fa2ff] flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg">
             <button
               type="button"
@@ -181,7 +177,7 @@ export function UserProfilePage() {
           </div>
         </div>
 
-        {/* ── HEADER DESKTOP (logo + título) ──────────────────────────────── */}
+        {/* ── HEADER DESKTOP ──────────────────────────────── */}
         <div className="hidden md:flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
           <div>
@@ -206,7 +202,6 @@ export function UserProfilePage() {
 
         {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
         <div className="flex flex-1 min-h-0 pb-5">
-          {/* Sidebar desktop */}
           <div className="hidden md:flex border-r-2 border-gray-800 shrink-0">
             <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
           </div>
@@ -223,14 +218,9 @@ export function UserProfilePage() {
                   />
                   <VisibilityToggles
                     visibility={{
-                      showEmail:
-                        form.visibility?.showEmail ??
-                        profile.visibility.showEmail,
-                      showProfession:
-                        form.visibility?.showProfession ??
-                        profile.visibility.showProfession,
-                      showBio:
-                        form.visibility?.showBio ?? profile.visibility.showBio,
+                      showEmail: form.visibility?.showEmail ?? profile.visibility.showEmail,
+                      showProfession: form.visibility?.showProfession ?? profile.visibility.showProfession,
+                      showBio: form.visibility?.showBio ?? profile.visibility.showBio,
                     }}
                     onChange={setVisibility}
                   />
@@ -244,11 +234,17 @@ export function UserProfilePage() {
                     }
                   />
                   <SocialLinksForm
-                    links={form.socialLinks ?? profile.socialLinks}
+                    links={{
+                      github: form.socialLinks?.github ?? profile.socialLinks.github ?? '',
+                      linkedin: form.socialLinks?.linkedin ?? profile.socialLinks.linkedin ?? '',
+                      instagram: form.socialLinks?.instagram ?? profile.socialLinks.instagram ?? '',
+                      facebook: form.socialLinks?.facebook ?? profile.socialLinks.facebook ?? '',
+                      youtube: form.socialLinks?.youtube ?? profile.socialLinks.youtube ?? '',
+                    }}
                     connectedProviders={profile.connectedProviders}
                     onChange={setSocialLink}
                   />
-                  <ChangePasswordForm />
+                  {profile.hasLocalPassword && <ChangePasswordForm />}
                 </div>
               </div>
             </div>
@@ -258,14 +254,11 @@ export function UserProfilePage() {
         {/* ── SIDEBAR DRAWER MÓVIL ────────────────────────────────────────── */}
         {sidebarOpen && (
           <>
-            {/* Backdrop — absolute, dentro del contenedor oscuro */}
             <div
               className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            {/* Drawer — absolute, dentro del contenedor oscuro */}
             <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-[#0f111a] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
-              {/* Header del drawer */}
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
                   <img
@@ -296,7 +289,6 @@ export function UserProfilePage() {
                   </svg>
                 </button>
               </div>
-              {/* Sidebar dentro del drawer */}
               <div className="flex-1 overflow-y-auto">
                 <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
               </div>
