@@ -219,6 +219,7 @@ export function UserProfilePage() {
                     profession={form.profession ?? profile.profession}
                     avatarUrl={profile.avatarUrl}
                     onFileChange={uploadAvatar}
+                    uploading={saving}
                   />
                   <VisibilityToggles
                     visibility={{
