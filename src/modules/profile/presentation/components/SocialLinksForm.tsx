@@ -86,23 +86,26 @@ interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];
   connectedProviders: string[];
   onChange: (key: SocialKey, value: string) => void;
+  /** Callback que se dispara cuando el usuario hace click en vincular */
+  onLinked?: (provider: 'github' | 'linkedin') => void;
 }
 
 export default function SocialLinksForm({
   links,
   connectedProviders,
   onChange,
+  onLinked,
 }: SocialLinksFormProps) {
   const isGithubConnected = connectedProviders.includes('github');
   const isLinkedinConnected = connectedProviders.includes('linkedin');
 
-  function handleVincular(provider: string) {
+  function handleVincular(provider: 'github' | 'linkedin') {
     const token = getToken();
     if (!token) {
       alert('Debes iniciar sesión para vincular una cuenta.');
       return;
     }
-    // Redirige al endpoint de VINCULACIÓN (no login) del backend
+    // Redirige al endpoint de vinculación del backend
     window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
   }
 
@@ -133,6 +136,7 @@ export default function SocialLinksForm({
             {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
             {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
           </button>
+
           <button
             type="button"
             disabled={isLinkedinConnected}
@@ -152,7 +156,6 @@ export default function SocialLinksForm({
           </button>
         </div>
 
-        {/* Inputs de redes sociales */}
         <div className="flex flex-col gap-4">
           {(
             [
@@ -195,8 +198,7 @@ export default function SocialLinksForm({
                   w-full min-w-0 bg-[#000000] border border-white/8 rounded-[12px] px-3 sm:px-4 py-3
                   text-white text-sm placeholder-[#6b7280]
                   focus:outline-none focus:border-white/16 focus:ring-0
-                  transition-colors
-                  truncate sm:truncate overflow-x-hidden
+                  transition-colors truncate overflow-x-hidden
                 "
               />
             </div>
