@@ -1,5 +1,9 @@
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
 import { getToken } from '../../../../infrastructure/storage/storage';
+import {
+  PORTLY_PENDING_OAUTH_PROVIDER_KEY,
+  type PortlyOAuthLinkProvider,
+} from '../constants/oauthLink.constants';
 
 function GithubIcon() {
   return (
@@ -99,13 +103,13 @@ export default function SocialLinksForm({
   const isGithubConnected = connectedProviders.includes('github');
   const isLinkedinConnected = connectedProviders.includes('linkedin');
 
-  function handleVincular(provider: 'github' | 'linkedin') {
+  function handleVincular(provider: PortlyOAuthLinkProvider) {
     const token = getToken();
     if (!token) {
       alert('Debes iniciar sesión para vincular una cuenta.');
       return;
     }
-    // Redirige al endpoint de vinculación del backend
+    sessionStorage.setItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY, provider);
     window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
   }
 

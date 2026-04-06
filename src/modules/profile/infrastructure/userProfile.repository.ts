@@ -2,76 +2,29 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
+import { mapBackendToUserProfile, mapUpdateDtoToBackend } from '../domain/userProfile.mapping';
+import type { IUserProfileRepository } from '../application/IUserProfileRepository';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 import { getToken } from '../../../infrastructure/storage/storage';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-// Mapea la respuesta del backend (español) al formato del frontend (inglés)
-function mapBackendToFrontend(data: any): UserProfileEntity {
-  const socialLinks: UserProfileEntity['socialLinks'] = {
-    github: '',
-    linkedin: '',
-    instagram: '',
-    facebook: '',
-    youtube: '',
-  };
-
-  if (data.enlaces && Array.isArray(data.enlaces)) {
-    for (const enlace of data.enlaces) {
-      const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
-      if (plataforma in socialLinks) {
-        (socialLinks as any)[plataforma] = enlace.direccionEnlace || '';
-      }
-    }
-  }
-
-  // Extraer proveedores vinculados
-  const connectedProviders: string[] = [];
-  if (data.proveedores && Array.isArray(data.proveedores)) {
-    for (const p of data.proveedores) {
-      connectedProviders.push((p.nombreProveedor || '').toLowerCase());
-    }
-  }
-
-  return {
-    id: data.idUsuario || '',
-    firstName: data.nombre || '',
-    lastName: data.apellido || '',
-    email: data.email || '',
-    profession: data.titularProfesional || '',
-    bio: data.acercaDeMi || '',
-    avatarUrl: data.enlaceFoto || undefined,
-    visibility: {
-      showEmail: true,
-      showProfession: true,
-      showBio: true,
-    },
-    socialLinks,
-    connectedProviders,
-  };
-}
-
-// Mapea el DTO del frontend (inglés) al formato del backend (español)
-function mapFrontendToBackend(dto: UpdateUserProfileDTO): any {
-  return {
-    nombre: dto.firstName,
-    apellido: dto.lastName,
-    titularProfesional: dto.profession,
-    acercaDeMi: dto.bio,
-  };
-}
-
-// ─── Repository ───────────────────────────────────────────────────────────────
-export const userProfileRepository = {
+export const userProfileRepository: IUserProfileRepository = {
   async getProfile(): Promise<UserProfileEntity> {
-    const data = await httpClient.getAuth<any>('/api/profile', 'Error al cargar perfil');
-    return mapBackendToFrontend(data);
+    const data = await httpClient.getAuth<Record<string, unknown>>(
+      '/api/profile',
+      'Error al cargar perfil',
+    );
+    return mapBackendToUserProfile(data);
   },
 
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
-    const data = await httpClient.putAuth<any>('/api/profile', mapFrontendToBackend(dto), 'Error al guardar perfil');
-    return mapBackendToFrontend(data);
+    const data = await httpClient.putAuth<Record<string, unknown>>(
+      '/api/profile',
+      mapUpdateDtoToBackend(dto),
+      'Error al guardar perfil',
+    );
+    return mapBackendToUserProfile(data);
   },
 
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
@@ -90,7 +43,7 @@ export const userProfileRepository = {
       throw new Error(errorText || `Error ${res.status} al subir imagen`);
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { avatarUrl: string };
     return { avatarUrl: data.avatarUrl };
   },
 };
