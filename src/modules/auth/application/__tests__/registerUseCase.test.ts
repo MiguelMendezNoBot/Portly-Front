@@ -16,7 +16,7 @@ const validForm = {
 describe('executeRegisterUseCase', () => {
   it('no registra si la validación falla', async () => {
     const register = jest.fn<IAuthRepository['register']>();
-    const repo: IAuthRepository = { login: jest.fn(), register };
+    const repo = { login: jest.fn(), register } as IAuthRepository;
 
     const result = await executeRegisterUseCase(repo, { ...validForm, email: 'mal' });
 
@@ -32,7 +32,7 @@ describe('executeRegisterUseCase', () => {
       rol: 'USER',
     };
     const register = jest.fn<IAuthRepository['register']>().mockResolvedValue(response);
-    const repo: IAuthRepository = { login: jest.fn(), register };
+    const repo = { login: jest.fn(), register } as IAuthRepository;
 
     const result = await executeRegisterUseCase(repo, validForm);
 

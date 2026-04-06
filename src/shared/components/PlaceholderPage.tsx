@@ -1,4 +1,4 @@
-import AppShell from '../../../shared/components/AppShell';
+import AppShell from './AppShell';
 
 /**
  * PlaceholderPage
