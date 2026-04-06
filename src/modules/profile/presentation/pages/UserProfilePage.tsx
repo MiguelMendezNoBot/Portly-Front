@@ -10,6 +10,8 @@ import SocialLinksForm from '../components/SocialLinksForm';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import BotonInicio from '../../../../shared/components/BotonInicio';
+import ChangePasswordForm from '../components/ChangePasswordForm';
+import { verifyAccountLink } from '../../../auth/infrastructure/authService';
 
 const LINKED_FLASH_MS = 4000;
 
@@ -222,8 +224,24 @@ export function UserProfilePage() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
+  const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
   const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevConnectedProvidersRef = useRef<string[]>([]);
+
+  // Hook local para verificar si se debe mostrar el cambio de contraseña
+  useEffect(() => {
+    if (!profile?.email) return;
+    verifyAccountLink(profile.email)
+      .then((res: any) => {
+        // El backend retorna un objeto JSON: { isOAuthWithoutPassword: bool }
+        const isSocialOnly = res?.isOAuthWithoutPassword === true;
+        
+        // isSocialOnly true -> no renderizar el componente de contraseña
+        // isSocialOnly false -> sí renderizar 
+        setShowPasswordChange(!isSocialOnly);
+      })
+      .catch((err: any) => console.error('Error verifying account link:', err));
+  }, [profile?.email]);
 
   useEffect(() => {
     return () => {
@@ -381,6 +399,11 @@ export function UserProfilePage() {
                     connectedProviders={profile.connectedProviders}
                     onChange={setSocialLink}
                   />
+                  
+                  {/* Se renderiza solo si la API responde false (no es cuenta exclusiva de red social) */}
+                  {showPasswordChange && (
+                    <ChangePasswordForm email={profile.email} />
+                  )}
                 </div>
               </div>
             </div>
