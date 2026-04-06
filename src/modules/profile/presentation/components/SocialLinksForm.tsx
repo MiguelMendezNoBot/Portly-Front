@@ -20,7 +20,14 @@ function LinkedinIcon() {
 
 function InstagramIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="2" y="2" width="20" height="20" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
@@ -38,16 +45,34 @@ function FacebookIcon() {
 
 function YoutubeIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z" />
-      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none" />
+      <polygon
+        points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   );
 }
 
 function CheckIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
@@ -80,16 +105,16 @@ export default function SocialLinksForm({
       alert('Debes iniciar sesión para vincular una cuenta.');
       return;
     }
-    // Avisa al padre para que active la animación de la píldora
-    onLinked?.(provider);
     // Redirige al endpoint de vinculación del backend
-    //window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
+    window.location.href = `${API_BASE}/auth/link/${provider}?token=${token}`;
   }
 
   return (
     <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
       <div className="px-4 sm:px-8 py-6 sm:py-8 border-b border-white/5">
-        <h2 className="text-[#e5e7f6] font-bold text-lg sm:text-xl">Redes Sociales</h2>
+        <h2 className="text-[#e5e7f6] font-bold text-lg sm:text-xl">
+          Redes Sociales
+        </h2>
       </div>
 
       <div className="px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
@@ -101,9 +126,11 @@ export default function SocialLinksForm({
             className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
               text-sm font-semibold transition-all duration-200
-              ${isGithubConnected
-                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-                : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'}
+              ${
+                isGithubConnected
+                  ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                  : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 cursor-pointer'
+              }
             `}
           >
             {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
@@ -117,9 +144,11 @@ export default function SocialLinksForm({
             className={`
               flex items-center justify-center gap-3 py-3 px-4 rounded-[12px]
               text-sm font-semibold transition-all duration-200
-              ${isLinkedinConnected
-                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
-                : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'}
+              ${
+                isLinkedinConnected
+                  ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 cursor-default'
+                  : 'bg-[#2f2ebe]/20 border border-[#9093ff]/20 text-[#9093ff] hover:bg-[#2f2ebe]/35 cursor-pointer'
+              }
             `}
           >
             {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
@@ -130,10 +159,30 @@ export default function SocialLinksForm({
         <div className="flex flex-col gap-4">
           {(
             [
-              { key: 'instagram' as SocialKey, icon: <InstagramIcon />, placeholder: 'https://instagram.com/usuario',  label: 'Instagram' },
-              { key: 'facebook'  as SocialKey, icon: <FacebookIcon />,  placeholder: 'https://facebook.com/usuario',   label: 'Facebook'  },
-              { key: 'youtube'   as SocialKey, icon: <YoutubeIcon />,   placeholder: 'https://youtube.com/c/canal',    label: 'YouTube'   },
-            ] as { key: SocialKey; icon: React.ReactNode; placeholder: string; label: string }[]
+              {
+                key: 'instagram' as SocialKey,
+                icon: <InstagramIcon />,
+                placeholder: 'https://instagram.com/usuario',
+                label: 'Instagram',
+              },
+              {
+                key: 'facebook' as SocialKey,
+                icon: <FacebookIcon />,
+                placeholder: 'https://facebook.com/usuario',
+                label: 'Facebook',
+              },
+              {
+                key: 'youtube' as SocialKey,
+                icon: <YoutubeIcon />,
+                placeholder: 'https://youtube.com/c/canal',
+                label: 'YouTube',
+              },
+            ] as {
+              key: SocialKey;
+              icon: React.ReactNode;
+              placeholder: string;
+              label: string;
+            }[]
           ).map(({ key, icon, placeholder, label }) => (
             <div key={key} className="flex items-center gap-2 sm:gap-4">
               <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
