@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { UpdateUserProfileDTO } from '../../domain/userProfile.entity';
 import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
@@ -12,8 +12,16 @@ import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import BotonInicio from '../../../../shared/components/BotonInicio';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import { verifyAccountLink } from '../../../auth/infrastructure/authService';
+import {
+  PORTLY_PENDING_OAUTH_PROVIDER_KEY,
+  type PortlyOAuthLinkProvider,
+} from '../constants/oauthLink.constants';
 
 const LINKED_FLASH_MS = 4000;
+
+function isPortlyOAuthProvider(p: string): p is PortlyOAuthLinkProvider {
+  return p === 'github' || p === 'linkedin';
+}
 
 // ── Íconos ────────────────────────────────────────────────────────────────────
 function SaveIcon() {
@@ -227,6 +235,8 @@ export function UserProfilePage() {
   const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
   const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevConnectedProvidersRef = useRef<string[]>([]);
+  /** Evita tratar la primera carga del API como “nueva vinculación” (F5 / entrada a la página). */
+  const providersBaselineReadyRef = useRef(false);
 
   // Hook local para verificar si se debe mostrar el cambio de contraseña
   useEffect(() => {
@@ -249,25 +259,50 @@ export function UserProfilePage() {
     };
   }, []);
 
-  // Monitorear cambios en connectedProviders y mostrar el mensaje cuando se agrega uno nuevo
+  const triggerLinkedFlash = useCallback(() => {
+    setPillMode('linked');
+    if (pillTimerRef.current) clearTimeout(pillTimerRef.current);
+    pillTimerRef.current = setTimeout(
+      () => setPillMode('normal'),
+      LINKED_FLASH_MS,
+    );
+  }, []);
+
+  /**
+   * La píldora verde solo debe mostrarse cuando el usuario acaba de vincular GitHub/LinkedIn:
+   * - Tras OAuth: sessionStorage marca el proveedor iniciado y el perfil ya lo incluye.
+   * - En la misma sesión SPA (sin remount): aparece un proveedor que no estaba en la lectura anterior.
+   * No se usa “length creció” en la primera hidratación (eso disparaba la animación en cada F5).
+   */
   useEffect(() => {
     if (!profile) return;
 
-    const prevProviders = prevConnectedProvidersRef.current;
     const currentProviders = profile.connectedProviders;
+    const prevProviders = prevConnectedProvidersRef.current;
 
-    // Si se agregó un nuevo proveedor, mostrar la píldora de éxito
-    if (currentProviders.length > prevProviders.length) {
-      setPillMode('linked');
-      if (pillTimerRef.current) clearTimeout(pillTimerRef.current);
-      pillTimerRef.current = setTimeout(
-        () => setPillMode('normal'),
-        LINKED_FLASH_MS
-      );
+    if (!providersBaselineReadyRef.current) {
+      providersBaselineReadyRef.current = true;
+      const raw = sessionStorage.getItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
+      if (
+        raw &&
+        isPortlyOAuthProvider(raw) &&
+        currentProviders.includes(raw)
+      ) {
+        sessionStorage.removeItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
+        triggerLinkedFlash();
+      }
+      prevConnectedProvidersRef.current = currentProviders;
+      return;
+    }
+
+    const prevSet = new Set(prevProviders);
+    const newlyLinked = currentProviders.filter((p) => !prevSet.has(p));
+    if (newlyLinked.some((p) => isPortlyOAuthProvider(p))) {
+      triggerLinkedFlash();
     }
 
     prevConnectedProvidersRef.current = currentProviders;
-  }, [profile?.connectedProviders]);
+  }, [profile?.connectedProviders, triggerLinkedFlash]);
 
   async function handleSave() {
     try {

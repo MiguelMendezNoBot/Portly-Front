@@ -1,23 +1,8 @@
+import { decodeJwtEmail, emailToDisplayName } from '../../domain/sessionUser';
+
 interface AuthUser {
   displayName: string;
   email: string;
-}
-
-function decodeJwtEmail(token: string): string | null {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const candidate = payload.email || payload.sub || '';
-    return String(candidate).includes('@') ? String(candidate) : null;
-  } catch {
-    return null;
-  }
-}
-
-function emailToDisplayName(email: string): string {
-  const local = email.split('@')[0];
-  return local
-    .replace(/[._-]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function useAuth(): { user: AuthUser | null; logout: () => void } {

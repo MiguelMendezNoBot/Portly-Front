@@ -1,137 +1,82 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { registerUser } from "../infrastructure/authService"
-import { useToast } from "../../../shared/hooks/useToast"
-import { saveToken, saveUsuarioId, saveEmail } from "../../../infrastructure/storage/storage"
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { executeRegisterUseCase } from './registerUseCase';
+import { authHttpRepository } from '../infrastructure/authRepository';
+import { validateRegisterFields } from '../domain/registerValidation';
+import { useToast } from '../../../shared/hooks/useToast';
+import { saveToken, saveUsuarioId, saveEmail } from '../../../infrastructure/storage/storage';
 
 interface FormFields {
-    nombre: string
-    apellido: string
-    profesion: string
-    email: string
-    biografia: string
-    password: string
-    confirmPassword: string
+  nombre: string;
+  apellido: string;
+  profesion: string;
+  email: string;
+  biografia: string;
+  password: string;
+  confirmPassword: string;
 }
 
 interface FormErrors {
-    nombre?: string
-    apellido?: string
-    profesion?: string
-    email?: string
-    biografia?: string
-    password?: string
-    confirmPassword?: string
-}
-
-const onlyLeters = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]+([a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]*[a-záéíóúüñA-ZÁÉÍÓÚÜÑ])?$/
-const emailValidation = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/
-const passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$*\-/~]).{8,}$/
-
-const validateAlphaField = (value: string, fieldName: string): string | undefined => {
-    if (!value.trim()) return `${fieldName} es obligatorio`
-    if (value.trim().length < 3) return `${fieldName} debe tener al menos 3 caracteres`
-    if (value.trim().length > 50) return `${fieldName} no puede superar 50 caracteres`
-    if (!onlyLeters.test(value.trim())) return `${fieldName} solo acepta letras y espacios`
-    return undefined
-}
-
-const validateEmail = (value: string): string | undefined => {
-    if (!value.trim()) return "El correo es obligatorio"
-    if (value.length > 320) return "El correo no puede superar 320 caracteres"
-    if (/\s/.test(value)) return "El correo no puede contener espacios"
-    if (!emailValidation.test(value)) return "Ingresa un correo válido (ej: nombre@dominio.com)"
-    return undefined
-}
-
-const validateBiografia = (value: string): string | undefined => {
-    if (!value.trim()) return "La biografia es obligatoria"
-    if (value.length > 500) return "La biografia no puede superar los 500 caracteres"
-    return undefined
-}
-
-const validatePassword = (value: string): string | undefined => {
-    if (!value) return "La contraseña es obligatoria"
-    if (!passwordValidation.test(value)) {
-        return "Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo (!#$*-/~)"
-    }
-    return undefined
-}
-
-const fieldsByStep: Record<number, (keyof FormFields)[]> = {
-    1: ['email', 'password', 'confirmPassword'],
-    2: ['nombre', 'apellido'],
-    3: ['profesion', 'biografia']
+  nombre?: string;
+  apellido?: string;
+  profesion?: string;
+  email?: string;
+  biografia?: string;
+  password?: string;
+  confirmPassword?: string;
 }
 
 export const useRegisterForm = () => {
-    const navigate = useNavigate()
-    const [fields, setFields] = useState<FormFields>({
-        nombre: "", apellido: "", profesion: "",biografia:"",
-        email: "", password: "", confirmPassword: ""
-    })
-    const [errors, setErrors] = useState<FormErrors>({})
-    const { toast, showToast } = useToast()
+  const navigate = useNavigate();
+  const [fields, setFields] = useState<FormFields>({
+    nombre: '',
+    apellido: '',
+    profesion: '',
+    biografia: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const { toast, showToast } = useToast();
 
-    const handleChange = (field: keyof FormFields) =>
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-            setFields(prev => ({ ...prev, [field]: e.target.value }))
-            setErrors(prev => ({ ...prev, [field]: undefined }))
-        }
+  const handleChange =
+    (field: keyof FormFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setFields((prev) => ({ ...prev, [field]: e.target.value }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    };
 
-    const validate = (step?: number): boolean => {
-        const shouldValidate = (field: keyof FormFields) =>
-            !step || fieldsByStep[step].includes(field)
+  const validate = (step?: number): boolean => {
+    const { errors: newErrors, isValid } = validateRegisterFields(fields, step);
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+    return isValid;
+  };
 
-        const newErrors: FormErrors = {}
-
-        if (shouldValidate('email')) newErrors.email = validateEmail(fields.email)
-        if (shouldValidate('password')) newErrors.password = validatePassword(fields.password)
-        if (shouldValidate('confirmPassword')) newErrors.confirmPassword = !fields.confirmPassword
-            ? "Confirma tu contraseña"
-            : fields.confirmPassword !== fields.password
-            ? "Las contraseñas no coinciden"
-            : undefined
-        if (shouldValidate('nombre')) newErrors.nombre = validateAlphaField(fields.nombre, "El nombre")
-        if (shouldValidate('apellido')) newErrors.apellido = validateAlphaField(fields.apellido, "El apellido")
-        if (shouldValidate('profesion')) newErrors.profesion = validateAlphaField(fields.profesion, "La profesión")
-        if (shouldValidate('biografia')) newErrors.biografia = validateBiografia(fields.biografia)
-
-        setErrors(prev => ({ ...prev, ...newErrors }))
-        return Object.values(newErrors).every(e => e === undefined)
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validate()) {
-        showToast("Por favor corrige los errores del formulario", "error")
-        return
-    }
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-        const data = await registerUser({
-            nombre: fields.nombre.trim(),
-            apellido: fields.apellido.trim(),
-            profesion: fields.profesion.trim(),
-            correoElectronico: fields.email.trim(),
-            biografia: fields.biografia?.trim() ?? "",
-            contrasena: fields.password,
-            confirmarContrasena: fields.confirmPassword
-        })
+      const result = await executeRegisterUseCase(authHttpRepository, fields);
+      if (!result.success) {
+        setErrors((prev) => ({ ...prev, ...result.errors }));
+        showToast('Por favor corrige los errores del formulario', 'error');
+        return;
+      }
 
-        saveToken(data.token)
-        saveUsuarioId(data.idUsuario)
-        saveEmail(data.email)
-        showToast("¡Cuenta creada exitosamente!", "success")
-        navigate("/")
-
-    } catch (error: any) {
-        if (error.status === 409 || error.message?.toLowerCase().includes("correo")) {
-            setErrors(prev => ({ ...prev, email: "Este correo ya está registrado" }))
-        }
-        showToast(error.message ?? "Error al registrarse, intenta de nuevo", "error")
+      const data = result.response;
+      saveToken(data.token);
+      saveUsuarioId(data.idUsuario);
+      saveEmail(data.email);
+      showToast('¡Cuenta creada exitosamente!', 'success');
+      navigate('/');
+    } catch (error: unknown) {
+      const err = error as { status?: number; message?: string };
+      if (err.status === 409 || err.message?.toLowerCase().includes('correo')) {
+        setErrors((prev) => ({ ...prev, email: 'Este correo ya está registrado' }));
+      }
+      showToast(err.message ?? 'Error al registrarse, intenta de nuevo', 'error');
     }
-}
+  };
 
-    return { fields, errors, toast, handleChange, handleSubmit, validate }
-}
+  return { fields, errors, toast, handleChange, handleSubmit, validate };
+};

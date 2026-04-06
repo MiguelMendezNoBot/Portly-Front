@@ -49,7 +49,7 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
   };
 
   return (
-    <div className="w-full bg-[#0f111a] border border-gray-800/60 rounded-[24px] p-6 sm:p-8 flex flex-col gap-6 mt-8 relative shadow-lg">
+    <div className="w-full bg-[#091328] border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
       <Toast toast={toast} />
       <h2 className="text-white text-xl font-bold">Cambiar Contraseña</h2>
 
