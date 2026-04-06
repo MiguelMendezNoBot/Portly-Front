@@ -1,14 +1,12 @@
-import CornerTab from '../../../../shared/components/CornerTab';
+import BotonInicio from '../../../../shared/components/BotonInicio';
 import { VerifyCodeForm } from '../components/VerifyCodeForm';
 
 export const VerifyCodePage = () => {
   return (
-    <div className="bg-white p-3 min-h-screen">
-      {/* Fondo con degradado azul oscuro para imitar image_16.png */}
-      <div className="bg-gradient-to-br from-[#0d152b] to-[#1a2e5d] rounded-[20px] min-h-[calc(100vh-25px)] flex items-center justify-center py-6 relative overflow-hidden">
+    <div className="min-h-screen bg-white p-2 md:p-4 box-border">
+      <div className="relative w-full min-h-[calc(100vh-1rem)] md:min-h-[calc(100vh-2rem)] bg-[#0f111a] rounded-[2rem] flex items-center justify-center shadow-2xl">
+        <BotonInicio texto="VOLVER" to="/forgot-password" />
         <VerifyCodeForm />
-        {/* Reutilizando PestanaEsquina con el texto exacto */}
-        <CornerTab texto="*CUADRITO CON ANIMACION*" />
       </div>
     </div>
   );
