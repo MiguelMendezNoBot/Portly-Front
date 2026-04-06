@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from '../../../../shared/components/SocialIcons';
-import { resetPassword } from '../../infrastructure/authService';
+import { resetPassword, loginUser } from '../../infrastructure/authService';
+import { saveToken, saveUsuarioId, saveEmail } from '../../../../infrastructure/storage/storage';
 import { useToast } from '../../../../shared/hooks/useToast';
 import { Toast } from '../../../../shared/components/Toast';
 
@@ -119,8 +120,21 @@ export const NewPasswordForm = () => {
       // Llamamos a tu endpoint pasándole el JSON requerido
       await resetPassword(email, codigo, password);
 
-      showToast('¡Contraseña restablecida con éxito!', 'success');
-      setTimeout(() => navigate('/', { replace: true }), 1500);
+      // Auto-iniciar sesión con las nuevas credenciales para que el estado
+      // de la aplicación esté actualizado al dirigirse a 'Home'
+      try {
+        const loginData = await loginUser({ correoElectronico: email, contraseña: password });
+        if (loginData?.token) saveToken(loginData.token);
+        if (loginData?.idUsuario) saveUsuarioId(loginData.idUsuario);
+        if (loginData?.email) saveEmail(loginData.email);
+
+        showToast('¡Contraseña restablecida con éxito!', 'success');
+        setTimeout(() => navigate('/', { replace: true }), 1500);
+      } catch (loginError) {
+        // En caso de que el login automático falle (muy raro)
+        showToast('Contraseña restablecida. Por favor inicia sesión.', 'success');
+        setTimeout(() => navigate('/login', { replace: true }), 2000);
+      }
     } catch (err: any) {
       // Si el backend lanza la IllegalArgumentException
       const errorMessage = err.message?.toLowerCase() || '';
