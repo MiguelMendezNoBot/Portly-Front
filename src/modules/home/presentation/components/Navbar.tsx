@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 const NAV_LINKS = [
   { label: 'PRINCIPAL', href: '/', active: true },
   { label: 'PREION', href: '#' },
-  { label: 'SERVICES', href: '#' },
-  { label: 'ABOUT', href: '#' },
+  { label: 'SERVICIOS', href: '#' },
+  { label: 'ACERCA DE', href: '#' },
 ];
 
 const PortlyLogo = () => (
