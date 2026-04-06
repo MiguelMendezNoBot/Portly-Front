@@ -1,11 +1,13 @@
 import { type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {
   texto?: string;
+  to?: string;
   children?: ReactNode;
 }
 
-export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO", children }: Props) {
+export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO", to = "/", children }: Props) {
   return (
     <div className="absolute top-0 right-0 z-20">
       <div className="relative bg-white pt-3 pb-5 pl-6 pr-5 rounded-bl-[2.5rem]">
@@ -26,12 +28,12 @@ export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO", children
             {children}
           </div>
         ) : (
-          <button
-            type="button"
-            className="bg-[#9fa2ff] hover:bg-[#868aff] text-[#1c1154] font-extrabold text-xs sm:text-sm px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-colors uppercase tracking-wide"
+          <Link
+            to={to}
+            className="bg-[#9fa2ff] hover:bg-[#868aff] text-[#1c1154] font-extrabold text-xs sm:text-sm px-6 py-3 sm:px-8 sm:py-3.5 rounded-full transition-colors uppercase tracking-wide inline-block"
           >
             {texto}
-          </button>
+          </Link>
         )}
 
       </div>
