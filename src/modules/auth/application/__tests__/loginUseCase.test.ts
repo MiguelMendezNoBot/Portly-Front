@@ -6,7 +6,7 @@ import { executeLoginUseCase } from '../loginUseCase';
 describe('executeLoginUseCase', () => {
   it('no llama al repositorio si la validación falla', async () => {
     const login = jest.fn<IAuthRepository['login']>();
-    const repo: IAuthRepository = { login, register: jest.fn() };
+    const repo = { login, register: jest.fn() } as IAuthRepository;
 
     const result = await executeLoginUseCase(repo, { email: '', password: '' });
 
@@ -25,7 +25,7 @@ describe('executeLoginUseCase', () => {
       rol: 'USER',
     };
     const login = jest.fn<IAuthRepository['login']>().mockResolvedValue(response);
-    const repo: IAuthRepository = { login, register: jest.fn() };
+    const repo = { login, register: jest.fn() } as IAuthRepository;
 
     const result = await executeLoginUseCase(repo, {
       email: '  u@u.com  ',

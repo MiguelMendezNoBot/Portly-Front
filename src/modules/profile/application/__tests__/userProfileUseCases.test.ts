@@ -19,11 +19,11 @@ describe('userProfile use cases (orquestación con dobles)', () => {
   it('loadUserProfile delega en getProfile', async () => {
     const p = sampleProfile();
     const getProfile = jest.fn<IUserProfileRepository['getProfile']>().mockResolvedValue(p);
-    const repo: IUserProfileRepository = {
+    const repo = {
       getProfile,
       updateProfile: jest.fn(),
       updateAvatar: jest.fn(),
-    };
+    } as IUserProfileRepository;
 
     await expect(loadUserProfile(repo)).resolves.toEqual(p);
     expect(getProfile).toHaveBeenCalledTimes(1);
@@ -33,11 +33,11 @@ describe('userProfile use cases (orquestación con dobles)', () => {
     const updated = sampleProfile();
     updated.firstName = 'Z';
     const updateProfile = jest.fn<IUserProfileRepository['updateProfile']>().mockResolvedValue(updated);
-    const repo: IUserProfileRepository = {
+    const repo = {
       getProfile: jest.fn(),
       updateProfile,
       updateAvatar: jest.fn(),
-    };
+    } as IUserProfileRepository;
 
     const dto = { firstName: 'Z' as const };
     await expect(saveUserProfile(repo, dto)).resolves.toEqual(updated);
@@ -49,11 +49,11 @@ describe('userProfile use cases (orquestación con dobles)', () => {
     const updateAvatar = jest
       .fn<IUserProfileRepository['updateAvatar']>()
       .mockResolvedValue({ avatarUrl: 'https://cdn/a.png' });
-    const repo: IUserProfileRepository = {
+    const repo = {
       getProfile: jest.fn(),
       updateProfile: jest.fn(),
       updateAvatar,
-    };
+    } as IUserProfileRepository;
 
     await uploadUserAvatar(repo, file);
     expect(updateAvatar).toHaveBeenCalledWith(file);

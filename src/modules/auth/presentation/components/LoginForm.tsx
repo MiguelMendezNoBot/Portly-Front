@@ -22,7 +22,7 @@ export function LoginForm() {
 
   return (
     // TARJETA BLANCA PRINCIPAL
-    <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative font-sans text-gray-900 mx-4">
+    <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative text-gray-900 mx-4">
       <Toast toast={toast} />
       <div className="text-center mb-8">
         <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
