@@ -15,16 +15,71 @@ export const userProfileRepository: IUserProfileRepository = {
       '/api/profile',
       'Error al cargar perfil',
     );
-    return mapBackendToUserProfile(data);
+    const profile = mapBackendToUserProfile(data);
+
+    if (profile.email) {
+      try {
+        const redes = await httpClient.postAuth<{
+          instagram?: string;
+          facebook?: string;
+          youtube?: string;
+        }>(
+          '/api/redes-sociales/user',
+          { email: profile.email },
+          'Error al cargar redes sociales'
+        );
+
+        if (redes.instagram) profile.socialLinks.instagram = redes.instagram;
+        if (redes.facebook) profile.socialLinks.facebook = redes.facebook;
+        if (redes.youtube) profile.socialLinks.youtube = redes.youtube;
+      } catch (err) {
+        console.error('Aviso: Redes sociales no pudieron ser cargadas', err);
+      }
+    }
+
+    return profile;
   },
 
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
-    const data = await httpClient.putAuth<Record<string, unknown>>(
+    const profilePromise = httpClient.putAuth<Record<string, unknown>>(
       '/api/profile',
       mapUpdateDtoToBackend(dto),
       'Error al guardar perfil',
     );
-    return mapBackendToUserProfile(data);
+
+    if (dto.socialLinks) {
+      await profilePromise;
+      await httpClient.postAuth(
+        '/api/redes-sociales',
+        {
+          gmail: '',
+          instagram: dto.socialLinks.instagram || '',
+          facebook: dto.socialLinks.facebook || '',
+          youtube: dto.socialLinks.youtube || '',
+        },
+        'Error al guardar redes sociales'
+      );
+    } else {
+      await profilePromise;
+    }
+
+    // Refetch to get the updated state including social links potentially processed by backend
+    const data = await httpClient.getAuth<Record<string, unknown>>(
+      '/api/profile',
+      'Error al cargar perfil actualizado',
+    );
+    const updatedProfile = mapBackendToUserProfile(data);
+
+    // Explicitly merge the just-saved socialLinks into the updated profile to prevent them from disappearing
+    // in case the backend GET /api/profile response does not immediately reflect the new state.
+    if (dto.socialLinks) {
+      updatedProfile.socialLinks = {
+        ...updatedProfile.socialLinks,
+        ...dto.socialLinks
+      };
+    }
+
+    return updatedProfile;
   },
 
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {

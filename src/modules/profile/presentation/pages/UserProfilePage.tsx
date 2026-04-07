@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { UpdateUserProfileDTO } from '../../domain/userProfile.entity';
+import type { UserProfileEntity, UpdateUserProfileDTO } from '../../domain/userProfile.entity';
 import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
@@ -233,6 +233,7 @@ export function UserProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
   const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
+  const [socialErrors, setSocialErrors] = useState<Partial<Record<keyof UserProfileEntity['socialLinks'], string>>>({});
   const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevConnectedProvidersRef = useRef<string[]>([]);
   /** Evita tratar la primera carga del API como “nueva vinculación” (F5 / entrada a la página). */
@@ -304,7 +305,46 @@ export function UserProfilePage() {
     prevConnectedProvidersRef.current = currentProviders;
   }, [profile?.connectedProviders, triggerLinkedFlash]);
 
+  function validateSocialLinks(links: typeof form.socialLinks | undefined) {
+    const errors: Partial<Record<keyof UserProfileEntity['socialLinks'], string>> = {};
+    if (!links) return errors;
+
+    for (const [key, value] of Object.entries(links)) {
+      const val = value?.trim();
+      if (!val) continue;
+
+      // Allow strings starting with @ directly
+      if (val.startsWith('@')) continue;
+
+      try {
+        const urlObj = new URL(val);
+        const { hostname } = urlObj;
+
+        // Verify specific domains for known platforms
+        if (key === 'instagram' && !hostname.includes('instagram.com')) {
+          errors[key] = 'Debe ser un enlace de Instagram o iniciar con "@"';
+        } else if (key === 'facebook' && !hostname.includes('facebook') && !hostname.includes('fb.com')) {
+          errors[key] = 'Debe ser un enlace de Facebook o iniciar con "@"';
+        } else if (key === 'youtube' && !hostname.includes('youtube.com') && !hostname.includes('youtu.be')) {
+          errors[key] = 'Debe ser un enlace de YouTube o iniciar con "@"';
+        }
+      } catch {
+        errors[key as keyof UserProfileEntity['socialLinks']] = 'Debe ser una URL válida o iniciar con "@"';
+      }
+    }
+    return errors;
+  }
+
   async function handleSave() {
+    const errors = validateSocialLinks(form.socialLinks);
+    if (Object.keys(errors).length > 0) {
+      setSocialErrors(errors);
+      const socialBlock = document.getElementById('social-links-section');
+      if (socialBlock) socialBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setSocialErrors({});
+
     try {
       await saveProfile(form);
     } catch {
@@ -429,11 +469,14 @@ export function UserProfilePage() {
                       setField(key as keyof UpdateUserProfileDTO, value)
                     }
                   />
-                  <SocialLinksForm
-                    links={form.socialLinks ?? profile.socialLinks}
-                    connectedProviders={profile.connectedProviders}
-                    onChange={setSocialLink}
-                  />
+                  <div id="social-links-section">
+                    <SocialLinksForm
+                      links={form.socialLinks ?? profile.socialLinks}
+                      connectedProviders={profile.connectedProviders}
+                      onChange={setSocialLink}
+                      errors={socialErrors}
+                    />
+                  </div>
                   
                   {/* Se renderiza solo si la API responde false (no es cuenta exclusiva de red social) */}
                   {showPasswordChange && (

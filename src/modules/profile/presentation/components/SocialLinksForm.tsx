@@ -92,6 +92,7 @@ interface SocialLinksFormProps {
   onChange: (key: SocialKey, value: string) => void;
   /** Callback que se dispara cuando el usuario hace click en vincular */
   onLinked?: (provider: 'github' | 'linkedin') => void;
+  errors?: Partial<Record<SocialKey, string>>;
 }
 
 export default function SocialLinksForm({
@@ -99,6 +100,7 @@ export default function SocialLinksForm({
   connectedProviders,
   onChange,
   onLinked,
+  errors,
 }: SocialLinksFormProps) {
   const isGithubConnected = connectedProviders.includes('github');
   const isLinkedinConnected = connectedProviders.includes('linkedin');
@@ -188,23 +190,31 @@ export default function SocialLinksForm({
               label: string;
             }[]
           ).map(({ key, icon, placeholder, label }) => (
-            <div key={key} className="flex items-center gap-2 sm:gap-4">
-              <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0">
+            <div key={key} className="flex items-start gap-2 sm:gap-4">
+              <div className="w-10 h-10 rounded-[8px] bg-[#000000] border border-white/5 flex items-center justify-center text-[#a7aab9] shrink-0 mt-0.5">
                 {icon}
               </div>
-              <input
-                type="url"
-                value={links[key] ?? ''}
-                onChange={(e) => onChange(key, e.target.value)}
-                placeholder={placeholder}
-                aria-label={`URL de ${label}`}
-                className="
-                  w-full min-w-0 bg-[#000000] border border-white/8 rounded-[12px] px-3 sm:px-4 py-3
-                  text-white text-sm placeholder-[#6b7280]
-                  focus:outline-none focus:border-white/16 focus:ring-0
-                  transition-colors truncate overflow-x-hidden
-                "
-              />
+              <div className="flex flex-col flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={links[key] ?? ''}
+                  onChange={(e) => onChange(key, e.target.value)}
+                  placeholder={placeholder}
+                  aria-label={`URL de ${label}`}
+                  className={`
+                    w-full min-w-0 bg-[#000000] border rounded-[12px] px-3 sm:px-4 py-3
+                    text-white text-sm placeholder-[#6b7280]
+                    focus:outline-none focus:ring-0
+                    transition-colors truncate overflow-x-hidden
+                    ${errors && errors[key] ? 'border-red-500/50 focus:border-red-500' : 'border-white/8 focus:border-white/16'}
+                  `}
+                />
+                {errors && errors[key] && (
+                  <span className="text-red-500 text-xs mt-1.5 pl-1 inline-block">
+                    {errors[key]}
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>
