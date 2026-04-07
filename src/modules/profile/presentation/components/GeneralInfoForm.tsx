@@ -63,25 +63,20 @@ export default function GeneralInfoForm({
 
   return (
     <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[16px] overflow-hidden">
-      {/* Header with border bottom */}
       <div className="flex items-center justify-between px-8 py-8 border-b border-white/5">
         <h2 className="text-[#e5e7f6] font-bold text-xl">
           Información General
         </h2>
       </div>
 
-      {/* Content */}
       <div className="px-8 py-8 flex flex-col gap-6">
-        {/* Name & Last Name row */}
         <div className="grid grid-cols-2 gap-6">
-          {/* Nombre */}
           <Field
             label="Nombre"
             value={form.firstName ?? ''}
             onChange={(v) => onFieldChange('firstName', v)}
           />
 
-          {/* Apellido */}
           <Field
             label="Apellido"
             value={form.lastName ?? ''}
@@ -89,25 +84,21 @@ export default function GeneralInfoForm({
           />
         </div>
 
-        {/* Correo (fila completa) */}
         <Field
           label="Correo electrónico"
           value={profile.email}
           onChange={() => {
-            /* email no editable desde aquí */
           }}
           type="email"
           disabled={true}
         />
 
-        {/* Profesión */}
         <Field
           label="Profesión"
           value={form.profession ?? ''}
           onChange={(v) => onFieldChange('profession', v)}
         />
 
-        {/* Biografía */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between px-0.5">
             <label className="text-[#a7aab9] text-xs font-semibold tracking-[1.2px] uppercase">

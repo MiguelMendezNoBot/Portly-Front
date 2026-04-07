@@ -1,6 +1,4 @@
-// src/components/SocialIcons.tsx
 
-// Interfaz para poder cambiarles el tamaño con Tailwind (ej: className="w-5 h-5")
 interface IconProps {
   className?: string;
 }
@@ -50,7 +48,6 @@ export function EyeIcon({ className }: IconProps) {
   );
 }
 
-// Icono de Ojo Tachado (Ocultar)
 export function EyeOffIcon({ className }: IconProps) {
   return (
     <svg 

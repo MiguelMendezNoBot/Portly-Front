@@ -15,9 +15,7 @@ const StarIcon = () => (
 export const HeroSection = () => {
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between gap-12 px-20 pt-5 pb-16">
-      {/* Left: Text content */}
       <div className="flex-1 max-w-xl">
-        {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-[#0b0f24] border border-white/8 rounded-full px-3.5 py-1.5 mb-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/70" />
           <span className="text-slate-300 text-xs font-semibold tracking-widest uppercase">
@@ -25,19 +23,16 @@ export const HeroSection = () => {
           </span>
         </div>
 
-        {/* Heading */}
         <h1 className="text-5xl font-extrabold leading-tight mb-6">
           <span className="text-white">Construye tu legado,</span>
           <br />
           <span className="text-teal-300"> un pixel a la vez.</span>
         </h1>
 
-        {/* Subtitle */}
         <p className="text-slate-400 text-base leading-relaxed mb-10 max-w-md">
           La plataforma de portafolios profesionales para desarrolladores de software. Centraliza tus proyectos, habilidades y logros en un solo lugar — ya sea para postularte a un empleo o a un programa académico.
         </p>
 
-        {/* CTA Buttons */}
         <div className="flex items-center gap-4 mb-12">
           <button className="px-6 py-3 rounded-full bg-[#6B72FF] hover:bg-[#585fe6] text-white font-semibold text-sm tracking-wide shadow-lg shadow-[#6B72FF]/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
             Comenzar ahora
@@ -47,9 +42,7 @@ export const HeroSection = () => {
           </button>
         </div>
 
-        {/* Social proof */}
         <div className="flex items-center gap-3">
-          {/* Avatar stack */}
           <div className="flex -space-x-2.5">
             {AVATARS.map((av, i) => (
               <div
@@ -61,7 +54,6 @@ export const HeroSection = () => {
               </div>
             ))}
           </div>
-          {/* Stars */}
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <StarIcon key={i} />
@@ -71,7 +63,6 @@ export const HeroSection = () => {
         </div>
       </div>
 
-      {/* Right: Mockup */}
       <div className="flex-1 flex justify-center lg:justify-end">
         <HeroMockup />
       </div>

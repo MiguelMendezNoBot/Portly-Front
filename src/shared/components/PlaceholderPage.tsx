@@ -1,15 +1,5 @@
 import AppShell from './AppShell';
 
-/**
- * PlaceholderPage
- * ──────────────────
- * Página genérica de "en construcción" para rutas que aún no tienen
- * su módulo implementado. Usa AppShell para mantener el shell visual
- * (polígono + sidebar) en todas las rutas.
- *
- * Cuando implementes cada sección real, reemplaza esta página por
- * la definitiva en el AppRouter — no toques este archivo.
- */
 interface PlaceholderPageProps {
   title: string;
   subtitle?: string;
@@ -17,9 +7,6 @@ interface PlaceholderPageProps {
 }
 
 export default function PlaceholderPage({ title, subtitle, icon }: PlaceholderPageProps) {
-  // Para el sidebar necesitamos un usuario; en una app real vendría
-  // de un contexto de autenticación global. Por ahora usamos un valor fijo
-  // que puedes reemplazar cuando implementes el AuthContext.
   const TEMP_USER = 'Victor Terrazas';
 
   return (

@@ -1,6 +1,5 @@
 import type { UpdateUserProfileDTO, UserProfileEntity } from './userProfile.entity';
 
-/** Aplica un parche sobre una entidad de perfil (reglas puras, sin I/O). */
 export function applyProfileUpdate(
   current: UserProfileEntity,
   dto: UpdateUserProfileDTO,

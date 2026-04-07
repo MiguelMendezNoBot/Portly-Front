@@ -1,7 +1,6 @@
 import { type ReactNode } from 'react';
 
 interface CircleButtonProps {
-  // Acepta string (letra temporal) o un ícono real como ReactNode
   icon: ReactNode;
   onClick?: () => void;
   ariaLabel?: string;

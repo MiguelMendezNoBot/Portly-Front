@@ -34,7 +34,6 @@ export const UserTab = () => {
 
   return (
     <div className="flex items-center gap-4">
-      {/* CERRAR SESION */}
       <button
         onClick={logout}
         className="text-[#6B72FF] font-bold text-xs tracking-wide leading-tight hover:text-[#585fe6] transition-colors text-center"
@@ -44,7 +43,6 @@ export const UserTab = () => {
         SESION
       </button>
 
-      {/* User pill → click lleva al perfil */}
       <Link
         to="/profile"
         className="flex items-center gap-2 bg-violet-100 border border-violet-200 rounded-full pl-1 pr-4 py-1 hover:bg-violet-200 transition-colors cursor-pointer"

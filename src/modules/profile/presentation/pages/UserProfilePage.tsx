@@ -23,7 +23,6 @@ function isPortlyOAuthProvider(p: string): p is PortlyOAuthLinkProvider {
   return p === 'github' || p === 'linkedin';
 }
 
-// ── Íconos ────────────────────────────────────────────────────────────────────
 function SaveIcon() {
   return (
     <svg
@@ -73,10 +72,6 @@ function CheckIcon() {
   );
 }
 
-// ── Contenido de la píldora: dos modos con MISMO ancho fijo ───────────────────
-//
-// El truco: ambos modos tienen el mismo w-[200px] para que BotonInicio
-// no cambie de tamaño al alternar entre ellos.
 
 interface PillContentProps {
   mode: 'normal' | 'linked';
@@ -95,9 +90,7 @@ function PillContent({
 }: PillContentProps) {
   if (mode === 'linked') {
     return (
-      // Píldora VERDE interna — misma altura que los botones, texto justo
       <div className="w-[240px] bg-emerald-500 rounded-full flex items-center gap-3 px-3 py-1.5 animate-fade-in">
-        {/* Círculo oscuro con check */}
         <div className="w-8 h-8 rounded-full bg-[#0f111a] flex items-center justify-center text-emerald-400 shrink-0">
           <CheckIcon />
         </div>
@@ -109,7 +102,6 @@ function PillContent({
   }
 
   return (
-    // Dos botones cuadrados — ancho fijo igual al modo linked
     <div className="w-[240px] flex items-center justify-center gap-12">
       <button
         type="button"
@@ -140,7 +132,6 @@ function PillContent({
   );
 }
 
-// ── Versión móvil del contenido de la píldora ─────────────────────────────────
 function PillContentMobile({
   mode,
   onSave,
@@ -223,7 +214,6 @@ function PillContentMobile({
   );
 }
 
-// ── Página ────────────────────────────────────────────────────────────────────
 export function UserProfilePage() {
   const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
@@ -235,19 +225,14 @@ export function UserProfilePage() {
   const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
   const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevConnectedProvidersRef = useRef<string[]>([]);
-  /** Evita tratar la primera carga del API como “nueva vinculación” (F5 / entrada a la página). */
   const providersBaselineReadyRef = useRef(false);
 
-  // Hook local para verificar si se debe mostrar el cambio de contraseña
   useEffect(() => {
     if (!profile?.email) return;
     verifyAccountLink(profile.email)
       .then((res: any) => {
-        // El backend retorna un objeto JSON: { isOAuthWithoutPassword: bool }
         const isSocialOnly = res?.isOAuthWithoutPassword === true;
         
-        // isSocialOnly true -> no renderizar el componente de contraseña
-        // isSocialOnly false -> sí renderizar 
         setShowPasswordChange(!isSocialOnly);
       })
       .catch((err: any) => console.error('Error verifying account link:', err));
@@ -268,12 +253,6 @@ export function UserProfilePage() {
     );
   }, []);
 
-  /**
-   * La píldora verde solo debe mostrarse cuando el usuario acaba de vincular GitHub/LinkedIn:
-   * - Tras OAuth: sessionStorage marca el proveedor iniciado y el perfil ya lo incluye.
-   * - En la misma sesión SPA (sin remount): aparece un proveedor que no estaba en la lectura anterior.
-   * No se usa “length creció” en la primera hidratación (eso disparaba la animación en cada F5).
-   */
   useEffect(() => {
     if (!profile) return;
 
@@ -337,7 +316,6 @@ export function UserProfilePage() {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
-        {/* ── MÓVIL: top bar ──────────────────────────────────────────────── */}
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
             type="button"
@@ -361,14 +339,12 @@ export function UserProfilePage() {
           <PillContentMobile {...pillProps} />
         </div>
 
-        {/* ── DESKTOP: muesca con BotonInicio ─────────────────────────────── */}
         <div className="hidden md:block">
           <BotonInicio>
             <PillContent {...pillProps} />
           </BotonInicio>
         </div>
 
-        {/* ── HEADER DESKTOP ─────────────────────────────────────────────── */}
         <div className="hidden md:flex items-center gap-5 px-7 pt-5 pb-3 shrink-0">
           <PortlyLogoBig />
           <div>
@@ -381,7 +357,6 @@ export function UserProfilePage() {
           </div>
         </div>
 
-        {/* ── HEADER MÓVIL ───────────────────────────────────────────────── */}
         <div className="md:hidden px-5 pt-16 pb-2 shrink-0">
           <h1 className="text-white text-lg font-bold leading-tight">
             Ajustes de perfil
@@ -391,7 +366,6 @@ export function UserProfilePage() {
           </p>
         </div>
 
-        {/* ── MAIN CONTENT ───────────────────────────────────────────────── */}
         <div className="flex flex-1 min-h-0 pb-5">
           <div className="hidden md:flex border-r-2 border-gray-800 shrink-0">
             <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
@@ -435,7 +409,6 @@ export function UserProfilePage() {
                     onChange={setSocialLink}
                   />
                   
-                  {/* Se renderiza solo si la API responde false (no es cuenta exclusiva de red social) */}
                   {showPasswordChange && (
                     <ChangePasswordForm email={profile.email} />
                   )}
@@ -445,7 +418,6 @@ export function UserProfilePage() {
           </div>
         </div>
 
-        {/* ── SIDEBAR DRAWER MÓVIL ───────────────────────────────────────── */}
         {sidebarOpen && (
           <>
             <div

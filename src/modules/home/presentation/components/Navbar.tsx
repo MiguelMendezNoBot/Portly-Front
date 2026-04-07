@@ -20,7 +20,6 @@ const PortlyLogo = () => (
 export const Navbar = () => {
   return (
     <nav className="flex items-center gap-6 px-6 py-4">
-      {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 group">
         <div className="w-10 h-10 rounded-xl bg-[#0d1830] border border-teal-500/20 flex items-center justify-center shadow-lg shadow-teal-500/10 group-hover:border-teal-500/40 transition-colors">
           <PortlyLogo />
@@ -28,7 +27,6 @@ export const Navbar = () => {
         <span className="text-white font-bold text-base tracking-[0.15em]">PORTLY</span>
       </Link>
 
-      {/* Nav links */}
       <div className="hidden sm:flex items-center gap-1 bg-black/20 rounded-full px-2 py-1.5 border border-white/5">
         {NAV_LINKS.map((link) => (
           <a
