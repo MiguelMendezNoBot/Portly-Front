@@ -42,6 +42,9 @@ export const httpClient = {
     getAuth: <T>(path: string, fallback = 'Error al cargar datos') =>
         request<T>(path, { method: 'GET' }, true, fallback),
 
+    postAuth: <T>(path: string, body: unknown, fallback = 'Error al guardar datos') =>
+        request<T>(path, { method: 'POST', body: JSON.stringify(body) }, true, fallback),
+
     putAuth: <T>(path: string, body: unknown, fallback = 'Error al guardar datos') =>
         request<T>(path, { method: 'PUT', body: JSON.stringify(body) }, true, fallback),
 }
