@@ -2,7 +2,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render, screen } from '@testing-library/react';
 import SocialLinksForm from '../SocialLinksForm';
 
-jest.mock('../../../infrastructure/storage/storage', () => ({
+jest.mock('../../../../../infrastructure/storage/storage', () => ({
   getToken: () => 'token-test',
 }));
 

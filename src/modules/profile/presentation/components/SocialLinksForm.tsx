@@ -84,7 +84,7 @@ function CheckIcon() {
 
 type SocialKey = keyof UserProfileEntity['socialLinks'];
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
+import { API_BASE } from '../constants/__mocks__/api.constants';
 
 interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];

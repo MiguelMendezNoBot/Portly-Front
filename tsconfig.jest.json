@@ -6,6 +6,7 @@
     "allowImportingTsExtensions": false,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "jsx": "react-jsx"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
