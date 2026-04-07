@@ -1,6 +1,5 @@
 import type { UpdateUserProfileDTO, UserProfileEntity } from './userProfile.entity';
 
-/** Mapea la respuesta del backend (español) al formato del dominio (inglés). */
 export function mapBackendToUserProfile(data: Record<string, unknown>): UserProfileEntity {
   const socialLinks: UserProfileEntity['socialLinks'] = {
     github: '',
@@ -46,7 +45,6 @@ export function mapBackendToUserProfile(data: Record<string, unknown>): UserProf
   };
 }
 
-/** Mapea el DTO del dominio (inglés) al cuerpo esperado por el backend (español). */
 export function mapUpdateDtoToBackend(dto: UpdateUserProfileDTO): Record<string, unknown> {
   return {
     nombre: dto.firstName,

@@ -22,7 +22,6 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
 
   const passwordsMatch = newPassword === confirmPassword;
   
-  // Validamos que los campos no estén vacíos, que la nueva clave tenga al menos 8 caracteres y que coincida
   const canSubmit = currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +53,6 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
       <h2 className="text-white text-xl font-bold">Cambiar Contraseña</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {/* Contraseña Actual */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
             CONTRASEÑA ACTUAL
@@ -82,7 +80,6 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
           </div>
         </div>
 
-        {/* Nueva Contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
             NUEVA CONTRASEÑA
@@ -113,7 +110,6 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
           </span>
         </div>
 
-        {/* Confirmar Nueva Contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
             CONFIRMAR NUEVA CONTRASEÑA
@@ -146,7 +142,6 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
           )}
         </div>
 
-        {/* Botón Guardar */}
         <button
           type="submit"
           disabled={!canSubmit || isLoading}

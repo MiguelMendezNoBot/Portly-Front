@@ -6,7 +6,6 @@ import { saveToken, saveUsuarioId, saveEmail } from '../../../../infrastructure/
 import { useToast } from '../../../../shared/hooks/useToast';
 import { Toast } from '../../../../shared/components/Toast';
 
-// --- Iconos SVGs ---
 const CheckmarkIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -64,39 +63,32 @@ export const NewPasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Estados de control y peticiones
   const [isLoading, setIsLoading] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
 
-  // Este estado controla si el backend rechazó la contraseña por ser igual a la anterior
   const [isSameAsOld, setIsSameAsOld] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const { toast, showToast } = useToast();
 
-  // Obtenemos los datos pasados desde VerifyCodeForm
   const email = location.state?.email;
   const codigo = location.state?.codigo;
 
-  // Redirección de seguridad si acceden sin el flujo normal
   useEffect(() => {
     if (!email || !codigo) {
       navigate('/login', { replace: true });
     }
   }, [email, codigo, navigate]);
 
-  // --- Lógica de Validación en Tiempo Real ---
   const requirements = useMemo(() => {
     return {
       hasMinLength: password.length >= 8,
       hasNumber: /\d/.test(password),
-      // Cumple si el backend NO ha dicho que es igual a la anterior
       isNotSameAsPrevious: !isSameAsOld,
     };
   }, [password, isSameAsOld]);
 
-  // El botón solo se habilita si TODOS los requisitos visuales se cumplen y las contraseñas coinciden
   const canSubmit =
     requirements.hasMinLength &&
     requirements.hasNumber &&
@@ -106,7 +98,6 @@ export const NewPasswordForm = () => {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    // Si el usuario empieza a borrar o cambiar la contraseña, limpiamos el error del backend
     if (isSameAsOld) setIsSameAsOld(false);
     if (generalError) setGeneralError(null);
   };
@@ -117,11 +108,8 @@ export const NewPasswordForm = () => {
 
     setIsLoading(true);
     try {
-      // Llamamos a tu endpoint pasándole el JSON requerido
       await resetPassword(email, codigo, password);
 
-      // Auto-iniciar sesión con las nuevas credenciales para que el estado
-      // de la aplicación esté actualizado al dirigirse a 'Home'
       try {
         const loginData = await loginUser({ correoElectronico: email, contraseña: password });
         if (loginData?.token) saveToken(loginData.token);
@@ -131,15 +119,13 @@ export const NewPasswordForm = () => {
         showToast('¡Contraseña restablecida con éxito!', 'success');
         setTimeout(() => navigate('/', { replace: true }), 1500);
       } catch (loginError) {
-        // En caso de que el login automático falle (muy raro)
         showToast('Contraseña restablecida. Por favor inicia sesión.', 'success');
         setTimeout(() => navigate('/login', { replace: true }), 2000);
       }
     } catch (err: any) {
-      // Si el backend lanza la IllegalArgumentException
       const errorMessage = err.message?.toLowerCase() || '';
       if (errorMessage.includes('igual') || errorMessage.includes('actual')) {
-        setIsSameAsOld(true); // Disparamos el check 3 para que se ponga rojo
+        setIsSameAsOld(true);
       } else {
         setGeneralError(
           err.message || 'Ocurrió un error al cambiar la contraseña.'
@@ -150,7 +136,6 @@ export const NewPasswordForm = () => {
     }
   };
 
-  // Componente auxiliar para pintar los checks (con soporte para estado de error)
   const RequirementItem = ({
     isMet,
     hasError,
@@ -192,7 +177,6 @@ export const NewPasswordForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="w-full">
-        {/* --- Input 1: Nueva Contraseña --- */}
         <div className="flex flex-col gap-1 mt-1 relative">
           <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
             NUEVA CONTRASEÑA
@@ -220,7 +204,6 @@ export const NewPasswordForm = () => {
           </div>
         </div>
 
-        {/* --- Input 2: Confirmar Nueva Contraseña --- */}
         <div className="flex flex-col gap-1 mt-4 relative">
           <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
             CONFIRMAR NUEVA CONTRASEÑA
@@ -256,7 +239,6 @@ export const NewPasswordForm = () => {
           )}
         </div>
 
-        {/* --- Recuadro de Requisitos de Seguridad --- */}
         <div
           className={`mt-8 bg-[#EEF2FF] px-6 py-5 rounded-2xl w-full border ${isSameAsOld ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}
         >
@@ -273,7 +255,6 @@ export const NewPasswordForm = () => {
               isMet={requirements.hasNumber}
               label="Incluye un número"
             />
-            {/* Este tercer check se pone rojo (hasError) si el backend lanza la excepción */}
             <RequirementItem
               isMet={requirements.isNotSameAsPrevious}
               hasError={isSameAsOld}
@@ -288,7 +269,6 @@ export const NewPasswordForm = () => {
           </div>
         )}
 
-        {/* Botón principal Cambiar Contraseña */}
         <div>
           <button
             type="submit"

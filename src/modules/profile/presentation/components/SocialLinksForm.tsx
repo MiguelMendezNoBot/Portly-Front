@@ -90,7 +90,6 @@ interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];
   connectedProviders: string[];
   onChange: (key: SocialKey, value: string) => void;
-  /** Callback que se dispara cuando el usuario hace click en vincular */
   onLinked?: (provider: 'github' | 'linkedin') => void;
   errors?: Partial<Record<SocialKey, string>>;
 }
