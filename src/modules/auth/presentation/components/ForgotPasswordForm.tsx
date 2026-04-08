@@ -3,7 +3,6 @@ import { Input } from '../../../../shared/components/Input';
 import { forgotPassword } from '../../infrastructure/authService';
 import { useNavigate, Link } from 'react-router-dom';
 
-// Icono circular del candado
 const ResetIcon = () => (
   <div className="w-14 h-14 bg-[#EEF2FF] rounded-full flex items-center justify-center mb-6">
     <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-[#6C63FF]">
@@ -25,7 +24,6 @@ const ResetIcon = () => (
   </div>
 );
 
-// Icono de la flecha pequeña en el botón
 const ArrowRightIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 ml-2">
     <path
@@ -38,7 +36,6 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-// Icono de volver al inicio
 const ArrowLeftIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 mr-2">
     <path
@@ -61,7 +58,6 @@ export const ForgotPasswordForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación básica en front
     if (!email.trim()) {
       setError('Por favor, ingresa tu correo electrónico.');
       return;
@@ -71,15 +67,10 @@ export const ForgotPasswordForm = () => {
     setIsLoading(true);
 
     try {
-      // Llamamos al backend (Puerto 8080)
       await forgotPassword(email);
 
-      // Si todo sale bien (código 200 OK), navegamos a la siguiente página.
-      // TRUCO: Pasamos el 'email' en el state de la navegación para que
-      // la página VerifyCodePage sepa qué correo estamos verificando.
       navigate('/verify-code', { state: { email: email } });
     } catch (err: any) {
-      // Si el backend lanza el EmailDoesNotExistException (404 o 400)
       console.error('Error al solicitar recuperación:', err);
       setError(err.message || 'Error al conectar con el servidor.');
     } finally {
@@ -111,12 +102,10 @@ export const ForgotPasswordForm = () => {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              setError(null); // Limpiamos el error al escribir
+              setError(null);
             }}
-            // Usamos la prop de error de tu componente Input
             error={error || undefined}
           />
-          {/* El mensaje de error rojito y pequeño debajo del input */}
         </div>
 
         <button

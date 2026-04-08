@@ -9,27 +9,23 @@ import { OAUTH_URLS } from '../constants/oauth.constants';
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { fields, errors, toast, handleChange, handleSubmit } = useLoginForm()
-  // Control remoto para el input de contraseña
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  // Función que detecta el Enter en el correo
   const handleEmailKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      passwordInputRef.current?.focus(); // Salta al campo de contraseña
+      passwordInputRef.current?.focus();
     }
   };
 
   return (
-    // TARJETA BLANCA PRINCIPAL
-    <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative font-sans text-gray-900 mx-4">
+    <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative text-gray-900 mx-4">
       <Toast toast={toast} />
       <div className="text-center mb-8">
         <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
         <p className="text-gray-600 text-sm">Ingresa en la plataforma con tus redes profesionales</p>
       </div>
 
-        {/* Botones Sociales */}
         <div className="space-y-4 mb-8">
           <button
             type="button"
@@ -59,7 +55,6 @@ export function LoginForm() {
           </div>
         </div>
 
-      {/* Divisor */}
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200"></div>
@@ -69,7 +64,6 @@ export function LoginForm() {
         </div>
       </div>
 
-      {/* Formulario */}
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div>
           <label className="block text-sm font-bold mb-1">Correo Electronico</label>

@@ -2,76 +2,84 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
+import { mapBackendToUserProfile, mapUpdateDtoToBackend } from '../domain/userProfile.mapping';
+import type { IUserProfileRepository } from '../application/IUserProfileRepository';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 import { getToken } from '../../../infrastructure/storage/storage';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-// Mapea la respuesta del backend (español) al formato del frontend (inglés)
-function mapBackendToFrontend(data: any): UserProfileEntity {
-  const socialLinks: UserProfileEntity['socialLinks'] = {
-    github: '',
-    linkedin: '',
-    instagram: '',
-    facebook: '',
-    youtube: '',
-  };
+export const userProfileRepository: IUserProfileRepository = {
+  async getProfile(): Promise<UserProfileEntity> {
+    const data = await httpClient.getAuth<Record<string, unknown>>(
+      '/api/profile',
+      'Error al cargar perfil',
+    );
+    const profile = mapBackendToUserProfile(data);
 
-  if (data.enlaces && Array.isArray(data.enlaces)) {
-    for (const enlace of data.enlaces) {
-      const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
-      if (plataforma in socialLinks) {
-        (socialLinks as any)[plataforma] = enlace.direccionEnlace || '';
+    if (profile.email) {
+      try {
+        const redes = await httpClient.postAuth<{
+          instagram?: string;
+          facebook?: string;
+          youtube?: string;
+        }>(
+          '/api/redes-sociales/user',
+          { email: profile.email },
+          'Error al cargar redes sociales'
+        );
+
+        if (redes.instagram) profile.socialLinks.instagram = redes.instagram;
+        if (redes.facebook) profile.socialLinks.facebook = redes.facebook;
+        if (redes.youtube) profile.socialLinks.youtube = redes.youtube;
+      } catch (err) {
+        console.error('Aviso: Redes sociales no pudieron ser cargadas', err);
       }
     }
-  }
 
-  // Extraer proveedores vinculados
-  const connectedProviders: string[] = [];
-  if (data.proveedores && Array.isArray(data.proveedores)) {
-    for (const p of data.proveedores) {
-      connectedProviders.push((p.nombreProveedor || '').toLowerCase());
-    }
-  }
-
-  return {
-    id: data.idUsuario || '',
-    firstName: data.nombre || '',
-    lastName: data.apellido || '',
-    email: data.email || '',
-    profession: data.titularProfesional || '',
-    bio: data.acercaDeMi || '',
-    avatarUrl: data.enlaceFoto || undefined,
-    visibility: {
-      showEmail: true,
-      showProfession: true,
-      showBio: true,
-    },
-    socialLinks,
-    connectedProviders,
-  };
-}
-
-// Mapea el DTO del frontend (inglés) al formato del backend (español)
-function mapFrontendToBackend(dto: UpdateUserProfileDTO): any {
-  return {
-    nombre: dto.firstName,
-    apellido: dto.lastName,
-    titularProfesional: dto.profession,
-    acercaDeMi: dto.bio,
-  };
-}
-
-// ─── Repository ───────────────────────────────────────────────────────────────
-export const userProfileRepository = {
-  async getProfile(): Promise<UserProfileEntity> {
-    const data = await httpClient.getAuth<any>('/api/profile', 'Error al cargar perfil');
-    return mapBackendToFrontend(data);
+    return profile;
   },
 
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {
-    const data = await httpClient.putAuth<any>('/api/profile', mapFrontendToBackend(dto), 'Error al guardar perfil');
-    return mapBackendToFrontend(data);
+    const profilePromise = httpClient.putAuth<Record<string, unknown>>(
+      '/api/profile',
+      mapUpdateDtoToBackend(dto),
+      'Error al guardar perfil',
+    );
+
+    if (dto.socialLinks) {
+      await profilePromise;
+      await httpClient.postAuth(
+        '/api/redes-sociales',
+        {
+          gmail: '',
+          instagram: dto.socialLinks.instagram || '',
+          facebook: dto.socialLinks.facebook || '',
+          youtube: dto.socialLinks.youtube || '',
+        },
+        'Error al guardar redes sociales'
+      );
+    } else {
+      await profilePromise;
+    }
+
+    // Refetch to get the updated state including social links potentially processed by backend
+    const data = await httpClient.getAuth<Record<string, unknown>>(
+      '/api/profile',
+      'Error al cargar perfil actualizado',
+    );
+    const updatedProfile = mapBackendToUserProfile(data);
+
+    // Explicitly merge the just-saved socialLinks into the updated profile to prevent them from disappearing
+    // in case the backend GET /api/profile response does not immediately reflect the new state.
+    if (dto.socialLinks) {
+      updatedProfile.socialLinks = {
+        ...updatedProfile.socialLinks,
+        ...dto.socialLinks
+      };
+    }
+
+    return updatedProfile;
   },
 
   async updateAvatar(file: File): Promise<{ avatarUrl: string }> {
@@ -90,7 +98,7 @@ export const userProfileRepository = {
       throw new Error(errorText || `Error ${res.status} al subir imagen`);
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { avatarUrl: string };
     return { avatarUrl: data.avatarUrl };
   },
 };

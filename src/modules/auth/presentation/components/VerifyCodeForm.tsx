@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyCode, forgotPassword } from '../../infrastructure/authService';
 
-// Icono circular de verificación (similar al estilo de candado de image_14.png)
 const CodeIcon = () => (
   <div className="w-16 h-16 bg-[#EEF2FF] rounded-full flex items-center justify-center mb-6 shadow-sm">
     <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7 text-[#6C63FF]">
@@ -24,7 +23,6 @@ const CodeIcon = () => (
   </div>
 );
 
-// Función auxiliar para formatear segundos a MM:SS
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -40,24 +38,20 @@ export const VerifyCodeForm = () => {
   const [secondsLeft, setSecondsLeft] = useState(59);
   const [canResend, setCanResend] = useState(false);
 
-  // Estados para manejar la carga y los errores
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Rescatamos el email que nos pasaron desde ForgotPasswordPage
   const email = location.state?.email;
 
-  // Si el usuario entra directamente a esta URL sin un correo, lo mandamos de vuelta
   useEffect(() => {
     if (!email) {
       navigate('/forgot-password', { replace: true });
     }
   }, [email, navigate]);
 
-  // Lógica del temporizador de cuenta regresiva
   useEffect(() => {
     if (secondsLeft <= 0) {
       setCanResend(true);
@@ -69,11 +63,10 @@ export const VerifyCodeForm = () => {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  // Manejar el cambio en los inputs de código
   const handleInputChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 
-    setError(null); // Limpiamos el error si el usuario empieza a escribir de nuevo
+    setError(null);
 
     const newCode = [...code];
     newCode[index] = value;
@@ -103,7 +96,6 @@ export const VerifyCodeForm = () => {
     inputRefs.current[5]?.focus();
   };
 
-  // ENVÍO DEL CÓDIGO PARA VERIFICACIÓN
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const fullCode = code.join('');
@@ -117,18 +109,13 @@ export const VerifyCodeForm = () => {
     setError(null);
 
     try {
-      // Llamamos a tu controlador de Spring Boot
       await verifyCode(email, fullCode);
 
-      // Si el backend devuelve 200 OK, navegamos a cambiar contraseña
-      // Pasamos el email nuevamente para que NewPasswordForm sepa a quién actualizarle la clave
       navigate('/reset-password', {
         state: { email: email, codigo: fullCode },
       });
     } catch (err: any) {
-      // Capturamos el InvalidCodeException o CodeExpiredException
       setError(err.message || 'Código inválido. Intenta nuevamente.');
-      // Limpiamos los inputs para que lo intente de nuevo
       setCode(new Array(6).fill(''));
       inputRefs.current[0]?.focus();
     } finally {
@@ -136,20 +123,18 @@ export const VerifyCodeForm = () => {
     }
   };
 
-  // LÓGICA DE REENVÍO
   const handleResend = async () => {
     if (!canResend) return;
 
     setError(null);
-    setCanResend(false); // Deshabilitamos el botón inmediatamente
+    setCanResend(false);
 
     try {
-      // Llamamos al mismo endpoint de solicitar contraseña en tu backend
       await forgotPassword(email);
-      setSecondsLeft(59); // Reiniciamos el timer
+      setSecondsLeft(59);
     } catch (err: any) {
       setError('No se pudo reenviar el código. Intenta de nuevo.');
-      setCanResend(true); // Lo volvemos a habilitar si falló
+      setCanResend(true);
     }
   };
 
@@ -187,7 +172,6 @@ export const VerifyCodeForm = () => {
           ))}
         </div>
 
-        {/* Mensaje de error en rojo debajo del código */}
         <div className="h-6 mb-4 text-center">
           {error && (
             <span className="text-red-500 text-[12px] font-medium">

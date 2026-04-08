@@ -38,7 +38,6 @@ export default function ProfileAvatar({
       <div className="absolute w-full h-full bg-white/1 pointer-events-none rounded-[12px]" />
 
       <div className="relative p-8 flex flex-col items-center gap-6">
-        {/* Avatar clickeable */}
         <div
           className="relative cursor-pointer group"
           onClick={() => inputRef.current?.click()}
@@ -67,7 +66,6 @@ export default function ProfileAvatar({
               </div>
             )}
 
-            {/* Overlay de carga */}
             {uploading && (
               <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                 <div className="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin" />

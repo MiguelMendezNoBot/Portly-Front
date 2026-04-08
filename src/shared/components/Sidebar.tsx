@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom';
 
-// ── Íconos SVG inline ──────────────────────────────────────────────────────
 const icons = {
   home: (
     <svg
@@ -84,16 +83,16 @@ const icons = {
 };
 
 const navItems = [
-  { to: '/home', label: 'Home', icon: icons.home },
-  { to: '/dashboard', label: 'Dashboard', icon: icons.grid },
-  { to: '/portfolios', label: 'Portfolios', icon: icons.folder },
-  { to: '/analytics', label: 'Analytics', icon: icons.chart },
+  { to: '/home', label: 'Inicio', icon: icons.home },
+  { to: '/dashboard', label: 'Tablero', icon: icons.grid },
+  { to: '/portfolios', label: 'Mis portafolios', icon: icons.folder },
+  { to: '/analytics', label: 'Analiticas', icon: icons.chart },
   {
     to: '/professional-profile',
-    label: 'Professional Profile',
+    label: 'Perfil profesional',
     icon: icons.badge,
   },
-  { to: '/profile', label: 'Profile', icon: icons.user },
+  { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
 ];
 
 interface SidebarProps {
@@ -111,7 +110,6 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
 
   return (
     <aside className="flex flex-col w-52 shrink-0 py-4 gap-5">
-      {/* Avatar + nombre */}
       <div className="flex items-center gap-3 px-2">
         <div className="w-9 h-9 rounded-full bg-[#7c6bec]/30 flex items-center justify-center shrink-0 overflow-hidden border border-[#7c6bec]/40">
           {avatarUrl ? (
@@ -132,7 +130,6 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
         </span>
       </div>
 
-      {/* Nav */}
       <nav className="flex flex-col gap-0.5">
         {navItems.map(({ to, label, icon }) => (
           <NavLink
@@ -150,7 +147,6 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
           >
             {({ isActive }) => (
               <>
-                {/* Barra indicadora izquierda */}
                 {isActive && (
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#7c6bec] rounded-r-full" />
                 )}

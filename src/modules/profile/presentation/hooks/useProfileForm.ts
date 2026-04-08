@@ -5,7 +5,6 @@ export function useProfileForm(profile: UserProfileEntity | null) {
   const [form, setForm] = useState<UpdateUserProfileDTO>({});
   const [dirty, setDirty] = useState(false);
 
-  // Sincroniza el form cuando llegan datos del servidor
   useEffect(() => {
     if (!profile) return;
     setForm({
