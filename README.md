@@ -1,6 +1,6 @@
 Aquí tienes una estructura de README.md moderna y funcional para un proyecto frontend utilizando React + Vite. Está diseñada para que cualquier miembro de tu equipo pueda levantar el entorno de desarrollo en segundos.
 
-⚛️ Proyecto Frontend: 
+⚛️ Proyecto Frontend:
 Este es el cliente web desarrollado con React y Vite, enfocado en una arquitectura modular y alto rendimiento.
 
 🚀 Requisitos Previos
@@ -14,15 +14,14 @@ npm (o yarn / pnpm).
 Sigue estos pasos para configurar el entorno local:
 
 1. Clonar el repositorio
-Bash
-git clone https://github.com/tu-usuario/frontend-repo.git
-cd frontend-repo
+   Bash
+   git clone https://github.com/tu-usuario/frontend-repo.git
+   cd frontend-repo
 2. Instalar dependencias
-Vite gestiona las dependencias de forma extremadamente rápida. Ejecuta:
+   Vite gestiona las dependencias de forma extremadamente rápida. Ejecuta:
 
 Bash
-npm install
-3. Variables de Entorno
+npm install 3. Variables de Entorno
 Crea un archivo .env en la raíz del proyecto basándote en el archivo de ejemplo (si existe):
 
 Bash
@@ -30,7 +29,7 @@ cp .env.example .env
 Asegúrate de configurar la URL de la API (por ejemplo: VITE_API_URL=http://localhost:8080/api).
 
 4. Ejecutar en Desarrollo
-Para levantar el servidor con Hot Module Replacement (HMR):
+   Para levantar el servidor con Hot Module Replacement (HMR):
 
 Bash
 npm run dev
@@ -48,13 +47,13 @@ npm run lint: Ejecuta ESLint para verificar la calidad del código.
 📦 Estructura de Carpetas
 Plaintext
 src/
- ├── assets/      # Imágenes, fuentes y archivos estáticos.
- ├── components/  # Componentes reutilizables de UI.
- ├── hooks/       # Custom hooks.
- ├── pages/       # Vistas principales del sistema (rutas).
- ├── services/    # Consumo de APIs y lógica de datos.
- ├── utils/       # Funciones de ayuda y constantes.
- └── App.jsx      # Componente raíz.
+├── assets/ # Imágenes, fuentes y archivos estáticos.
+├── components/ # Componentes reutilizables de UI.
+├── hooks/ # Custom hooks.
+├── pages/ # Vistas principales del sistema (rutas).
+├── services/ # Consumo de APIs y lógica de datos.
+├── utils/ # Funciones de ayuda y constantes.
+└── App.jsx # Componente raíz.
 🎨 Tecnologías Principales
 Vite: Build tool de última generación.
 
