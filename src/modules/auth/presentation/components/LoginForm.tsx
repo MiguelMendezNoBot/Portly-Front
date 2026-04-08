@@ -24,7 +24,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative text-gray-900 mx-4">
+    <div className="bg-white p-6 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-[480px] z-10 relative text-gray-900 mx-4 box-border">
       <Toast toast={toast} />
       <div className="text-center mb-8">
         <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
@@ -44,7 +44,7 @@ export function LoginForm() {
           <GoogleIcon className="w-5 h-5" />
           Google
         </button>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             type="button"
             onClick={() => {
