@@ -11,7 +11,8 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
   '\\.(css|less|scss|svg|png|jpg)$': 'identity-obj-proxy',
-  '.*oauth\\.constants(\\.ts)?$': '<rootDir>/src/__mocks__/oauth.constants.ts',
+  '^.*api\\.constants(\\.[jt]s)?$': '<rootDir>/src/modules/profile/presentation/constants/__mocks__/api.constants.mock.ts',
+  '^.*oauth\\.constants(\\.[jt]s)?$': '<rootDir>/src/modules/auth/presentation/constants/__mocks__/oauth.constants.mock.ts',
 },
   transform: {
     '^.+\\.tsx?$': [
