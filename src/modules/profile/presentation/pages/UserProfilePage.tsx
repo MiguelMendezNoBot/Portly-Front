@@ -235,12 +235,12 @@ export function UserProfilePage() {
   useEffect(() => {
     if (!profile?.email) return;
     verifyAccountLink(profile.email)
-      .then((res: any) => {
-        const isSocialOnly = res?.isOAuthWithoutPassword === true;
-
-        setShowPasswordChange(!isSocialOnly);
+      .then((res) => {
+        setShowPasswordChange(!res?.isOAuthWithoutPassword);
       })
-      .catch((err: any) => console.error('Error verifying account link:', err));
+      .catch((err: unknown) =>
+        console.error('Error verifying account link:', err)
+      );
   }, [profile?.email]);
 
   useEffect(() => {
@@ -269,6 +269,7 @@ export function UserProfilePage() {
       const raw = sessionStorage.getItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
       if (raw && isPortlyOAuthProvider(raw) && currentProviders.includes(raw)) {
         sessionStorage.removeItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         triggerLinkedFlash();
       }
       prevConnectedProvidersRef.current = currentProviders;
@@ -282,7 +283,7 @@ export function UserProfilePage() {
     }
 
     prevConnectedProvidersRef.current = currentProviders;
-  }, [profile?.connectedProviders, triggerLinkedFlash]);
+  }, [profile, triggerLinkedFlash]);
 
   function validateSocialLinks(links: typeof form.socialLinks | undefined) {
     const errors: Partial<

@@ -125,20 +125,24 @@ export const NewPasswordForm = () => {
 
         showToast('¡Contraseña restablecida con éxito!', 'success');
         setTimeout(() => navigate('/', { replace: true }), 1500);
-      } catch (loginError) {
+      } catch (_loginError) {
         showToast(
           'Contraseña restablecida. Por favor inicia sesión.',
           'success'
         );
         setTimeout(() => navigate('/login', { replace: true }), 2000);
       }
-    } catch (err: any) {
-      const errorMessage = err.message?.toLowerCase() || '';
+    } catch (err: unknown) {
+      const errorMessage = (
+        err instanceof Error ? err.message : ''
+      ).toLowerCase();
       if (errorMessage.includes('igual') || errorMessage.includes('actual')) {
         setIsSameAsOld(true);
       } else {
         setGeneralError(
-          err.message || 'Ocurrió un error al cambiar la contraseña.'
+          err instanceof Error
+            ? err.message
+            : 'Ocurrió un error al cambiar la contraseña.'
         );
       }
     } finally {

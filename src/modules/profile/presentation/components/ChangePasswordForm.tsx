@@ -41,8 +41,13 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error: any) {
-      showToast(error.message || 'Error al actualizar contraseña', 'error');
+    } catch (error: unknown) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : 'Error al actualizar contraseña',
+        'error'
+      );
     } finally {
       setIsLoading(false);
     }

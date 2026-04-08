@@ -37,9 +37,18 @@ export const resetPassword = (
   );
 
 export const verifyAccountLink = (email: string) =>
-  httpClient.post<boolean>('/auth/verify-account-link', { email });
+  httpClient.post<{ isOAuthWithoutPassword: boolean }>(
+    '/auth/verify-account-link',
+    { email }
+  );
 
-export const changePassword = (data: any) =>
+interface ChangePasswordData {
+  email: string;
+  contrasenaActual: string;
+  nuevaContrasena: string;
+}
+
+export const changePassword = (data: ChangePasswordData) =>
   httpClient.post(
     '/auth/change-password',
     data,

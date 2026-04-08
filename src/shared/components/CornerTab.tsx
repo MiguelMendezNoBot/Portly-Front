@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 interface Props {
   texto?: string;
   children?: React.ReactNode;

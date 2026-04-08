@@ -15,30 +15,31 @@ function decodeJwtPayload(token: string): Record<string, string> | null {
 }
 
 export function AuthCallbackPage() {
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
+  // Compute error synchronously from URL params (avoids setState-in-effect)
+  const [error] = useState<string | null>(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const errorParam = params.get('error');
-
     if (token) {
       const payload = decodeJwtPayload(token);
-      if (!payload) {
-        setError('Token inválido recibido.');
-        return;
-      }
-
-      saveToken(token);
-      if (payload.sub) saveUsuarioId(payload.sub);
-      if (payload.email) saveEmail(payload.email);
-
-      window.location.replace('/');
-    } else if (errorParam) {
-      setError(decodeURIComponent(errorParam));
-    } else {
-      setError('No se recibió un token válido.');
+      return payload ? null : 'Token inválido recibido.';
     }
+    return errorParam
+      ? decodeURIComponent(errorParam)
+      : 'No se recibió un token válido.';
+  });
+
+  // Side effects only: save tokens and redirect on success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (!token) return;
+    const payload = decodeJwtPayload(token);
+    if (!payload) return;
+    saveToken(token);
+    if (payload.sub) saveUsuarioId(payload.sub);
+    if (payload.email) saveEmail(payload.email);
+    window.location.replace('/');
   }, []);
 
   if (error) {

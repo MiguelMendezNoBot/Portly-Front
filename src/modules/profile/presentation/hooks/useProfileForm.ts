@@ -10,6 +10,7 @@ export function useProfileForm(profile: UserProfileEntity | null) {
 
   useEffect(() => {
     if (!profile) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({
       firstName: profile.firstName,
       lastName: profile.lastName,

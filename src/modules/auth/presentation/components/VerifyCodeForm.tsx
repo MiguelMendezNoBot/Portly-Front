@@ -114,8 +114,12 @@ export const VerifyCodeForm = () => {
       navigate('/reset-password', {
         state: { email: email, codigo: fullCode },
       });
-    } catch (err: any) {
-      setError(err.message || 'Código inválido. Intenta nuevamente.');
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Código inválido. Intenta nuevamente.'
+      );
       setCode(new Array(6).fill(''));
       inputRefs.current[0]?.focus();
     } finally {
@@ -132,7 +136,7 @@ export const VerifyCodeForm = () => {
     try {
       await forgotPassword(email);
       setSecondsLeft(59);
-    } catch (err: any) {
+    } catch (_err: unknown) {
       setError('No se pudo reenviar el código. Intenta de nuevo.');
       setCanResend(true);
     }

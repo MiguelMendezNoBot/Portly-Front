@@ -70,9 +70,13 @@ export const ForgotPasswordForm = () => {
       await forgotPassword(email);
 
       navigate('/verify-code', { state: { email: email } });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error al solicitar recuperación:', err);
-      setError(err.message || 'Error al conectar con el servidor.');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Error al conectar con el servidor.'
+      );
     } finally {
       setIsLoading(false);
     }

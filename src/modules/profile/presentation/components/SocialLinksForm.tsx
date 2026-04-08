@@ -98,7 +98,7 @@ export default function SocialLinksForm({
   links,
   connectedProviders,
   onChange,
-  onLinked,
+  onLinked: _onLinked,
   errors,
 }: SocialLinksFormProps) {
   const isGithubConnected = connectedProviders.includes('github');
