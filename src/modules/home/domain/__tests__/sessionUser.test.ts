@@ -3,7 +3,9 @@ import { decodeJwtEmail, emailToDisplayName } from '../sessionUser';
 
 describe('decodeJwtEmail', () => {
   it('extrae email del payload', () => {
-    const payload = btoa(JSON.stringify({ email: 'user@test.com', sub: 'ignored' }));
+    const payload = btoa(
+      JSON.stringify({ email: 'user@test.com', sub: 'ignored' })
+    );
     const token = `h.${payload}.s`;
     expect(decodeJwtEmail(token)).toBe('user@test.com');
   });

@@ -4,7 +4,11 @@ interface ToggleProps {
   disabled?: boolean;
 }
 
-export default function Toggle({ checked, onChange, disabled = false }: ToggleProps) {
+export default function Toggle({
+  checked,
+  onChange,
+  disabled = false,
+}: ToggleProps) {
   return (
     <button
       type="button"

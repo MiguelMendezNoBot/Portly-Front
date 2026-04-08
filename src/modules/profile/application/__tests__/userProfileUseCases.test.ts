@@ -1,7 +1,11 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import type { UserProfileEntity } from '../../domain/userProfile.entity';
 import type { IUserProfileRepository } from '../IUserProfileRepository';
-import { loadUserProfile, saveUserProfile, uploadUserAvatar } from '../userProfileUseCases';
+import {
+  loadUserProfile,
+  saveUserProfile,
+  uploadUserAvatar,
+} from '../userProfileUseCases';
 
 const sampleProfile = (): UserProfileEntity => ({
   id: '1',
@@ -18,7 +22,9 @@ const sampleProfile = (): UserProfileEntity => ({
 describe('userProfile use cases (orquestación con dobles)', () => {
   it('loadUserProfile delega en getProfile', async () => {
     const p = sampleProfile();
-    const getProfile = jest.fn<IUserProfileRepository['getProfile']>().mockResolvedValue(p);
+    const getProfile = jest
+      .fn<IUserProfileRepository['getProfile']>()
+      .mockResolvedValue(p);
     const repo = {
       getProfile,
       updateProfile: jest.fn(),
@@ -32,7 +38,9 @@ describe('userProfile use cases (orquestación con dobles)', () => {
   it('saveUserProfile delega el DTO al repositorio', async () => {
     const updated = sampleProfile();
     updated.firstName = 'Z';
-    const updateProfile = jest.fn<IUserProfileRepository['updateProfile']>().mockResolvedValue(updated);
+    const updateProfile = jest
+      .fn<IUserProfileRepository['updateProfile']>()
+      .mockResolvedValue(updated);
     const repo = {
       getProfile: jest.fn(),
       updateProfile,

@@ -2,7 +2,11 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from '../../../../shared/components/SocialIcons';
 import { resetPassword, loginUser } from '../../infrastructure/authService';
-import { saveToken, saveUsuarioId, saveEmail } from '../../../../infrastructure/storage/storage';
+import {
+  saveToken,
+  saveUsuarioId,
+  saveEmail,
+} from '../../../../infrastructure/storage/storage';
 import { useToast } from '../../../../shared/hooks/useToast';
 import { Toast } from '../../../../shared/components/Toast';
 
@@ -111,7 +115,10 @@ export const NewPasswordForm = () => {
       await resetPassword(email, codigo, password);
 
       try {
-        const loginData = await loginUser({ correoElectronico: email, contraseña: password });
+        const loginData = await loginUser({
+          correoElectronico: email,
+          contraseña: password,
+        });
         if (loginData?.token) saveToken(loginData.token);
         if (loginData?.idUsuario) saveUsuarioId(loginData.idUsuario);
         if (loginData?.email) saveEmail(loginData.email);
@@ -119,7 +126,10 @@ export const NewPasswordForm = () => {
         showToast('¡Contraseña restablecida con éxito!', 'success');
         setTimeout(() => navigate('/', { replace: true }), 1500);
       } catch (loginError) {
-        showToast('Contraseña restablecida. Por favor inicia sesión.', 'success');
+        showToast(
+          'Contraseña restablecida. Por favor inicia sesión.',
+          'success'
+        );
         setTimeout(() => navigate('/login', { replace: true }), 2000);
       }
     } catch (err: any) {

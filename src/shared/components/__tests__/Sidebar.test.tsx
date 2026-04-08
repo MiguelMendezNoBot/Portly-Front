@@ -8,7 +8,7 @@ describe('Sidebar', () => {
     render(
       <MemoryRouter>
         <Sidebar userName="Ana Perez" />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(screen.getByText('Ana Perez')).toBeInTheDocument();
     expect(screen.getByText('Inicio')).toBeInTheDocument();

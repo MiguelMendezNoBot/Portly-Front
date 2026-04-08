@@ -1,6 +1,5 @@
 import Sidebar from './Sidebar';
 
-
 export function PortlyLogo() {
   return (
     <div className="flex items-center gap-2 bg-white rounded-xl px-3 py-2 shadow-sm">

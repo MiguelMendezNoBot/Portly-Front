@@ -20,13 +20,20 @@ describe('GeneralInfoForm', () => {
     const onFieldChange = jest.fn();
     render(
       <GeneralInfoForm
-        form={{ firstName: 'Ana', lastName: 'Perez', profession: 'Dev', bio: 'Hola' }}
+        form={{
+          firstName: 'Ana',
+          lastName: 'Perez',
+          profession: 'Dev',
+          bio: 'Hola',
+        }}
         profile={baseProfile}
         onFieldChange={onFieldChange}
-      />,
+      />
     );
 
-    fireEvent.change(screen.getByDisplayValue('Ana'), { target: { value: 'Anita' } });
+    fireEvent.change(screen.getByDisplayValue('Ana'), {
+      target: { value: 'Anita' },
+    });
     expect(onFieldChange).toHaveBeenCalledWith('firstName', 'Anita');
     expect(screen.getByDisplayValue('ana@test.com')).toBeDisabled();
   });

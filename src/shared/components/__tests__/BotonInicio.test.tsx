@@ -8,8 +8,10 @@ describe('BotonInicio', () => {
     render(
       <MemoryRouter>
         <BotonInicio />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
-    expect(screen.getByRole('link', { name: 'EXPLORAR COMO INVITADO' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'EXPLORAR COMO INVITADO' })
+    ).toBeInTheDocument();
   });
 });

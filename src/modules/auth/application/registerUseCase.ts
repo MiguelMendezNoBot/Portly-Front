@@ -1,5 +1,8 @@
 import type { AuthResponse, RegisterData } from '../domain/authTypes';
-import type { RegisterFormErrors, RegisterFormFields } from '../domain/registerValidation';
+import type {
+  RegisterFormErrors,
+  RegisterFormFields,
+} from '../domain/registerValidation';
 import { validateRegisterFields } from '../domain/registerValidation';
 import type { IAuthRepository } from './IAuthRepository';
 
@@ -9,7 +12,7 @@ export type RegisterUseCaseResult =
 
 export async function executeRegisterUseCase(
   repo: IAuthRepository,
-  fields: RegisterFormFields,
+  fields: RegisterFormFields
 ): Promise<RegisterUseCaseResult> {
   const { errors, isValid } = validateRegisterFields(fields);
   if (!isValid) {

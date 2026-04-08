@@ -1,8 +1,11 @@
-import type { UpdateUserProfileDTO, UserProfileEntity } from './userProfile.entity';
+import type {
+  UpdateUserProfileDTO,
+  UserProfileEntity,
+} from './userProfile.entity';
 
 export function applyProfileUpdate(
   current: UserProfileEntity,
-  dto: UpdateUserProfileDTO,
+  dto: UpdateUserProfileDTO
 ): UserProfileEntity {
   return {
     ...current,

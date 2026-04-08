@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { UserProfileEntity, UpdateUserProfileDTO } from '../domain/userProfile.entity';
+import type {
+  UserProfileEntity,
+  UpdateUserProfileDTO,
+} from '../domain/userProfile.entity';
 import { userProfileRepository } from '../infrastructure/userProfile.repository';
 
 interface UseUserProfileReturn {
@@ -35,22 +38,19 @@ export function useUserProfile(): UseUserProfileReturn {
     fetchProfile();
   }, [fetchProfile]);
 
-  const saveProfile = useCallback(
-    async (dto: UpdateUserProfileDTO) => {
-      setSaving(true);
-      setError(null);
-      try {
-        const updated = await userProfileRepository.updateProfile(dto);
-        setProfile(updated);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'Error al guardar');
-        throw e;
-      } finally {
-        setSaving(false);
-      }
-    },
-    [],
-  );
+  const saveProfile = useCallback(async (dto: UpdateUserProfileDTO) => {
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await userProfileRepository.updateProfile(dto);
+      setProfile(updated);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al guardar');
+      throw e;
+    } finally {
+      setSaving(false);
+    }
+  }, []);
 
   const uploadAvatar = useCallback(async (file: File) => {
     setSaving(true);

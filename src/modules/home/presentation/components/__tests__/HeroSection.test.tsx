@@ -6,6 +6,8 @@ describe('HeroSection', () => {
   it('renderiza título y CTA principal', () => {
     render(<HeroSection />);
     expect(screen.getByText('Construye tu legado,')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Comenzar ahora' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Comenzar ahora' })
+    ).toBeInTheDocument();
   });
 });

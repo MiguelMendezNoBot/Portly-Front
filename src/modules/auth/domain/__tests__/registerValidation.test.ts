@@ -19,7 +19,9 @@ const validFields = () => ({
 describe('validateEmail', () => {
   it('rechaza vacío y formato inválido', () => {
     expect(validateEmail('')).toBe('El correo es obligatorio');
-    expect(validateEmail('no-arroba')).toBe('Ingresa un correo válido (ej: nombre@dominio.com)');
+    expect(validateEmail('no-arroba')).toBe(
+      'Ingresa un correo válido (ej: nombre@dominio.com)'
+    );
   });
 
   it('acepta correo válido', () => {
@@ -30,7 +32,9 @@ describe('validateEmail', () => {
 describe('validateAlphaField', () => {
   it('rechaza corto o con dígitos', () => {
     expect(validateAlphaField('ab', 'Campo')).toContain('3 caracteres');
-    expect(validateAlphaField('abcd1', 'Campo')).toContain('solo acepta letras');
+    expect(validateAlphaField('abcd1', 'Campo')).toContain(
+      'solo acepta letras'
+    );
   });
 });
 
@@ -50,7 +54,7 @@ describe('validateRegisterFields', () => {
         password: '',
         confirmPassword: '',
       },
-      1,
+      1
     );
     expect(isValid).toBe(false);
     expect(errors.email).toBeDefined();

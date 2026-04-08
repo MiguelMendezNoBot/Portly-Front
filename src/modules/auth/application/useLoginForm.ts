@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { executeLoginUseCase } from './loginUseCase';
 import { authHttpRepository } from '../infrastructure/authRepository';
 import { useToast } from '../../../shared/hooks/useToast';
-import { saveToken, saveUsuarioId, saveEmail } from '../../../infrastructure/storage/storage';
+import {
+  saveToken,
+  saveUsuarioId,
+  saveEmail,
+} from '../../../infrastructure/storage/storage';
 
 interface FormFields {
   email: string;
@@ -22,7 +26,8 @@ export const useLoginForm = () => {
   const { toast, showToast } = useToast();
 
   const handleChange =
-    (field: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (field: keyof FormFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setFields((prev) => ({ ...prev, [field]: e.target.value }));
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     };

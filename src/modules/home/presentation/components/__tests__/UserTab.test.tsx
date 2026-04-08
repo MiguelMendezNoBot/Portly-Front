@@ -16,9 +16,11 @@ describe('UserTab', () => {
     render(
       <MemoryRouter>
         <UserTab />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
-    expect(screen.getByRole('link', { name: 'Iniciar Sesión' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Iniciar Sesión' })
+    ).toBeInTheDocument();
   });
 
   it('permite cerrar sesion cuando hay usuario', () => {
@@ -29,7 +31,7 @@ describe('UserTab', () => {
     render(
       <MemoryRouter>
         <UserTab />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     fireEvent.click(screen.getByRole('button', { name: /CERRAR/i }));
     expect(mockLogout).toHaveBeenCalled();

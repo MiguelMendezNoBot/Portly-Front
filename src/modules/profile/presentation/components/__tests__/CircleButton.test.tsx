@@ -5,7 +5,13 @@ import CircleButton from '../CircleButton';
 describe('CircleButton', () => {
   it('renderiza icono y ejecuta click', () => {
     const onClick = jest.fn();
-    render(<CircleButton icon={<span>+</span>} onClick={onClick} ariaLabel="agregar" />);
+    render(
+      <CircleButton
+        icon={<span>+</span>}
+        onClick={onClick}
+        ariaLabel="agregar"
+      />
+    );
     fireEvent.click(screen.getByRole('button', { name: 'agregar' }));
     expect(onClick).toHaveBeenCalled();
   });

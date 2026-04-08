@@ -2,7 +2,10 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../domain/userProfile.entity';
-import { mapBackendToUserProfile, mapUpdateDtoToBackend } from '../domain/userProfile.mapping';
+import {
+  mapBackendToUserProfile,
+  mapUpdateDtoToBackend,
+} from '../domain/userProfile.mapping';
 import type { IUserProfileRepository } from '../application/IUserProfileRepository';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 import { getToken } from '../../../infrastructure/storage/storage';
@@ -13,7 +16,7 @@ export const userProfileRepository: IUserProfileRepository = {
   async getProfile(): Promise<UserProfileEntity> {
     const data = await httpClient.getAuth<Record<string, unknown>>(
       '/api/profile',
-      'Error al cargar perfil',
+      'Error al cargar perfil'
     );
     const profile = mapBackendToUserProfile(data);
 
@@ -44,7 +47,7 @@ export const userProfileRepository: IUserProfileRepository = {
     const profilePromise = httpClient.putAuth<Record<string, unknown>>(
       '/api/profile',
       mapUpdateDtoToBackend(dto),
-      'Error al guardar perfil',
+      'Error al guardar perfil'
     );
 
     if (dto.socialLinks) {
@@ -66,7 +69,7 @@ export const userProfileRepository: IUserProfileRepository = {
     // Refetch to get the updated state including social links potentially processed by backend
     const data = await httpClient.getAuth<Record<string, unknown>>(
       '/api/profile',
-      'Error al cargar perfil actualizado',
+      'Error al cargar perfil actualizado'
     );
     const updatedProfile = mapBackendToUserProfile(data);
 
@@ -75,7 +78,7 @@ export const userProfileRepository: IUserProfileRepository = {
     if (dto.socialLinks) {
       updatedProfile.socialLinks = {
         ...updatedProfile.socialLinks,
-        ...dto.socialLinks
+        ...dto.socialLinks,
       };
     }
 

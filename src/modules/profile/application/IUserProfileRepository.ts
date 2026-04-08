@@ -1,4 +1,7 @@
-import type { UpdateUserProfileDTO, UserProfileEntity } from '../domain/userProfile.entity';
+import type {
+  UpdateUserProfileDTO,
+  UserProfileEntity,
+} from '../domain/userProfile.entity';
 
 export interface IUserProfileRepository {
   getProfile(): Promise<UserProfileEntity>;

@@ -8,7 +8,7 @@ describe('Navbar', () => {
     render(
       <MemoryRouter>
         <Navbar />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(screen.getByText('PORTLY')).toBeInTheDocument();
     expect(screen.getByText('PRINCIPAL')).toBeInTheDocument();

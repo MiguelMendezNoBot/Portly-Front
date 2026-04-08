@@ -11,7 +11,8 @@ jest.mock('../../../infrastructure/authService', () => ({
 }));
 
 jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
+  const actual =
+    jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -27,11 +28,13 @@ describe('ForgotPasswordForm', () => {
     render(
       <MemoryRouter>
         <ForgotPasswordForm />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Enviar enlace' }));
-    expect(await screen.findByText('Por favor, ingresa tu correo electrónico.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Por favor, ingresa tu correo electrónico.')
+    ).toBeInTheDocument();
   });
 
   it('solicita recuperacion y navega al codigo', async () => {
@@ -40,7 +43,7 @@ describe('ForgotPasswordForm', () => {
     render(
       <MemoryRouter>
         <ForgotPasswordForm />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     fireEvent.change(screen.getByPlaceholderText('tu@ejemplo.com'), {
@@ -50,7 +53,9 @@ describe('ForgotPasswordForm', () => {
 
     await waitFor(() => {
       expect(forgotPassword).toHaveBeenCalledWith('test@correo.com');
-      expect(mockNavigate).toHaveBeenCalledWith('/verify-code', { state: { email: 'test@correo.com' } });
+      expect(mockNavigate).toHaveBeenCalledWith('/verify-code', {
+        state: { email: 'test@correo.com' },
+      });
     });
   });
 });

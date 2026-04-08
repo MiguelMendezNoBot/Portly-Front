@@ -14,11 +14,15 @@ describe('SocialLinksForm', () => {
         links={{ instagram: '', facebook: '', youtube: '' }}
         connectedProviders={[]}
         onChange={onChange}
-      />,
+      />
     );
-    expect(screen.getByRole('button', { name: /Vincular GitHub/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Vincular GitHub/i })
+    ).toBeInTheDocument();
     expect(screen.getByLabelText('URL de Instagram')).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText('URL de Instagram'), { target: { value: 'https://ig.com/a' } });
+    fireEvent.change(screen.getByLabelText('URL de Instagram'), {
+      target: { value: 'https://ig.com/a' },
+    });
     expect(onChange).toHaveBeenCalledWith('instagram', 'https://ig.com/a');
   });
 });

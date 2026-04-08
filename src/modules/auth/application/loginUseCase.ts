@@ -1,6 +1,12 @@
 import type { AuthResponse } from '../domain/authTypes';
-import type { LoginFormErrors, LoginFormFields } from '../domain/loginCredentials';
-import { isLoginFormValid, validateLoginFields } from '../domain/loginCredentials';
+import type {
+  LoginFormErrors,
+  LoginFormFields,
+} from '../domain/loginCredentials';
+import {
+  isLoginFormValid,
+  validateLoginFields,
+} from '../domain/loginCredentials';
 import type { IAuthRepository } from './IAuthRepository';
 
 export type LoginUseCaseResult =
@@ -9,7 +15,7 @@ export type LoginUseCaseResult =
 
 export async function executeLoginUseCase(
   repo: IAuthRepository,
-  fields: LoginFormFields,
+  fields: LoginFormFields
 ): Promise<LoginUseCaseResult> {
   const errors = validateLoginFields(fields);
   if (!isLoginFormValid(errors)) {

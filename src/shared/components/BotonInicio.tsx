@@ -7,11 +7,14 @@ interface Props {
   children?: ReactNode;
 }
 
-export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO", to = "/", children }: Props) {
+export default function BotonInicio({
+  texto = 'EXPLORAR COMO INVITADO',
+  to = '/',
+  children,
+}: Props) {
   return (
     <div className="absolute top-0 right-0 z-20">
       <div className="relative bg-white pt-3 pb-5 pl-6 pr-5 rounded-bl-[2.5rem]">
-
         <div className="absolute top-0 -left-6 w-6 h-6 bg-white overflow-hidden pointer-events-none">
           <div className="w-full h-full bg-[#0f111a] rounded-tr-[1.5rem]"></div>
         </div>
@@ -32,7 +35,6 @@ export default function BotonInicio({ texto = "EXPLORAR COMO INVITADO", to = "/"
             {texto}
           </Link>
         )}
-
       </div>
     </div>
   );

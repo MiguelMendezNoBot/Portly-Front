@@ -5,7 +5,10 @@ interface FolderLayoutProps {
   className?: string;
 }
 
-export default function FolderLayout({ children, className = '' }: FolderLayoutProps) {
+export default function FolderLayout({
+  children,
+  className = '',
+}: FolderLayoutProps) {
   return (
     <div className={`relative flex-1 min-h-0 ${className}`}>
       <svg
@@ -15,7 +18,8 @@ export default function FolderLayout({ children, className = '' }: FolderLayoutP
       >
         <defs>
           <clipPath id="folder-clip" clipPathUnits="objectBoundingBox">
-            <path d="
+            <path
+              d="
               M 0.03,0
               L 0.77,0
               Q 0.80,0  0.80,0.03
@@ -30,15 +34,13 @@ export default function FolderLayout({ children, className = '' }: FolderLayoutP
               L 0.00,0.03
               Q 0.00,0.00  0.03,0.00
               Z
-            " />
+            "
+            />
           </clipPath>
         </defs>
       </svg>
 
-      <div
-        className="w-full h-full"
-        style={{ clipPath: 'url(#folder-clip)' }}
-      >
+      <div className="w-full h-full" style={{ clipPath: 'url(#folder-clip)' }}>
         <div className="w-full h-full bg-[#0d1117] relative">
           <div
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"

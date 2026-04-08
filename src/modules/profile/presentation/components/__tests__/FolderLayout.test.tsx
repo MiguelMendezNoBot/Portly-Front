@@ -7,7 +7,7 @@ describe('FolderLayout', () => {
     render(
       <FolderLayout>
         <p>contenido</p>
-      </FolderLayout>,
+      </FolderLayout>
     );
     expect(screen.getByText('contenido')).toBeInTheDocument();
   });

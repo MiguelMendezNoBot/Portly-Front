@@ -11,7 +11,8 @@ jest.mock('../../../infrastructure/authService', () => ({
 }));
 
 jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
+  const actual =
+    jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -23,7 +24,9 @@ describe('VerifyCodeForm', () => {
   it('muestra error con codigo incompleto', async () => {
     render(<VerifyCodeForm />);
     fireEvent.click(screen.getByRole('button', { name: 'VERIFICAR' }));
-    expect(await screen.findByText('Por favor, ingresa el código de 6 dígitos.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Por favor, ingresa el código de 6 dígitos.')
+    ).toBeInTheDocument();
   });
 
   it('verifica codigo correcto y navega', async () => {

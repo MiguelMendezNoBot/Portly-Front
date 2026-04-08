@@ -80,9 +80,10 @@ export default function ProfileAvatar({
               absolute -bottom-2 -right-2 w-10 h-10 rounded-[12px]
               flex items-center justify-center 
               shadow-lg border border-white/5 transition-colors
-              ${uploading
-                ? 'bg-[#8a4cfc]/40 cursor-not-allowed'
-                : 'bg-[#8a4cfc] hover:bg-[#9b5ffd] cursor-pointer'
+              ${
+                uploading
+                  ? 'bg-[#8a4cfc]/40 cursor-not-allowed'
+                  : 'bg-[#8a4cfc] hover:bg-[#9b5ffd] cursor-pointer'
               }
             `}
             onClick={(e) => {

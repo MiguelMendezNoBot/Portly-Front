@@ -9,7 +9,7 @@ describe('VisibilityToggles', () => {
       <VisibilityToggles
         visibility={{ showEmail: true, showProfession: false, showBio: true }}
         onChange={onChange}
-      />,
+      />
     );
 
     const toggles = screen.getAllByRole('switch');

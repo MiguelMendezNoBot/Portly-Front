@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { UserProfileEntity, UpdateUserProfileDTO } from '../../domain/userProfile.entity';
+import type {
+  UserProfileEntity,
+  UpdateUserProfileDTO,
+} from '../../domain/userProfile.entity';
 import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
@@ -71,7 +74,6 @@ function CheckIcon() {
     </svg>
   );
 }
-
 
 interface PillContentProps {
   mode: 'normal' | 'linked';
@@ -223,7 +225,9 @@ export function UserProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
   const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
-  const [socialErrors, setSocialErrors] = useState<Partial<Record<keyof UserProfileEntity['socialLinks'], string>>>({});
+  const [socialErrors, setSocialErrors] = useState<
+    Partial<Record<keyof UserProfileEntity['socialLinks'], string>>
+  >({});
   const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevConnectedProvidersRef = useRef<string[]>([]);
   const providersBaselineReadyRef = useRef(false);
@@ -233,7 +237,7 @@ export function UserProfilePage() {
     verifyAccountLink(profile.email)
       .then((res: any) => {
         const isSocialOnly = res?.isOAuthWithoutPassword === true;
-        
+
         setShowPasswordChange(!isSocialOnly);
       })
       .catch((err: any) => console.error('Error verifying account link:', err));
@@ -250,7 +254,7 @@ export function UserProfilePage() {
     if (pillTimerRef.current) clearTimeout(pillTimerRef.current);
     pillTimerRef.current = setTimeout(
       () => setPillMode('normal'),
-      LINKED_FLASH_MS,
+      LINKED_FLASH_MS
     );
   }, []);
 
@@ -263,11 +267,7 @@ export function UserProfilePage() {
     if (!providersBaselineReadyRef.current) {
       providersBaselineReadyRef.current = true;
       const raw = sessionStorage.getItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
-      if (
-        raw &&
-        isPortlyOAuthProvider(raw) &&
-        currentProviders.includes(raw)
-      ) {
+      if (raw && isPortlyOAuthProvider(raw) && currentProviders.includes(raw)) {
         sessionStorage.removeItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
         triggerLinkedFlash();
       }
@@ -285,7 +285,9 @@ export function UserProfilePage() {
   }, [profile?.connectedProviders, triggerLinkedFlash]);
 
   function validateSocialLinks(links: typeof form.socialLinks | undefined) {
-    const errors: Partial<Record<keyof UserProfileEntity['socialLinks'], string>> = {};
+    const errors: Partial<
+      Record<keyof UserProfileEntity['socialLinks'], string>
+    > = {};
     if (!links) return errors;
 
     for (const [key, value] of Object.entries(links)) {
@@ -302,13 +304,22 @@ export function UserProfilePage() {
         // Verify specific domains for known platforms
         if (key === 'instagram' && !hostname.includes('instagram.com')) {
           errors[key] = 'Debe ser un enlace de Instagram o iniciar con "@"';
-        } else if (key === 'facebook' && !hostname.includes('facebook') && !hostname.includes('fb.com')) {
+        } else if (
+          key === 'facebook' &&
+          !hostname.includes('facebook') &&
+          !hostname.includes('fb.com')
+        ) {
           errors[key] = 'Debe ser un enlace de Facebook o iniciar con "@"';
-        } else if (key === 'youtube' && !hostname.includes('youtube.com') && !hostname.includes('youtu.be')) {
+        } else if (
+          key === 'youtube' &&
+          !hostname.includes('youtube.com') &&
+          !hostname.includes('youtu.be')
+        ) {
           errors[key] = 'Debe ser un enlace de YouTube o iniciar con "@"';
         }
       } catch {
-        errors[key as keyof UserProfileEntity['socialLinks']] = 'Debe ser una URL válida o iniciar con "@"';
+        errors[key as keyof UserProfileEntity['socialLinks']] =
+          'Debe ser una URL válida o iniciar con "@"';
       }
     }
     return errors;
@@ -319,7 +330,8 @@ export function UserProfilePage() {
     if (Object.keys(errors).length > 0) {
       setSocialErrors(errors);
       const socialBlock = document.getElementById('social-links-section');
-      if (socialBlock) socialBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (socialBlock)
+        socialBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     setSocialErrors({});
@@ -451,7 +463,7 @@ export function UserProfilePage() {
                       errors={socialErrors}
                     />
                   </div>
-                  
+
                   {showPasswordChange && (
                     <ChangePasswordForm email={profile.email} />
                   )}

@@ -4,7 +4,11 @@ import { executeRegisterUseCase } from './registerUseCase';
 import { authHttpRepository } from '../infrastructure/authRepository';
 import { validateRegisterFields } from '../domain/registerValidation';
 import { useToast } from '../../../shared/hooks/useToast';
-import { saveToken, saveUsuarioId, saveEmail } from '../../../infrastructure/storage/storage';
+import {
+  saveToken,
+  saveUsuarioId,
+  saveEmail,
+} from '../../../infrastructure/storage/storage';
 
 interface FormFields {
   nombre: string;
@@ -42,7 +46,11 @@ export const useRegisterForm = () => {
 
   const handleChange =
     (field: keyof FormFields) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
       setFields((prev) => ({ ...prev, [field]: e.target.value }));
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     };
@@ -72,9 +80,15 @@ export const useRegisterForm = () => {
     } catch (error: unknown) {
       const err = error as { status?: number; message?: string };
       if (err.status === 409 || err.message?.toLowerCase().includes('correo')) {
-        setErrors((prev) => ({ ...prev, email: 'Este correo ya está registrado' }));
+        setErrors((prev) => ({
+          ...prev,
+          email: 'Este correo ya está registrado',
+        }));
       }
-      showToast(err.message ?? 'Error al registrarse, intenta de nuevo', 'error');
+      showToast(
+        err.message ?? 'Error al registrarse, intenta de nuevo',
+        'error'
+      );
     }
   };
 

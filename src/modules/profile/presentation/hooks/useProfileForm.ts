@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { UserProfileEntity, UpdateUserProfileDTO } from '../../domain/userProfile.entity';
+import type {
+  UserProfileEntity,
+  UpdateUserProfileDTO,
+} from '../../domain/userProfile.entity';
 
 export function useProfileForm(profile: UserProfileEntity | null) {
   const [form, setForm] = useState<UpdateUserProfileDTO>({});
@@ -20,13 +23,16 @@ export function useProfileForm(profile: UserProfileEntity | null) {
 
   function setField<K extends keyof UpdateUserProfileDTO>(
     key: K,
-    value: UpdateUserProfileDTO[K],
+    value: UpdateUserProfileDTO[K]
   ) {
     setForm((prev) => ({ ...prev, [key]: value }));
     setDirty(true);
   }
 
-  function setVisibility(key: keyof UserProfileEntity['visibility'], value: boolean) {
+  function setVisibility(
+    key: keyof UserProfileEntity['visibility'],
+    value: boolean
+  ) {
     setForm((prev) => ({
       ...prev,
       visibility: { ...prev.visibility, [key]: value },
@@ -34,7 +40,10 @@ export function useProfileForm(profile: UserProfileEntity | null) {
     setDirty(true);
   }
 
-  function setSocialLink(key: keyof UserProfileEntity['socialLinks'], value: string) {
+  function setSocialLink(
+    key: keyof UserProfileEntity['socialLinks'],
+    value: string
+  ) {
     setForm((prev) => ({
       ...prev,
       socialLinks: { ...prev.socialLinks, [key]: value },

@@ -8,9 +8,11 @@ describe('PlaceholderPage', () => {
     render(
       <MemoryRouter>
         <PlaceholderPage title="Mi modulo" subtitle="Subtitulo" />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(screen.getByText('Mi modulo')).toBeInTheDocument();
-    expect(screen.getByText('Esta sección está en desarrollo.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Esta sección está en desarrollo.')
+    ).toBeInTheDocument();
   });
 });

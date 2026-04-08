@@ -21,8 +21,9 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
   const { toast, showToast } = useToast();
 
   const passwordsMatch = newPassword === confirmPassword;
-  
-  const canSubmit = currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch;
+
+  const canSubmit =
+    currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +31,12 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
 
     setIsLoading(true);
     try {
-      await changePassword({ 
-        email, 
-        contrasenaActual: currentPassword, 
-        nuevaContrasena: newPassword 
+      await changePassword({
+        email,
+        contrasenaActual: currentPassword,
+        nuevaContrasena: newPassword,
       });
-      
+
       showToast('Contraseña actualizada con éxito', 'success');
       setCurrentPassword('');
       setNewPassword('');
@@ -106,7 +107,8 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
             </button>
           </div>
           <span className="text-[#6b7280] text-[11px] mt-1 pl-1">
-            Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (!,#,$,*,-,/,~).
+            Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
+            (!,#,$,*,-,/,~).
           </span>
         </div>
 

@@ -1,5 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
-import { mapBackendToUserProfile, mapUpdateDtoToBackend } from '../userProfile.mapping';
+import {
+  mapBackendToUserProfile,
+  mapUpdateDtoToBackend,
+} from '../userProfile.mapping';
 
 describe('mapBackendToUserProfile', () => {
   it('mapea campos planos y listas de enlaces/proveedores', () => {
@@ -40,7 +43,7 @@ describe('mapUpdateDtoToBackend', () => {
         lastName: 'B',
         profession: 'P',
         bio: 'Bio',
-      }),
+      })
     ).toEqual({
       nombre: 'A',
       apellido: 'B',

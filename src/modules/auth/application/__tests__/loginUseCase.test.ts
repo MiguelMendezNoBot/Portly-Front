@@ -24,7 +24,9 @@ describe('executeLoginUseCase', () => {
       email: 'u@u.com',
       rol: 'USER',
     };
-    const login = jest.fn<IAuthRepository['login']>().mockResolvedValue(response);
+    const login = jest
+      .fn<IAuthRepository['login']>()
+      .mockResolvedValue(response);
     const repo = { login, register: jest.fn() } as IAuthRepository;
 
     const result = await executeLoginUseCase(repo, {

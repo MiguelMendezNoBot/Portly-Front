@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { saveToken, saveUsuarioId, saveEmail } from '../../../../infrastructure/storage/storage';
+import {
+  saveToken,
+  saveUsuarioId,
+  saveEmail,
+} from '../../../../infrastructure/storage/storage';
 
 function decodeJwtPayload(token: string): Record<string, string> | null {
   try {
@@ -26,7 +30,7 @@ export function AuthCallbackPage() {
       }
 
       saveToken(token);
-      if (payload.sub)   saveUsuarioId(payload.sub);
+      if (payload.sub) saveUsuarioId(payload.sub);
       if (payload.email) saveEmail(payload.email);
 
       window.location.replace('/');
@@ -41,7 +45,9 @@ export function AuthCallbackPage() {
     return (
       <div className="min-h-screen bg-[#0f1629] flex items-center justify-center p-4 font-sans">
         <div className="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-sm text-center">
-          <h2 className="text-xl font-bold text-red-500 mb-2">Error de autenticación</h2>
+          <h2 className="text-xl font-bold text-red-500 mb-2">
+            Error de autenticación
+          </h2>
           <p className="text-gray-600 text-sm mb-6">{error}</p>
           <a
             href="/"

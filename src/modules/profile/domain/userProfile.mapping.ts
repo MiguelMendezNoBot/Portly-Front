@@ -1,6 +1,11 @@
-import type { UpdateUserProfileDTO, UserProfileEntity } from './userProfile.entity';
+import type {
+  UpdateUserProfileDTO,
+  UserProfileEntity,
+} from './userProfile.entity';
 
-export function mapBackendToUserProfile(data: Record<string, unknown>): UserProfileEntity {
+export function mapBackendToUserProfile(
+  data: Record<string, unknown>
+): UserProfileEntity {
   const socialLinks: UserProfileEntity['socialLinks'] = {
     github: '',
     linkedin: '',
@@ -11,10 +16,14 @@ export function mapBackendToUserProfile(data: Record<string, unknown>): UserProf
 
   const enlaces = data.enlaces;
   if (enlaces && Array.isArray(enlaces)) {
-    for (const enlace of enlaces as { plataformaProfesional?: string; direccionEnlace?: string }[]) {
+    for (const enlace of enlaces as {
+      plataformaProfesional?: string;
+      direccionEnlace?: string;
+    }[]) {
       const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
       if (plataforma in socialLinks) {
-        (socialLinks as Record<string, string>)[plataforma] = enlace.direccionEnlace || '';
+        (socialLinks as Record<string, string>)[plataforma] =
+          enlace.direccionEnlace || '';
       }
     }
   }
@@ -45,7 +54,9 @@ export function mapBackendToUserProfile(data: Record<string, unknown>): UserProf
   };
 }
 
-export function mapUpdateDtoToBackend(dto: UpdateUserProfileDTO): Record<string, unknown> {
+export function mapUpdateDtoToBackend(
+  dto: UpdateUserProfileDTO
+): Record<string, unknown> {
   return {
     nombre: dto.firstName,
     apellido: dto.lastName,

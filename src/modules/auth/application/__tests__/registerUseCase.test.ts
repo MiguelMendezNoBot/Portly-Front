@@ -18,7 +18,10 @@ describe('executeRegisterUseCase', () => {
     const register = jest.fn<IAuthRepository['register']>();
     const repo = { login: jest.fn(), register } as IAuthRepository;
 
-    const result = await executeRegisterUseCase(repo, { ...validForm, email: 'mal' });
+    const result = await executeRegisterUseCase(repo, {
+      ...validForm,
+      email: 'mal',
+    });
 
     expect(register).not.toHaveBeenCalled();
     expect(result.success).toBe(false);
@@ -31,7 +34,9 @@ describe('executeRegisterUseCase', () => {
       email: 'ana@example.com',
       rol: 'USER',
     };
-    const register = jest.fn<IAuthRepository['register']>().mockResolvedValue(response);
+    const register = jest
+      .fn<IAuthRepository['register']>()
+      .mockResolvedValue(response);
     const repo = { login: jest.fn(), register } as IAuthRepository;
 
     const result = await executeRegisterUseCase(repo, validForm);

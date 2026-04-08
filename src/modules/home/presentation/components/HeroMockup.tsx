@@ -1,5 +1,11 @@
 const LightningIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="#2dd4bf" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="#2dd4bf"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
   </svg>
 );
@@ -8,9 +14,10 @@ export const HeroMockup = () => {
   return (
     <div className="relative w-full max-w-[420px] aspect-square">
       <div className="absolute inset-0 rounded-3xl bg-[#0b0f22] border border-white/5 shadow-2xl shadow-black/50 overflow-hidden">
-
         <div className="absolute top-5 left-5 bg-[#0f1530]/80 backdrop-blur-sm rounded-xl px-3 py-2 border border-white/5 z-10">
-          <p className="text-slate-500 text-[10px] font-medium tracking-widest uppercase mb-1.5">Styles</p>
+          <p className="text-slate-500 text-[10px] font-medium tracking-widest uppercase mb-1.5">
+            Styles
+          </p>
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <div className="h-1 w-16 rounded-full bg-violet-500/60" />
@@ -36,8 +43,8 @@ export const HeroMockup = () => {
                   i === 2
                     ? 'rgba(45, 212, 191, 0.55)'
                     : i === 0
-                    ? 'rgba(255,255,255,0.04)'
-                    : 'rgba(255,255,255,0.06)',
+                      ? 'rgba(255,255,255,0.04)'
+                      : 'rgba(255,255,255,0.06)',
                 boxShadow: i === 2 ? '0 0 12px rgba(45,212,191,0.3)' : 'none',
                 backgroundColor:
                   i === 5
@@ -53,7 +60,9 @@ export const HeroMockup = () => {
           <div className="w-5 h-5 rounded-full bg-teal-400/15 flex items-center justify-center">
             <LightningIcon />
           </div>
-          <span className="text-teal-300 text-xs font-semibold tracking-wide">Auto-Responsive</span>
+          <span className="text-teal-300 text-xs font-semibold tracking-wide">
+            Auto-Responsive
+          </span>
         </div>
       </div>
 

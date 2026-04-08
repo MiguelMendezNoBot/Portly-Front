@@ -1,6 +1,6 @@
-import {UserTab} from "../components/UserTab"
-import {Navbar} from "../components/Navbar"
-import {HeroSection} from "../components/HeroSection"
+import { UserTab } from '../components/UserTab';
+import { Navbar } from '../components/Navbar';
+import { HeroSection } from '../components/HeroSection';
 import PestanaEsquina from '../../../../shared/components/CornerTab';
 
 export const HomePage = () => {

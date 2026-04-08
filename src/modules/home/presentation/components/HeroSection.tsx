@@ -7,7 +7,13 @@ const AVATARS = [
 ];
 
 const StarIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="#f59e0b"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path d="M12 2l2.9 6.3 6.8.6-5 4.7 1.5 6.7L12 17l-6.2 3.3 1.5-6.7-5-4.7 6.8-.6z" />
   </svg>
 );
@@ -30,7 +36,9 @@ export const HeroSection = () => {
         </h1>
 
         <p className="text-slate-400 text-base leading-relaxed mb-10 max-w-md">
-          La plataforma de portafolios profesionales para desarrolladores de software. Centraliza tus proyectos, habilidades y logros en un solo lugar — ya sea para postularte a un empleo o a un programa académico.
+          La plataforma de portafolios profesionales para desarrolladores de
+          software. Centraliza tus proyectos, habilidades y logros en un solo
+          lugar — ya sea para postularte a un empleo o a un programa académico.
         </p>
 
         <div className="flex items-center gap-4 mb-12">
@@ -59,7 +67,9 @@ export const HeroSection = () => {
               <StarIcon key={i} />
             ))}
           </div>
-          <span className="text-slate-400 text-sm">Utilizado por más de 2,000 profesionales del software</span>
+          <span className="text-slate-400 text-sm">
+            Utilizado por más de 2,000 profesionales del software
+          </span>
         </div>
       </div>
 

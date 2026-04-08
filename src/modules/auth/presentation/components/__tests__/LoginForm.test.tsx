@@ -21,22 +21,28 @@ describe('LoginForm', () => {
     render(
       <MemoryRouter>
         <LoginForm />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(screen.getByText('Bienvenido')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Iniciar Sesion' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '¿Olvidaste tu contraseña?' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Iniciar Sesion' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '¿Olvidaste tu contraseña?' })
+    ).toBeInTheDocument();
   });
 
   it('envia el formulario con submit', () => {
     render(
       <MemoryRouter>
         <LoginForm />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
-    fireEvent.submit(screen.getByRole('button', { name: 'Iniciar Sesion' }).closest('form')!);
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Iniciar Sesion' }).closest('form')!
+    );
     expect(mockHandleSubmit).toHaveBeenCalled();
   });
 });

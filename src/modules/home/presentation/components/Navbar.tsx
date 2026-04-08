@@ -8,12 +8,58 @@ const NAV_LINKS = [
 ];
 
 const PortlyLogo = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="9" height="9" rx="2" fill="#2dd4bf" opacity="0.9" />
-    <rect x="13" y="2" width="9" height="4" rx="1.5" fill="#2dd4bf" opacity="0.5" />
-    <rect x="13" y="8" width="9" height="3" rx="1.5" fill="#2dd4bf" opacity="0.3" />
-    <rect x="2" y="13" width="4" height="9" rx="1.5" fill="#2dd4bf" opacity="0.5" />
-    <rect x="8" y="13" width="14" height="9" rx="2" fill="#2dd4bf" opacity="0.7" />
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="2"
+      y="2"
+      width="9"
+      height="9"
+      rx="2"
+      fill="#2dd4bf"
+      opacity="0.9"
+    />
+    <rect
+      x="13"
+      y="2"
+      width="9"
+      height="4"
+      rx="1.5"
+      fill="#2dd4bf"
+      opacity="0.5"
+    />
+    <rect
+      x="13"
+      y="8"
+      width="9"
+      height="3"
+      rx="1.5"
+      fill="#2dd4bf"
+      opacity="0.3"
+    />
+    <rect
+      x="2"
+      y="13"
+      width="4"
+      height="9"
+      rx="1.5"
+      fill="#2dd4bf"
+      opacity="0.5"
+    />
+    <rect
+      x="8"
+      y="13"
+      width="14"
+      height="9"
+      rx="2"
+      fill="#2dd4bf"
+      opacity="0.7"
+    />
   </svg>
 );
 
@@ -24,7 +70,9 @@ export const Navbar = () => {
         <div className="w-10 h-10 rounded-xl bg-[#0d1830] border border-teal-500/20 flex items-center justify-center shadow-lg shadow-teal-500/10 group-hover:border-teal-500/40 transition-colors">
           <PortlyLogo />
         </div>
-        <span className="text-white font-bold text-base tracking-[0.15em]">PORTLY</span>
+        <span className="text-white font-bold text-base tracking-[0.15em]">
+          PORTLY
+        </span>
       </Link>
 
       <div className="hidden sm:flex items-center gap-1 bg-black/20 rounded-full px-2 py-1.5 border border-white/5">

@@ -10,7 +10,7 @@ describe('AppShell', () => {
         <AppShell userName="Ana" pageTitle="Perfil">
           <p>contenido principal</p>
         </AppShell>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(screen.getByText('Perfil')).toBeInTheDocument();

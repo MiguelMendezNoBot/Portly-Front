@@ -10,12 +10,11 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
 
   if (!token) return { user: null, logout: () => {} };
 
-  const email =
-    localStorage.getItem('email') ||
-    decodeJwtEmail(token) ||
-    '';
+  const email = localStorage.getItem('email') || decodeJwtEmail(token) || '';
 
-  const displayName = email ? emailToDisplayName(email).toUpperCase() : 'USUARIO';
+  const displayName = email
+    ? emailToDisplayName(email).toUpperCase()
+    : 'USUARIO';
 
   const user: AuthUser = { displayName, email };
 

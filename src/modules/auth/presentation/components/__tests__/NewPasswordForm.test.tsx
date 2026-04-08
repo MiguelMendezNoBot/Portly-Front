@@ -14,11 +14,14 @@ jest.mock('../../../infrastructure/authService', () => ({
 }));
 
 jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
+  const actual =
+    jest.requireActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-    useLocation: () => ({ state: { email: 'mail@test.com', codigo: '123456' } }),
+    useLocation: () => ({
+      state: { email: 'mail@test.com', codigo: '123456' },
+    }),
   };
 });
 
@@ -26,7 +29,9 @@ describe('NewPasswordForm', () => {
   it('renderiza formulario de nueva contraseña', () => {
     render(<NewPasswordForm />);
     expect(screen.getByText('Nueva Contraseña')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Cambiar contraseña/i })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: /Cambiar contraseña/i })
+    ).toBeDisabled();
   });
 
   it('muestra error cuando las contraseñas no coinciden', () => {
@@ -36,6 +41,8 @@ describe('NewPasswordForm', () => {
     fireEvent.change(inputs[0], { target: { value: 'abcd1234' } });
     fireEvent.change(inputs[1], { target: { value: 'abcd1235' } });
 
-    expect(screen.getByText('Las contraseñas no coinciden')).toBeInTheDocument();
+    expect(
+      screen.getByText('Las contraseñas no coinciden')
+    ).toBeInTheDocument();
   });
 });
