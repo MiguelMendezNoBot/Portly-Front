@@ -2,73 +2,17 @@ import { Link } from 'react-router-dom';
 
 const NAV_LINKS = [
   { label: 'PRINCIPAL', href: '/', active: true },
-  { label: 'PREION', href: '#' },
+  { label: 'PLANTILLAS', href: '#' },
   { label: 'SERVICIOS', href: '#' },
   { label: 'ACERCA DE', href: '#' },
 ];
-
-const PortlyLogo = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <rect
-      x="2"
-      y="2"
-      width="9"
-      height="9"
-      rx="2"
-      fill="#2dd4bf"
-      opacity="0.9"
-    />
-    <rect
-      x="13"
-      y="2"
-      width="9"
-      height="4"
-      rx="1.5"
-      fill="#2dd4bf"
-      opacity="0.5"
-    />
-    <rect
-      x="13"
-      y="8"
-      width="9"
-      height="3"
-      rx="1.5"
-      fill="#2dd4bf"
-      opacity="0.3"
-    />
-    <rect
-      x="2"
-      y="13"
-      width="4"
-      height="9"
-      rx="1.5"
-      fill="#2dd4bf"
-      opacity="0.5"
-    />
-    <rect
-      x="8"
-      y="13"
-      width="14"
-      height="9"
-      rx="2"
-      fill="#2dd4bf"
-      opacity="0.7"
-    />
-  </svg>
-);
 
 export const Navbar = () => {
   return (
     <nav className="flex items-center gap-6 px-6 py-4">
       <Link to="/" className="flex items-center gap-2.5 group">
         <div className="w-10 h-10 rounded-xl bg-[#0d1830] border border-teal-500/20 flex items-center justify-center shadow-lg shadow-teal-500/10 group-hover:border-teal-500/40 transition-colors">
-          <PortlyLogo />
+          <img src="/portly_logo.png" alt="Portly" className="w-7 h-7" />
         </div>
         <span className="text-white font-bold text-base tracking-[0.15em]">
           PORTLY
