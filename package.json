@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:report": "npx eslint . && npx tsc --noEmit && npx prettier --check . && npx jscpd src/"
   },
   "dependencies": {
     "react": "^19.2.4",
