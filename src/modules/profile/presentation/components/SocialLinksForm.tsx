@@ -84,7 +84,7 @@ function CheckIcon() {
 
 type SocialKey = keyof UserProfileEntity['socialLinks'];
 
-import { API_BASE } from '../constants/__mocks__/api.constants';
+import { API_BASE } from '../constants/api.constants';
 
 interface SocialLinksFormProps {
   links: UserProfileEntity['socialLinks'];
