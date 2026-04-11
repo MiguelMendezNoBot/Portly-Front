@@ -41,7 +41,7 @@ export default function FolderLayout({
       </svg>
 
       <div className="w-full h-full" style={{ clipPath: 'url(#folder-clip)' }}>
-        <div className="w-full h-full bg-[#0d1117] relative">
+        <div className="w-full h-full bg-src-0d1117 relative">
           <div
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"
             style={{ paddingTop: '0px' }}

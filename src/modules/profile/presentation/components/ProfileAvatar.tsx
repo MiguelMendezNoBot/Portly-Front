@@ -34,7 +34,7 @@ export default function ProfileAvatar({
   }
 
   return (
-    <div className="relative flex flex-col bg-[#091328] border border-white/5 rounded-[12px] overflow-hidden">
+    <div className="relative flex flex-col bg-src-091328 border border-white/5 rounded-[12px] overflow-hidden">
       <div className="absolute w-full h-full bg-white/1 pointer-events-none rounded-[12px]" />
 
       <div className="relative p-8 flex flex-col items-center gap-6">
@@ -42,7 +42,7 @@ export default function ProfileAvatar({
           className="relative cursor-pointer group"
           onClick={() => inputRef.current?.click()}
         >
-          <div className="w-32 h-32 rounded-2xl bg-[#000000] border border-white/10 flex items-center justify-center overflow-hidden shadow-lg">
+          <div className="w-32 h-32 rounded-2xl bg-src-000000 border border-white/10 flex items-center justify-center overflow-hidden shadow-lg">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
@@ -54,7 +54,7 @@ export default function ProfileAvatar({
                 aria-label={`Foto de perfil de ${name}`}
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-[#a3a6ff] to-[#a28efc] flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-src-a3a6ff to-src-a28efc flex items-center justify-center">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
                   <circle cx="32" cy="24" r="14" fill="white" opacity="0.3" />
                   <path
@@ -82,8 +82,8 @@ export default function ProfileAvatar({
               shadow-lg border border-white/5 transition-colors
               ${
                 uploading
-                  ? 'bg-[#8a4cfc]/40 cursor-not-allowed'
-                  : 'bg-[#8a4cfc] hover:bg-[#9b5ffd] cursor-pointer'
+                  ? 'bg-src-8a4cfc/40 cursor-not-allowed'
+                  : 'bg-src-8a4cfc hover:bg-src-9b5ffd cursor-pointer'
               }
             `}
             onClick={(e) => {
@@ -115,8 +115,8 @@ export default function ProfileAvatar({
         </div>
 
         <div className="text-center">
-          <h3 className="text-[#e5e7f6] font-bold text-xl">{name}</h3>
-          <p className="text-[#a7aab9] text-sm mt-1 leading-snug line-clamp-2">
+          <h3 className="text-src-e5e7f6 font-bold text-xl">{name}</h3>
+          <p className="text-src-a7aab9 text-sm mt-1 leading-snug line-clamp-2">
             {profession || 'Sin profesión'}
           </p>
           {sizeError && (

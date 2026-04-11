@@ -33,7 +33,7 @@ export function PortlyLogo() {
           opacity="0.3"
         />
       </svg>
-      <span className="text-[#1a1a2e] font-bold text-sm tracking-wide">
+      <span className="text-src-1a1a2e font-bold text-sm tracking-wide">
         PORTLY
       </span>
     </div>
@@ -44,7 +44,7 @@ export function PortlyLogoBig() {
   return (
     <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 shadow-lg">
       <img src="/portly_logo.png" alt="Portly" className="w-8 h-8" />
-      <span className="text-[#1a1a2e] font-bold text-lg tracking-wide">
+      <span className="text-src-1a1a2e font-bold text-lg tracking-wide">
         Portly
       </span>
     </div>
@@ -69,7 +69,7 @@ export default function AppShell({
   children,
 }: AppShellProps) {
   return (
-    <div className="h-screen bg-[#e2e2e8] overflow-hidden flex items-center justify-center p-5">
+    <div className="h-screen bg-src-e2e2e8 overflow-hidden flex items-center justify-center p-5">
       <div className="relative w-full max-w-[1920px] h-[calc(100vh-2.5rem)]">
         <svg
           aria-hidden="true"
@@ -88,7 +88,7 @@ export default function AppShell({
         </svg>
 
         <div
-          className="absolute inset-0 bg-[#0d1117] flex flex-col"
+          className="absolute inset-0 bg-src-0d1117 flex flex-col"
           style={{ clipPath: 'url(#app-shell-clip)' }}
         >
           <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
@@ -99,7 +99,7 @@ export default function AppShell({
                   {pageTitle}
                 </h1>
                 {pageSubtitle && (
-                  <p className="text-[#6b7280] text-sm mt-0.5">
+                  <p className="text-src-6b7280 text-sm mt-0.5">
                     {pageSubtitle}
                   </p>
                 )}

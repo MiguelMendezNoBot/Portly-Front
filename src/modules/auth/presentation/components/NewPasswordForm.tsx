@@ -14,7 +14,7 @@ const CheckmarkIcon = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
-    className="w-4 h-4 text-[#6C63FF] mr-2.5"
+    className="w-4 h-4 text-src-6c63ff mr-2.5"
   >
     <path
       d="M5 13l4 4L19 7"
@@ -254,7 +254,7 @@ export const NewPasswordForm = () => {
         </div>
 
         <div
-          className={`mt-8 bg-[#EEF2FF] px-6 py-5 rounded-2xl w-full border ${isSameAsOld ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}
+          className={`mt-8 bg-src-eef2ff px-6 py-5 rounded-2xl w-full border ${isSameAsOld ? 'border-red-200 bg-red-50' : 'border-gray-200'}`}
         >
           <label className="text-black text-[12.5px] font-bold uppercase tracking-wide">
             REQUISITOS DE SEGURIDAD
@@ -289,7 +289,7 @@ export const NewPasswordForm = () => {
             disabled={!canSubmit || isLoading}
             className={`mt-8 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] shadow-lg ${
               canSubmit && !isLoading
-                ? 'bg-[#6C63FF] hover:bg-[#5a52d5] cursor-pointer shadow-indigo-100'
+                ? 'bg-src-6c63ff hover:bg-src-5a52d5 cursor-pointer shadow-indigo-100'
                 : 'bg-gray-400 cursor-not-allowed shadow-none'
             }`}
           >
