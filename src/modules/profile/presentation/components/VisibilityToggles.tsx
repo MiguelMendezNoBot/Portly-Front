@@ -20,9 +20,9 @@ export default function VisibilityToggles({
   onChange,
 }: VisibilityTogglesProps) {
   return (
-    <div className="flex flex-col bg-[#091328] border border-white/5 rounded-[12px] overflow-hidden">
+    <div className="flex flex-col bg-src-091328 border border-white/5 rounded-[12px] overflow-hidden">
       <div className="px-6 py-4 border-b border-white/5">
-        <p className="text-[#a7aab9] text-xs font-semibold tracking-[1.2px] uppercase">
+        <p className="text-src-a7aab9 text-xs font-semibold tracking-[1.2px] uppercase">
           Visibilidad rápida
         </p>
       </div>
@@ -30,7 +30,7 @@ export default function VisibilityToggles({
       <div className="px-6 py-4 flex flex-col gap-4">
         {items.map(({ key, label }) => (
           <div key={key} className="flex items-center justify-between">
-            <span className="text-[#e5e7f6] text-sm font-normal">{label}</span>
+            <span className="text-src-e5e7f6 text-sm font-normal">{label}</span>
             <Toggle
               checked={visibility[key]}
               onChange={(val) => onChange(key, val)}

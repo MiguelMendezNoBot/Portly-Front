@@ -23,7 +23,7 @@ export const UserTab = () => {
     return (
       <Link
         to="/login"
-        className="flex items-center gap-2 text-[#6B72FF] font-bold text-sm hover:text-[#585fe6] transition-colors"
+        className="flex items-center gap-2 text-src-6b72ff font-bold text-sm hover:text-src-585fe6 transition-colors"
       >
         Iniciar Sesión
       </Link>
@@ -36,7 +36,7 @@ export const UserTab = () => {
     <div className="flex items-center gap-4">
       <button
         onClick={logout}
-        className="text-[#6B72FF] font-bold text-xs tracking-wide leading-tight hover:text-[#585fe6] transition-colors text-center"
+        className="text-src-6b72ff font-bold text-xs tracking-wide leading-tight hover:text-src-585fe6 transition-colors text-center"
       >
         CERRAR
         <br />
@@ -50,7 +50,7 @@ export const UserTab = () => {
         <div className="w-8 h-8 rounded-full bg-white border border-violet-200 flex items-center justify-center text-slate-600">
           <UserIcon />
         </div>
-        <span className="text-[#6B72FF] text-xs font-bold tracking-wide leading-tight">
+        <span className="text-src-6b72ff text-xs font-bold tracking-wide leading-tight">
           {firstName}
           <br />
           {lastName}

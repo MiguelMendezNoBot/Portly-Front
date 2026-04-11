@@ -54,13 +54,13 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
   };
 
   return (
-    <div className="w-full bg-[#091328] border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
+    <div className="w-full bg-src-091328 border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
       <Toast toast={toast} />
       <h2 className="text-white text-xl font-bold">Cambiar Contraseña</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
+          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
             CONTRASEÑA ACTUAL
           </label>
           <div className="relative">
@@ -87,7 +87,7 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
+          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
             NUEVA CONTRASEÑA
           </label>
           <div className="relative">
@@ -111,14 +111,14 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               )}
             </button>
           </div>
-          <span className="text-[#6b7280] text-[11px] mt-1 pl-1">
+          <span className="text-src-6b7280 text-[11px] mt-1 pl-1">
             Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
             (!,#,$,*,-,/,~).
           </span>
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-[#a1a1aa] text-[11px] font-bold uppercase tracking-wider">
+          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
             CONFIRMAR NUEVA CONTRASEÑA
           </label>
           <div className="relative">
@@ -154,8 +154,8 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
           disabled={!canSubmit || isLoading}
           className={`w-full py-3.5 rounded-2xl text-white font-bold transition-all mt-2.5 ${
             canSubmit && !isLoading
-              ? 'bg-[#818cf8] hover:bg-[#6366f1] active:scale-[0.98] shadow-lg shadow-indigo-500/20 cursor-pointer'
-              : 'bg-[#818cf8]/50 cursor-not-allowed text-white/70'
+              ? 'bg-src-818cf8 hover:bg-src-6366f1 active:scale-[0.98] shadow-lg shadow-indigo-500/20 cursor-pointer'
+              : 'bg-src-818cf8/50 cursor-not-allowed text-white/70'
           }`}
         >
           {isLoading ? 'Actualizando...' : 'Actualizar Contraseña'}

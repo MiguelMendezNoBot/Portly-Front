@@ -20,7 +20,7 @@ export default function Toggle({
         'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent',
         'transition-colors duration-200 ease-in-out focus:outline-none',
         'disabled:opacity-50 disabled:cursor-not-allowed',
-        checked ? 'bg-[#7c6bec]' : 'bg-[#2a2d3e]',
+        checked ? 'bg-src-7c6bec' : 'bg-src-2a2d3e',
       ].join(' ')}
     >
       <span
