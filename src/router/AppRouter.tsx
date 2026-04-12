@@ -24,26 +24,6 @@ export const AppRouter = () => {
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/complete-profile" element={<CompleteProfilePage />} />
-        <Route
-          path="/home"
-          element={<div className="text-white p-8">Home</div>}
-        />
-        <Route
-          path="/dashboard"
-          element={<div className="text-white p-8">Dashboard</div>}
-        />
-        <Route
-          path="/portfolios"
-          element={<div className="text-white p-8">Portfolios</div>}
-        />
-        <Route
-          path="/analytics"
-          element={<div className="text-white p-8">Analytics</div>}
-        />
-        <Route
-          path="/professional-profile"
-          element={<div className="text-white p-8">Professional Profile</div>}
-        />
         {/* Rutas autenticadas con layout compartido */}
         <Route element={<AuthenticatedLayout />}>
           <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
