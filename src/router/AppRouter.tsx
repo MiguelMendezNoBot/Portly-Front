@@ -7,6 +7,7 @@ import { VerifyCodePage } from '../modules/auth/presentation/pages/VerifyCodePag
 import { NewPasswordPage } from '../modules/auth/presentation/pages/NewPasswordPage';
 import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
+import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
 
 export const AppRouter = () => {
   return (
@@ -20,6 +21,7 @@ export const AppRouter = () => {
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route path="/complete-profile" element={<CompleteProfilePage />} />
         <Route
           path="/home"
           element={<div className="text-white p-8">Home</div>}
