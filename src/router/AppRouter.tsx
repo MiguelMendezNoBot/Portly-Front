@@ -7,6 +7,8 @@ import { VerifyCodePage } from '../modules/auth/presentation/pages/VerifyCodePag
 import { NewPasswordPage } from '../modules/auth/presentation/pages/NewPasswordPage';
 import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
+import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
+import ProfessionalProfilePage from "../modules/professional/presentation/pages/ProfessionalProfilePage"
 
 export const AppRouter = () => {
   return (
@@ -20,26 +22,13 @@ export const AppRouter = () => {
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
-        <Route
-          path="/home"
-          element={<div className="text-white p-8">Home</div>}
-        />
-        <Route
-          path="/dashboard"
-          element={<div className="text-white p-8">Dashboard</div>}
-        />
-        <Route
-          path="/portfolios"
-          element={<div className="text-white p-8">Portfolios</div>}
-        />
-        <Route
-          path="/analytics"
-          element={<div className="text-white p-8">Analytics</div>}
-        />
-        <Route
-          path="/professional-profile"
-          element={<div className="text-white p-8">Professional Profile</div>}
-        />
+        {/* Rutas autenticadas con layout compartido */}
+        <Route element={<AuthenticatedLayout />}>
+          <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
+          <Route path="/analytics" element={<div className="text-white p-8">analytics</div>} />
+          <Route path="/portfolios" element={<div className="text-white p-8">portfolios</div>} />
+          <Route path="/professional-profile" element={<ProfessionalProfilePage />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
