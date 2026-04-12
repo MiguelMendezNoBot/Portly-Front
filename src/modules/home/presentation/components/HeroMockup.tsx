@@ -13,8 +13,8 @@ const LightningIcon = () => (
 export const HeroMockup = () => {
   return (
     <div className="relative w-full max-w-[420px] aspect-square">
-      <div className="absolute inset-0 rounded-3xl bg-[#0b0f22] border border-white/5 shadow-2xl shadow-black/50 overflow-hidden">
-        <div className="absolute top-5 left-5 bg-[#0f1530]/80 backdrop-blur-sm rounded-xl px-3 py-2 border border-white/5 z-10">
+      <div className="absolute inset-0 rounded-3xl bg-src-0b0f22 border border-white/5 shadow-2xl shadow-black/50 overflow-hidden">
+        <div className="absolute top-5 left-5 bg-src-0f1530/80 backdrop-blur-sm rounded-xl px-3 py-2 border border-white/5 z-10">
           <p className="text-slate-500 text-[10px] font-medium tracking-widest uppercase mb-1.5">
             Styles
           </p>
@@ -56,7 +56,7 @@ export const HeroMockup = () => {
           <div className="absolute w-3 h-3 rounded-full bg-teal-400/70 shadow-lg shadow-teal-400/50" />
         </div>
 
-        <div className="absolute bottom-5 right-5 flex items-center gap-1.5 bg-[#0d1428]/90 backdrop-blur-sm border border-teal-500/20 rounded-full px-3 py-1.5 z-10">
+        <div className="absolute bottom-5 right-5 flex items-center gap-1.5 bg-src-0d1428/90 backdrop-blur-sm border border-teal-500/20 rounded-full px-3 py-1.5 z-10">
           <div className="w-5 h-5 rounded-full bg-teal-400/15 flex items-center justify-center">
             <LightningIcon />
           </div>

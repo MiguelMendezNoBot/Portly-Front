@@ -16,8 +16,8 @@ export default function PlaceholderPage({
   return (
     <AppShell userName={TEMP_USER} pageTitle={title} pageSubtitle={subtitle}>
       <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-4 text-center">
-        {icon && <div className="text-[#7c6bec]/50 mb-2">{icon}</div>}
-        <p className="text-[#4b5563] text-sm">
+        {icon && <div className="text-src-7c6bec/50 mb-2">{icon}</div>}
+        <p className="text-src-4b5563 text-sm">
           Esta sección está en desarrollo.
         </p>
       </div>

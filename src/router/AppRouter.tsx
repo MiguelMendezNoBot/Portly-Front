@@ -8,6 +8,8 @@ import { NewPasswordPage } from '../modules/auth/presentation/pages/NewPasswordP
 import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
 import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
+import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
+import ProfessionalProfilePage from "../modules/professional/presentation/pages/ProfessionalProfilePage"
 
 export const AppRouter = () => {
   return (
@@ -42,6 +44,13 @@ export const AppRouter = () => {
           path="/professional-profile"
           element={<div className="text-white p-8">Professional Profile</div>}
         />
+        {/* Rutas autenticadas con layout compartido */}
+        <Route element={<AuthenticatedLayout />}>
+          <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
+          <Route path="/analytics" element={<div className="text-white p-8">analytics</div>} />
+          <Route path="/portfolios" element={<div className="text-white p-8">portfolios</div>} />
+          <Route path="/professional-profile" element={<ProfessionalProfilePage />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

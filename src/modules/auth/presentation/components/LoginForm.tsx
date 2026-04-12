@@ -62,7 +62,7 @@ export function LoginForm() {
             }}
             className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-xl py-3.5 text-gray-900 font-semibold hover:bg-gray-50 transition-colors"
           >
-            <LinkedInIcon className="w-5 h-5 text-[#0077B5]" />
+            <LinkedInIcon className="w-5 h-5 text-src-0077b5" />
             LinkedIn
           </button>
         </div>
@@ -144,7 +144,7 @@ export function LoginForm() {
 
         <button
           type="submit"
-          className="w-full bg-[#6B72FF] hover:bg-[#585fe6] text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg shadow-indigo-200"
+          className="w-full bg-src-6b72ff hover:bg-src-585fe6 text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg shadow-indigo-200"
         >
           Iniciar Sesion
         </button>
@@ -154,7 +154,7 @@ export function LoginForm() {
         ¿Nuevo en la plataforma?{' '}
         <Link
           to="/register"
-          className="text-[#6B72FF] font-bold hover:underline"
+          className="text-src-6b72ff font-bold hover:underline"
         >
           Crea una cuenta
         </Link>

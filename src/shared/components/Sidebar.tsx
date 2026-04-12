@@ -111,7 +111,7 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
   return (
     <aside className="flex flex-col w-52 shrink-0 py-4 gap-5">
       <div className="flex items-center gap-3 px-2">
-        <div className="w-9 h-9 rounded-full bg-[#7c6bec]/30 flex items-center justify-center shrink-0 overflow-hidden border border-[#7c6bec]/40">
+        <div className="w-9 h-9 rounded-full bg-src-7c6bec/30 flex items-center justify-center shrink-0 overflow-hidden border border-src-7c6bec/40">
           {avatarUrl ? (
             <img
               src={avatarUrl}
@@ -120,7 +120,7 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
               referrerPolicy="no-referrer"
             />
           ) : (
-            <span className="text-[#b0a8f5] text-sm font-semibold">
+            <span className="text-src-b0a8f5 text-sm font-semibold">
               {initials}
             </span>
           )}
@@ -140,17 +140,17 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
                 'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm',
                 'transition-all duration-150',
                 isActive
-                  ? 'bg-[#7c6bec]/15 text-[#c4bef8]'
-                  : 'text-[#5a6278] hover:text-[#9ca3af] hover:bg-white/5',
+                  ? 'bg-src-7c6bec/15 text-src-c4bef8'
+                  : 'text-src-5a6278 hover:text-src-9ca3af hover:bg-white/5',
               ].join(' ')
             }
           >
             {({ isActive }) => (
               <>
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#7c6bec] rounded-r-full" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-src-7c6bec rounded-r-full" />
                 )}
-                <span className={isActive ? 'text-[#7c6bec]' : ''}>{icon}</span>
+                <span className={isActive ? 'text-src-7c6bec' : ''}>{icon}</span>
                 <span className={isActive ? 'font-medium' : ''}>{label}</span>
               </>
             )}

@@ -93,10 +93,10 @@ function PillContent({
   if (mode === 'linked') {
     return (
       <div className="w-[240px] bg-emerald-500 rounded-full flex items-center gap-3 px-3 py-1.5 animate-fade-in">
-        <div className="w-8 h-8 rounded-full bg-[#0f111a] flex items-center justify-center text-emerald-400 shrink-0">
+        <div className="w-8 h-8 rounded-full bg-src-0f111a flex items-center justify-center text-emerald-400 shrink-0">
           <CheckIcon />
         </div>
-        <span className="text-[#0f111a] font-extrabold text-xs tracking-wide uppercase whitespace-nowrap">
+        <span className="text-src-0f111a font-extrabold text-xs tracking-wide uppercase whitespace-nowrap">
           Vinculación correcta
         </span>
       </div>
@@ -112,12 +112,12 @@ function PillContent({
         title="Guardar perfil"
         className={`w-[38px] h-[38px] rounded-[12px] flex items-center justify-center transition-all ${
           saving || !dirty
-            ? 'bg-[#1c1154]/40 cursor-not-allowed text-[#9fa2ff]/50'
-            : 'bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 text-[#9fa2ff] cursor-pointer shadow-md'
+            ? 'bg-src-1c1154/40 cursor-not-allowed text-src-9fa2ff/50'
+            : 'bg-src-1c1154 hover:bg-src-2b1b7a active:scale-95 text-src-9fa2ff cursor-pointer shadow-md'
         }`}
       >
         {saving ? (
-          <div className="w-4 h-4 border-2 border-[#9fa2ff] border-t-transparent rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-src-9fa2ff border-t-transparent rounded-full animate-spin" />
         ) : (
           <SaveIcon />
         )}
@@ -126,7 +126,7 @@ function PillContent({
         type="button"
         onClick={onClose}
         title="Cerrar"
-        className="w-[38px] h-[38px] rounded-[12px] bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 flex items-center justify-center text-[#9fa2ff] transition-all cursor-pointer shadow-md"
+        className="w-[38px] h-[38px] rounded-[12px] bg-src-1c1154 hover:bg-src-2b1b7a active:scale-95 flex items-center justify-center text-src-9fa2ff transition-all cursor-pointer shadow-md"
       >
         <CloseIcon />
       </button>
@@ -144,7 +144,7 @@ function PillContentMobile({
   if (mode === 'linked') {
     return (
       <div className="bg-emerald-500 rounded-full flex items-center gap-2 px-4 py-1.5 animate-fade-in">
-        <div className="w-7 h-7 rounded-full bg-[#0f111a] flex items-center justify-center text-emerald-400 shrink-0">
+        <div className="w-7 h-7 rounded-full bg-src-0f111a flex items-center justify-center text-emerald-400 shrink-0">
           <svg
             width="14"
             height="14"
@@ -157,7 +157,7 @@ function PillContentMobile({
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
         </div>
-        <span className="text-[#0f111a] font-extrabold text-[10px] tracking-wide uppercase whitespace-nowrap pr-1">
+        <span className="text-src-0f111a font-extrabold text-[10px] tracking-wide uppercase whitespace-nowrap pr-1">
           Vinculación correcta
         </span>
       </div>
@@ -165,7 +165,7 @@ function PillContentMobile({
   }
 
   return (
-    <div className="bg-[#9fa2ff] flex items-center gap-3 px-3 py-1.5 rounded-full shadow-lg">
+    <div className="bg-src-9fa2ff flex items-center gap-3 px-3 py-1.5 rounded-full shadow-lg">
       <button
         type="button"
         onClick={onSave}
@@ -173,12 +173,12 @@ function PillContentMobile({
         title="Guardar"
         className={`w-8 h-8 rounded-[10px] flex items-center justify-center transition-all ${
           saving || !dirty
-            ? 'bg-[#1c1154]/40 cursor-not-allowed text-[#9fa2ff]/50'
-            : 'bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 text-[#9fa2ff] cursor-pointer shadow-lg'
+            ? 'bg-src-1c1154/40 cursor-not-allowed text-src-9fa2ff/50'
+            : 'bg-src-1c1154 hover:bg-src-2b1b7a active:scale-95 text-src-9fa2ff cursor-pointer shadow-lg'
         }`}
       >
         {saving ? (
-          <div className="w-3.5 h-3.5 border-2 border-[#9fa2ff] border-t-transparent rounded-full animate-spin" />
+          <div className="w-3.5 h-3.5 border-2 border-src-9fa2ff border-t-transparent rounded-full animate-spin" />
         ) : (
           <svg
             width="16"
@@ -198,7 +198,7 @@ function PillContentMobile({
         type="button"
         onClick={onClose}
         title="Cerrar"
-        className="w-8 h-8 rounded-[10px] bg-[#1c1154] hover:bg-[#2b1b7a] active:scale-95 flex items-center justify-center text-[#9fa2ff] transition-all cursor-pointer shadow-lg"
+        className="w-8 h-8 rounded-[10px] bg-src-1c1154 hover:bg-src-2b1b7a active:scale-95 flex items-center justify-center text-src-9fa2ff transition-all cursor-pointer shadow-lg"
       >
         <svg
           width="16"
@@ -348,8 +348,8 @@ export function UserProfilePage() {
     return (
       <div className="min-h-screen bg-white p-2 md:p-4 box-border flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-2 border-[#7c6bec]/30 border-t-[#7c6bec] rounded-full animate-spin" />
-          <p className="text-[#6b7280] text-sm">Cargando perfil…</p>
+          <div className="w-10 h-10 border-2 border-src-7c6bec/30 border-t-src-7c6bec rounded-full animate-spin" />
+          <p className="text-src-6b7280 text-sm">Cargando perfil…</p>
         </div>
       </div>
     );
@@ -368,12 +368,12 @@ export function UserProfilePage() {
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
-      <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0f111a] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
+      <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-091328 rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="w-11 h-11 rounded-full bg-[#9fa2ff] flex items-center justify-center text-[#1c1154] shadow-lg"
+            className="w-11 h-11 rounded-full bg-src-9fa2ff flex items-center justify-center text-src-1c1154 shadow-lg"
             aria-label="Abrir menú"
           >
             <svg
@@ -404,7 +404,7 @@ export function UserProfilePage() {
             <h1 className="text-white text-2xl font-bold leading-tight">
               Ajustes de perfil
             </h1>
-            <p className="text-[#6b7280] text-sm mt-0.5">
+            <p className="text-src-6b7280 text-sm mt-0.5">
               Puedes modificar y editar algunos detalles en este apartado.
             </p>
           </div>
@@ -414,7 +414,7 @@ export function UserProfilePage() {
           <h1 className="text-white text-lg font-bold leading-tight">
             Ajustes de perfil
           </h1>
-          <p className="text-[#6b7280] text-xs mt-0.5">
+          <p className="text-src-6b7280 text-xs mt-0.5">
             Puedes modificar y editar algunos detalles.
           </p>
         </div>
@@ -480,7 +480,7 @@ export function UserProfilePage() {
               className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-[#0f111a] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
+            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-src-091328 z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
                   <img

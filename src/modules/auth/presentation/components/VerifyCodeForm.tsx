@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyCode, forgotPassword } from '../../infrastructure/authService';
 
 const CodeIcon = () => (
-  <div className="w-16 h-16 bg-[#EEF2FF] rounded-full flex items-center justify-center mb-6 shadow-sm">
-    <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7 text-[#6C63FF]">
+  <div className="w-16 h-16 bg-src-eef2ff rounded-full flex items-center justify-center mb-6 shadow-sm">
+    <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7 text-src-6c63ff">
       <path
         d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525M12 22H3L4.99999 20"
         stroke="currentColor"
@@ -187,7 +187,7 @@ export const VerifyCodeForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] tracking-wide ${isLoading ? 'bg-[#5a52d5] cursor-wait' : 'bg-[#6C63FF] hover:bg-[#5a52d5]'}`}
+          className={`w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] tracking-wide ${isLoading ? 'bg-src-5a52d5 cursor-wait' : 'bg-src-6c63ff hover:bg-src-5a52d5'}`}
         >
           {isLoading ? 'VERIFICANDO...' : 'VERIFICAR'}
         </button>
@@ -199,7 +199,7 @@ export const VerifyCodeForm = () => {
           type="button"
           onClick={handleResend}
           disabled={!canResend}
-          className={`font-semibold transition-colors ${canResend ? 'text-[#6C63FF] hover:underline cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
+          className={`font-semibold transition-colors ${canResend ? 'text-src-6c63ff hover:underline cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
         >
           Reenviar {canResend ? '' : `en ${formatTime(secondsLeft)}`}
         </button>

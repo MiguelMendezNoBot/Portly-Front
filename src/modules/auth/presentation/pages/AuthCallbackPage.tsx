@@ -49,7 +49,7 @@ export function AuthCallbackPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0f1629] flex items-center justify-center p-4 font-sans">
+      <div className="min-h-screen bg-src-0f1629 flex items-center justify-center p-4 font-sans">
         <div className="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-sm text-center">
           <h2 className="text-xl font-bold text-red-500 mb-2">
             Error de autenticación
@@ -57,7 +57,7 @@ export function AuthCallbackPage() {
           <p className="text-gray-600 text-sm mb-6">{error}</p>
           <a
             href="/"
-            className="inline-block bg-[#6B72FF] hover:bg-[#585fe6] text-white font-bold py-3 px-6 rounded-xl transition-colors"
+            className="inline-block bg-src-6b72ff hover:bg-src-585fe6 text-white font-bold py-3 px-6 rounded-xl transition-colors"
           >
             Volver al inicio
           </a>
@@ -67,7 +67,7 @@ export function AuthCallbackPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1629] flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-src-0f1629 flex items-center justify-center font-sans">
       <p className="text-white text-sm">Procesando autenticación...</p>
     </div>
   );

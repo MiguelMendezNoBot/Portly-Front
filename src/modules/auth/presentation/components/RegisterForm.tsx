@@ -97,13 +97,13 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                     onClick={() => (window.location.href = OAUTH_URLS.linkedin)}
                     className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 transition-colors"
                   >
-                    <LinkedInIcon className="w-8 h-8 text-[#0077B5]" />
+                    <LinkedInIcon className="w-8 h-8 text-src-0077b5" />
                   </button>
                 </div>
               </div>
               <button
                 onClick={nextStep}
-                className="mt-4 w-full py-2 rounded-lg text-sm text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors"
+                className="mt-4 w-full py-2 rounded-lg text-sm text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors"
               >
                 Siguiente
               </button>
@@ -132,14 +132,14 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/3 py-1 rounded-lg text-[#6C63FF] font-light text-sm border border-[#6C63FF] hover:bg-gray-50 transition-colors"
+                  className="w-1/3 py-1 rounded-lg text-src-6c63ff font-light text-sm border border-src-6c63ff hover:bg-gray-50 transition-colors"
                 >
                   {' '}
                   Atrás
                 </button>
                 <button
                   onClick={nextStep}
-                  className="w-2/3 py-2 text-sm rounded-lg text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors"
+                  className="w-2/3 py-2 text-sm rounded-lg text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors"
                 >
                   {' '}
                   Siguiente{' '}
@@ -171,13 +171,13 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/3 py-1 rounded-lg text-[#6C63FF] font-light text-sm border border-[#6C63FF] hover:bg-gray-50 transition-colors"
+                  className="w-1/3 py-1 rounded-lg text-src-6c63ff font-light text-sm border border-src-6c63ff hover:bg-gray-50 transition-colors"
                 >
                   Atrás
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-2 text-sm rounded-lg text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors"
+                  className="w-2/3 py-2 text-sm rounded-lg text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors"
                 >
                   Finalizar registro
                 </button>
@@ -189,7 +189,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
             <span className="text-gray-500 text-sm">¿Ya tienes cuenta? </span>
             <Link
               to="/login"
-              className="text-[#6C63FF] font-medium text-sm cursor-pointer hover:underline"
+              className="text-src-6c63ff font-medium text-sm cursor-pointer hover:underline"
             >
               Iniciar Sesión
             </Link>
