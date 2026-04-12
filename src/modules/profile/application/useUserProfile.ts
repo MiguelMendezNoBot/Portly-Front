@@ -5,6 +5,10 @@ import type {
 } from '../domain/userProfile.entity';
 import { userProfileRepository } from '../infrastructure/userProfile.repository';
 
+// Caché global para evitar recargar el perfil en cada navegación
+let globalProfileCache: UserProfileEntity | null = null;
+let profileFetchPromise: Promise<UserProfileEntity> | null = null;
+
 interface UseUserProfileReturn {
   profile: UserProfileEntity | null;
   loading: boolean;
@@ -16,21 +20,37 @@ interface UseUserProfileReturn {
 }
 
 export function useUserProfile(): UseUserProfileReturn {
-  const [profile, setProfile] = useState<UserProfileEntity | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfileEntity | null>(globalProfileCache);
+  const [loading, setLoading] = useState(!globalProfileCache);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    if (!globalProfileCache) {
+      setLoading(true);
+      setError(null);
+    }
+
     try {
-      const data = await userProfileRepository.getProfile();
-      setProfile(data);
+      if (!profileFetchPromise) {
+        profileFetchPromise = userProfileRepository.getProfile().finally(() => {
+          profileFetchPromise = null;
+        });
+      }
+      
+      const data = await profileFetchPromise;
+      globalProfileCache = data;
+      setProfile(globalProfileCache);
+      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al cargar el perfil');
     } finally {
-      setLoading(false);
+      if (!globalProfileCache) {
+        setLoading(false);
+      } else {
+        // En caso de que se haya resuelto y ya esté montado
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -43,6 +63,7 @@ export function useUserProfile(): UseUserProfileReturn {
     setError(null);
     try {
       const updated = await userProfileRepository.updateProfile(dto);
+      globalProfileCache = updated;
       setProfile(updated);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al guardar');
@@ -56,7 +77,12 @@ export function useUserProfile(): UseUserProfileReturn {
     setSaving(true);
     try {
       const { avatarUrl } = await userProfileRepository.updateAvatar(file);
-      setProfile((prev) => (prev ? { ...prev, avatarUrl } : prev));
+      setProfile((prev) => {
+        if (!prev) return prev;
+        const updated = { ...prev, avatarUrl };
+        globalProfileCache = updated;
+        return updated;
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al subir avatar');
     } finally {
@@ -71,6 +97,9 @@ export function useUserProfile(): UseUserProfileReturn {
     error,
     saveProfile,
     uploadAvatar,
-    refetch: fetchProfile,
+    refetch: () => {
+       globalProfileCache = null; // Forzamos nueva recarga sin caché
+       fetchProfile();
+    },
   };
 }

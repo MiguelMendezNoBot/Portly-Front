@@ -54,14 +54,14 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
   };
 
   return (
-    <div className="w-full bg-src-091328 border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
+    <div className="w-full bg-src-0f111a border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
       <Toast toast={toast} />
       <h2 className="text-white text-xl font-bold">Cambiar Contraseña</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
-            CONTRASEÑA ACTUAL
+          <label className="text-white text-sm">
+            Contraseña Actual
           </label>
           <div className="relative">
             <input
@@ -69,7 +69,7 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full bg-black text-white text-sm px-4 py-3 rounded-[14px] border border-gray-800 outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
               required
             />
             <button
@@ -87,8 +87,8 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
-            NUEVA CONTRASEÑA
+          <label className="text-white text-sm">
+            Nueva Contraseña
           </label>
           <div className="relative">
             <input
@@ -96,7 +96,7 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full bg-black text-white text-sm px-4 py-3 rounded-[14px] border border-gray-800 outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
               required
             />
             <button
@@ -118,8 +118,8 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-src-a1a1aa text-[11px] font-bold uppercase tracking-wider">
-            CONFIRMAR NUEVA CONTRASEÑA
+          <label className="text-white text-sm">
+            Confirmar Nueva Contraseña
           </label>
           <div className="relative">
             <input
@@ -127,7 +127,7 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-black text-white text-sm px-4 py-3 rounded-[14px] border border-gray-800 outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
               required
             />
             <button

@@ -34,7 +34,7 @@ export default function ProfileAvatar({
   }
 
   return (
-    <div className="relative flex flex-col bg-src-091328 border border-white/5 rounded-[12px] overflow-hidden">
+    <div className="relative flex flex-col bg-src-0f111a border border-white/5 rounded-[12px] overflow-hidden">
       <div className="absolute w-full h-full bg-white/1 pointer-events-none rounded-[12px]" />
 
       <div className="relative p-8 flex flex-col items-center gap-6">
