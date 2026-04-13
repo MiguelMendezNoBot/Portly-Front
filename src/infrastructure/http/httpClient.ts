@@ -75,4 +75,6 @@ export const httpClient = {
       true,
       fallback
     ),
+  deleteAuth: <T>(path: string, fallback = 'Error al eliminar datos') =>
+    request<T>(path, { method: 'DELETE' }, true, fallback),
 };
