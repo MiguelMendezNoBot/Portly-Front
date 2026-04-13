@@ -1,3 +1,5 @@
+import { ConfirmModal } from '../../../../../shared/components/ConfirmModal';
+
 interface DeleteProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,8 +15,6 @@ export const DeleteConfirmModal = ({
   title,
   isLoading = false,
 }: DeleteProps) => {
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="bg-[#0f111a] w-full max-w-md rounded-[24px] border border-white/10 p-8 shadow-2xl text-center">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Experience } from '../../../domain/entities/Experience';
 import { HttpExperienceRepository } from '../../../infrastructure/repositories/HttpExperienceRepository';
+import { DateRangeInput } from '../../../../../shared/components/DateRangeInput';
 
 const repo = new HttpExperienceRepository();
 
@@ -301,79 +302,11 @@ export default function ExperienceFormModal({
               <h3 className="text-white text-lg font-semibold mb-4">
                 Periodo de tiempo
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] gap-4 items-end">
-                <div>
-                  <label className="text-[#9ca3af] text-sm block mb-2">
-                    Fecha de inicio *
-                  </label>
-                  <input
-                    type="date"
-                    max={today}
-                    onKeyDown={(e) => e.preventDefault()}
-                    onClick={(e) =>
-                      (e.currentTarget as HTMLInputElement).showPicker?.()
-                    }
-                    className="date-input w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-[#9ca3af] text-sm cursor-pointer"
-                    value={formData.fechaInicio}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        fechaInicio: e.target.value,
-                        fechaFin: '',
-                      })
-                    }
-                  />
-                </div>
-                <div className="relative">
-                  <label className="text-[#9ca3af] text-sm block mb-2">
-                    Fecha de finalización *
-                  </label>
-                  <input
-                    type="date"
-                    disabled={
-                      formData.actualmenteTrabajando || !formData.fechaInicio
-                    }
-                    onKeyDown={(e) => e.preventDefault()}
-                    onClick={(e) =>
-                      !e.currentTarget.disabled &&
-                      (e.currentTarget as HTMLInputElement).showPicker?.()
-                    }
-                    min={formData.fechaInicio}
-                    max={today}
-                    className="date-input w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-[#9ca3af] text-sm disabled:opacity-30 cursor-pointer"
-                    value={formData.fechaFin || ''}
-                    onChange={(e) =>
-                      setFormData({ ...formData, fechaFin: e.target.value })
-                    }
-                  />
-                  {!formData.fechaInicio && !formData.actualmenteTrabajando && (
-                    <p className="text-[#6c63ff] text-[10px] mt-1 absolute">
-                      Seleccione fecha de inicio
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                  <input
-                    type="checkbox"
-                    id="currentJob"
-                    checked={formData.actualmenteTrabajando}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        actualmenteTrabajando: e.target.checked,
-                        fechaFin: e.target.checked ? null : formData.fechaFin,
-                      })
-                    }
-                    className="w-5 h-5 rounded border-white/10 bg-[#1a1c29] accent-[#6c63ff] shrink-0"
-                  />
-                  <label
-                    htmlFor="currentJob"
-                    className="text-[#9ca3af] text-xs leading-tight"
-                  >
-                    Actualmente trabajo aquí
-                  </label>
-                </div>
-              </div>
+              <DateRangeInput
+                formData={formData}
+                today={today}
+                setFormData={setFormData}
+              />
             </section>
 
             <section>
