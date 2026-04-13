@@ -22,7 +22,7 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
     localStorage.removeItem('token');
     localStorage.removeItem('usuarioId');
     localStorage.removeItem('email');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   return { user, logout };

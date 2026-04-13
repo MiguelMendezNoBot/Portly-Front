@@ -115,11 +115,18 @@ export const VerifyCodeForm = () => {
         state: { email: email, codigo: fullCode },
       });
     } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Código inválido. Intenta nuevamente.'
-      );
+      const msg = (err instanceof Error ? err.message : '').toLowerCase();
+      if (
+        msg.includes('expirado') ||
+        msg.includes('solicita') ||
+        msg.includes('tiempo')
+      ) {
+        setError(
+          'El código ha expirado (más de 10 minutos). Solicita uno nuevo.'
+        );
+      } else {
+        setError('Código inválido. Intenta nuevamente.');
+      }
       setCode(new Array(6).fill(''));
       inputRefs.current[0]?.focus();
     } finally {
@@ -189,7 +196,7 @@ export const VerifyCodeForm = () => {
           disabled={isLoading}
           className={`w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] tracking-wide ${isLoading ? 'bg-src-5a52d5 cursor-wait' : 'bg-src-6c63ff hover:bg-src-5a52d5'}`}
         >
-          {isLoading ? 'VERIFICANDO...' : 'VERIFICAR'}
+          {isLoading ? 'Verificando...' : 'Verificar'}
         </button>
       </form>
 

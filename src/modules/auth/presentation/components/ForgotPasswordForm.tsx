@@ -48,6 +48,8 @@ const ArrowLeftIcon = () => (
   </svg>
 );
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -63,23 +65,26 @@ export const ForgotPasswordForm = () => {
       return;
     }
 
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setError('El correo ingresado no tiene un formato válido.');
+      return;
+    }
+
     setError(null);
     setIsLoading(true);
 
     try {
-      await forgotPassword(email);
-
-      navigate('/verify-code', { state: { email: email } });
-    } catch (err: unknown) {
-      console.error('Error al solicitar recuperación:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Error al conectar con el servidor.'
-      );
+      // Intentamos enviar el código; si el correo no está registrado,
+      // el backend no lo enviará pero igualmente avanzamos a verify-code
+      // para no revelar qué correos están registrados.
+      await forgotPassword(email.trim());
+    } catch (_err) {
+      // Silenciamos el error intencionalmente: el usuario siempre avanza.
     } finally {
       setIsLoading(false);
     }
+
+    navigate('/verify-code', { state: { email: email.trim() } });
   };
 
   return (
@@ -117,7 +122,7 @@ export const ForgotPasswordForm = () => {
           disabled={isLoading}
           className={`mt-8 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] ${isLoading ? 'bg-src-5a52d5 cursor-wait' : 'bg-src-6c63ff hover:bg-src-5a52d5'}`}
         >
-          {isLoading ? 'Enviando...' : 'Enviar enlace'}
+          {isLoading ? 'Enviando...' : 'Enviar código'}
           {!isLoading && <ArrowRightIcon />}
         </button>
       </form>
