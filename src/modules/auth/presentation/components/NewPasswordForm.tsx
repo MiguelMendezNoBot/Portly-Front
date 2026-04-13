@@ -110,6 +110,13 @@ export const NewPasswordForm = () => {
     e.preventDefault();
     setGeneralError(null);
 
+    if (password !== confirmPassword) {
+      setGeneralError(
+        'Las contraseñas no coinciden. Verifícalas e intenta de nuevo.'
+      );
+      return;
+    }
+
     setIsLoading(true);
     try {
       await resetPassword(email, codigo, password);
@@ -142,7 +149,7 @@ export const NewPasswordForm = () => {
         setGeneralError(
           err instanceof Error
             ? err.message
-            : 'Ocurrió un error al cambiar la contraseña.'
+            : 'La contraseña no puede ser igual a la anterior.'
         );
       }
     } finally {
@@ -192,8 +199,8 @@ export const NewPasswordForm = () => {
 
       <form onSubmit={handleSubmit} noValidate className="w-full">
         <div className="flex flex-col gap-1 mt-1 relative">
-          <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
-            NUEVA CONTRASEÑA
+          <label className="text-black text-[12.5px] font-bold mt-1 tracking-wide">
+            Nueva Contraseña
           </label>
           <div className="relative">
             <input
@@ -219,8 +226,8 @@ export const NewPasswordForm = () => {
         </div>
 
         <div className="flex flex-col gap-1 mt-4 relative">
-          <label className="text-black text-[12.5px] font-bold mt-1 uppercase tracking-wide">
-            CONFIRMAR NUEVA CONTRASEÑA
+          <label className="text-black text-[12.5px] font-bold mt-1 tracking-wide">
+            Confirmar Nueva Contraseña
           </label>
           <div className="relative">
             <input

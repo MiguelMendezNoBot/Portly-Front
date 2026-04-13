@@ -65,7 +65,7 @@ export default {
           e2e2e8: '#e2e2e8',
           e5e7f6: '#e5e7f6',
           eef2ff: '#eef2ff',
-          dae2fd: 'dae2fd',
+          dae2fd: '#dae2fd',
         },
         primary: '#6366F2',
         accent: '#69AFBF',

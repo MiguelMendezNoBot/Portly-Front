@@ -6,9 +6,13 @@ import { changePassword } from '../../../../modules/auth/infrastructure/authServ
 
 interface ChangePasswordFormProps {
   email: string;
+  onCancel?: () => void;
 }
 
-export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
+export default function ChangePasswordForm({
+  email,
+  onCancel,
+}: ChangePasswordFormProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -41,6 +45,9 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setTimeout(() => {
+        if (onCancel) onCancel();
+      }, 1500);
     } catch (error: unknown) {
       showToast(
         error instanceof Error
@@ -54,14 +61,18 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
   };
 
   return (
-    <div className="w-full bg-src-0f111a border border-white/5 rounded-[16px] p-6 sm:p-8 flex flex-col gap-6 relative shadow-lg">
+    <div className="w-[calc(100vw-2rem)] sm:w-[340px] md:w-[320px] bg-[#11131f] border border-white/5 rounded-[28px] p-7 flex flex-col gap-5 relative shadow-2xl">
       <Toast toast={toast} />
-      <h2 className="text-white text-xl font-bold">Cambiar Contraseña</h2>
+      <h2 className="text-white text-[28px] font-bold leading-[1.1] mb-1">
+        Actualizar
+        <br />
+        contraseña
+      </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-white text-sm">
-            Contraseña Actual
+          <label className="text-[#a1a1aa] text-[13px] font-medium">
+            Contraseña actual
           </label>
           <div className="relative">
             <input
@@ -69,26 +80,26 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
               required
             />
             <button
               type="button"
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
             >
               {showCurrentPassword ? (
-                <EyeOffIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeOffIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               ) : (
-                <EyeIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               )}
             </button>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-white text-sm">
-            Nueva Contraseña
+          <label className="text-[#a1a1aa] text-[13px] font-medium">
+            Nueva contraseña
           </label>
           <div className="relative">
             <input
@@ -96,30 +107,26 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
               required
             />
             <button
               type="button"
               onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
             >
               {showNewPassword ? (
-                <EyeOffIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeOffIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               ) : (
-                <EyeIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               )}
             </button>
           </div>
-          <span className="text-src-6b7280 text-[11px] mt-1 pl-1">
-            Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
-            (!,#,$,*,-,/,~).
-          </span>
         </div>
 
         <div className="flex flex-col gap-1.5 relative">
-          <label className="text-white text-sm">
-            Confirmar Nueva Contraseña
+          <label className="text-[#a1a1aa] text-[13px] font-medium">
+            Confirmar contraseña
           </label>
           <div className="relative">
             <input
@@ -127,39 +134,43 @@ export default function ChangePasswordForm({ email }: ChangePasswordFormProps) {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-src-1e293b text-white text-sm px-4 py-3 rounded-[14px] border border-transparent outline-none pr-10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder-gray-600"
+              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
               required
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 focus:outline-none"
             >
               {showConfirmPassword ? (
-                <EyeOffIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeOffIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               ) : (
-                <EyeIcon className="w-5 h-5 text-gray-400 hover:text-gray-200 transition-colors" />
+                <EyeIcon className="w-[18px] h-[18px] text-gray-400 hover:text-gray-600 transition-colors" />
               )}
             </button>
           </div>
-          {newPassword !== confirmPassword && confirmPassword.length > 0 && (
-            <span className="text-red-400 text-[11px] mt-1 pl-1">
-              Las contraseñas no coinciden.
-            </span>
-          )}
         </div>
 
-        <button
-          type="submit"
-          disabled={!canSubmit || isLoading}
-          className={`w-full py-3.5 rounded-2xl text-white font-bold transition-all mt-2.5 ${
-            canSubmit && !isLoading
-              ? 'bg-src-818cf8 hover:bg-src-6366f1 active:scale-[0.98] shadow-lg shadow-indigo-500/20 cursor-pointer'
-              : 'bg-src-818cf8/50 cursor-not-allowed text-white/70'
-          }`}
-        >
-          {isLoading ? 'Actualizando...' : 'Actualizar Contraseña'}
-        </button>
+        <div className="flex flex-col gap-2.5 mt-3">
+          <button
+            type="submit"
+            disabled={!canSubmit || isLoading}
+            className={`w-full py-3 rounded-full text-src-1c1154 font-bold text-[13px] tracking-wide uppercase transition-all ${
+              canSubmit && !isLoading
+                ? 'bg-[#c3b6f9] hover:bg-[#a998f5] active:scale-[0.98] cursor-pointer'
+                : 'bg-[#c3b6f9]/50 cursor-not-allowed text-src-1c1154/50'
+            }`}
+          >
+            {isLoading ? 'ACTUALIZANDO...' : 'CAMBIAR CONTRASEÑA'}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full py-3 rounded-full bg-transparent border border-white/20 text-white font-bold text-[13px] tracking-wide uppercase hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            CANCELAR
+          </button>
+        </div>
       </form>
     </div>
   );
