@@ -54,3 +54,10 @@ export const changePassword = (data: ChangePasswordData) =>
     data,
     'Error al actualizar la contraseña.'
   );
+
+export const completeOAuthProfile = (data: { profesion: string; resena: string }) =>
+  httpClient.postAuth<{ token: string; idUsuario: string; email: string; rol: string }>(
+    '/api/complete-profile',
+    data,
+    'Error al completar el perfil.'
+  );

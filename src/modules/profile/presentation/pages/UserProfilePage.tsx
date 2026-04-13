@@ -368,7 +368,7 @@ export function UserProfilePage() {
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
-      <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-0f111a rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
+      <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-091328 rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
             type="button"
@@ -480,7 +480,7 @@ export function UserProfilePage() {
               className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-src-0f111a z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
+            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-src-091328 z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
                   <img
