@@ -1,5 +1,5 @@
-import FormacionAcademicaSection from './trayectoria/FormacionAcademicaSection';
-import TrayectoriaProfesional from './trayectoria/TrayectoriaProfesionalSection';
+import FormacionAcademicaSection from './trajectory/FormacionAcademicaSection';
+import TrayectoriaProfesional from './trajectory/ProfessionalExperienceSection';
 
 export default function TrayectoriaSection() {
   return (

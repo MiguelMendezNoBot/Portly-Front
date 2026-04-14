@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { cn } from '../../../../shared/utils/cn';
 import SkillsSection from './SkillsSection';
-import TrayectoriaSection from './TrayectoriaSection';
 import ProjectsSection from './ProjectsSection';
+import ExperienceSection from './ExperienceSection';
 
 type TabType = 'habilidades' | 'trayectoria' | 'proyectos';
 
@@ -38,7 +38,7 @@ export default function ProfileTabs() {
       {/* Contenido Dinámico */}
       <div className="min-h-[400px]">
         {activeTab === 'habilidades' && <SkillsSection />}
-        {activeTab === 'trayectoria' && <TrayectoriaSection />}
+        {activeTab === 'trayectoria' && <ExperienceSection />}
         {activeTab === 'proyectos' && <ProjectsSection />}
       </div>
     </div>
