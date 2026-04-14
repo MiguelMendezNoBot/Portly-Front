@@ -2,20 +2,41 @@ import { useState, useEffect, useCallback } from 'react';
 import AcademicFormModal from './AcademicFormModal';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { HttpFormacionAcademicaRepository } from '../../../infrastructure/repositories/HttpFormacionAcademicaRepository';
-import { FormacionAcademica, FormacionAcademicaRequest } from '../../../domain/entities/FormacionAcademica';
+import {
+  FormacionAcademica,
+  FormacionAcademicaRequest,
+} from '../../../domain/entities/FormacionAcademica';
 
 // ── Repositorio (singleton ligero) ───────────────────────────────────────────
 const repo = new HttpFormacionAcademicaRepository();
 
 // ── Íconos inline ────────────────────────────────────────────────────────────
 const EditIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
   </svg>
 );
 
 const TrashIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="3 6 5 6 21 6" />
     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
   </svg>
@@ -25,7 +46,20 @@ const TrashIcon = () => (
 const formatDate = (dateStr: string | null | undefined): string => {
   if (!dateStr) return '';
   const [year, month] = dateStr.split('-');
-  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  const months = [
+    'Ene',
+    'Feb',
+    'Mar',
+    'Abr',
+    'May',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dic',
+  ];
   return `${months[parseInt(month, 10) - 1]} ${year}`;
 };
 
@@ -36,7 +70,9 @@ export default function FormacionAcademicaSection() {
   const [apiError, setApiError] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<FormacionAcademica | undefined>();
+  const [editingRecord, setEditingRecord] = useState<
+    FormacionAcademica | undefined
+  >();
 
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -77,7 +113,10 @@ export default function FormacionAcademicaSection() {
     setIsModalOpen(true);
   };
 
-  const handleSave = async (request: FormacionAcademicaRequest, id?: number) => {
+  const handleSave = async (
+    request: FormacionAcademicaRequest,
+    id?: number
+  ) => {
     if (id !== undefined) {
       // Edición
       const updated = await repo.update(id, request);
@@ -102,7 +141,10 @@ export default function FormacionAcademicaSection() {
     try {
       await repo.delete(deleteModal.record.idFormacionAcademica);
       setRecords((prev) =>
-        prev.filter((r) => r.idFormacionAcademica !== deleteModal.record!.idFormacionAcademica)
+        prev.filter(
+          (r) =>
+            r.idFormacionAcademica !== deleteModal.record!.idFormacionAcademica
+        )
       );
       setDeleteModal({ isOpen: false });
     } catch (err: unknown) {
@@ -121,13 +163,12 @@ export default function FormacionAcademicaSection() {
   return (
     <>
       <section className="flex flex-col gap-6 w-full animate-fade-in bg-[#171B28] p-4 rounded-2xl">
-
         {/* Cabecera */}
         <header className="flex flex-col gap-1">
           <h3 className="text-white text-2xl font-bold">Formación Académica</h3>
           <p className="text-[#9ca3af] text-sm">
-            Mantén actualizado tu perfil académico para mostrar tus certificaciones y
-            grados académicos más recientes.
+            Mantén actualizado tu perfil académico para mostrar tus
+            certificaciones y grados académicos más recientes.
           </p>
         </header>
 
@@ -144,7 +185,10 @@ export default function FormacionAcademicaSection() {
             /* Skeleton loader */
             <div className="space-y-4">
               {[1, 2].map((i) => (
-                <div key={i} className="bg-[#2D3449] p-6 rounded-2xl border border-white/5 animate-pulse">
+                <div
+                  key={i}
+                  className="bg-[#2D3449] p-6 rounded-2xl border border-white/5 animate-pulse"
+                >
                   <div className="h-4 bg-white/10 rounded w-2/3 mb-3" />
                   <div className="h-3 bg-white/10 rounded w-1/3 mb-2" />
                   <div className="h-3 bg-white/10 rounded w-1/2" />
@@ -157,7 +201,8 @@ export default function FormacionAcademicaSection() {
                 Tu formación académica está vacía.
               </h4>
               <p className="text-[#9ca3af] text-sm">
-                Agrega tus estudios y certificaciones para destacar tu perfil académico.
+                Agrega tus estudios y certificaciones para destacar tu perfil
+                académico.
               </p>
             </div>
           ) : (
@@ -182,7 +227,9 @@ export default function FormacionAcademicaSection() {
                     aria-label="Eliminar formación académica"
                   >
                     <TrashIcon />
-                    <span className="text-[10px] text-gray-400 hover:text-red-400">Eliminar</span>
+                    <span className="text-[10px] text-gray-400 hover:text-red-400">
+                      Eliminar
+                    </span>
                   </button>
                 </div>
 
@@ -195,10 +242,14 @@ export default function FormacionAcademicaSection() {
                     {rec.nivel}
                   </span>
                 )}
-                <p className="text-[#A8E8FF] text-sm font-medium mt-1">{rec.institucion}</p>
+                <p className="text-[#A8E8FF] text-sm font-medium mt-1">
+                  {rec.institucion}
+                </p>
                 <p className="text-[#A8E8FF] text-sm font-medium">
                   • {formatDate(rec.fechaInicio)} –{' '}
-                  {rec.actualmenteEstudiando ? 'Presente' : formatDate(rec.fechaFinalizacion)}
+                  {rec.actualmenteEstudiando
+                    ? 'Presente'
+                    : formatDate(rec.fechaFinalizacion)}
                 </p>
                 {rec.descripcion && (
                   <p className="text-[#9ca3af] text-sm mt-3 leading-relaxed pr-2">
@@ -233,13 +284,15 @@ export default function FormacionAcademicaSection() {
       )}
 
       {/* Modal de confirmación de eliminación */}
-      <DeleteConfirmModal
-        isOpen={deleteModal.isOpen}
-        title={deleteModal.record?.carrera ?? ''}
-        onClose={() => setDeleteModal({ isOpen: false })}
-        onConfirm={confirmDelete}
-        isLoading={isDeleting}
-      />
+      {deleteModal.isOpen && (
+        <DeleteConfirmModal
+          isOpen={deleteModal.isOpen}
+          title={deleteModal.record?.carrera ?? ''}
+          onClose={() => setDeleteModal({ isOpen: false })}
+          onConfirm={confirmDelete}
+          isLoading={isDeleting}
+        />
+      )}
     </>
   );
 }
