@@ -186,12 +186,14 @@ export default function TrayectoriaSection() {
           onSuccess={loadData}
         />
       )}
-      <DeleteConfirmModal
-        isOpen={deleteModal.isOpen}
-        title={deleteModal.title}
-        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
-        onConfirm={confirmDelete}
-      />
+      {deleteModal.isOpen && (
+        <DeleteConfirmModal
+          isOpen={deleteModal.isOpen}
+          title={deleteModal.title}
+          onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+          onConfirm={confirmDelete}
+        />
+      )}
     </>
   );
 }

@@ -233,13 +233,15 @@ export default function FormacionAcademicaSection() {
       )}
 
       {/* Modal de confirmación de eliminación */}
-      <DeleteConfirmModal
-        isOpen={deleteModal.isOpen}
-        title={deleteModal.record?.carrera ?? ''}
-        onClose={() => setDeleteModal({ isOpen: false })}
-        onConfirm={confirmDelete}
-        isLoading={isDeleting}
-      />
+      {deleteModal.isOpen && (
+        <DeleteConfirmModal
+          isOpen={deleteModal.isOpen}
+          title={deleteModal.record?.carrera ?? ''}
+          onClose={() => setDeleteModal({ isOpen: false })}
+          onConfirm={confirmDelete}
+          isLoading={isDeleting}
+        />
+      )}
     </>
   );
 }
