@@ -5,13 +5,12 @@ import {
   LEVEL_DESCRIPTIONS,
   PREDEFINED_SKILLS,
 } from '../../../domain/skillLevels';
-import { cn } from '../../../../../shared/utils/cn';
 
 interface SkillFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (name: string, level: SkillLevel) => Promise<void> | void;
-  initialData?: Skill; // si existe, es edición
+  initialData?: Skill;
   isSaving?: boolean;
 }
 
@@ -20,232 +19,161 @@ export default function SkillFormModal({
   onClose,
   onSave,
   initialData,
-  isSaving = false,
+  isSaving,
 }: SkillFormModalProps) {
   const [name, setName] = useState('');
   const [customName, setCustomName] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<SkillLevel>('Básico');
-  const [showCustomInput, setShowCustomInput] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
+  const [isCustom, setIsCustom] = useState(false);
+  const [showError, setShowError] = useState(false);
 
-  const isEditing = !!initialData;
-
-  // Resetear formulario cuando se abre/cierra o cambia initialData
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
-        setName(initialData.name);
         setSelectedLevel(initialData.level);
-        // Determinar si el nombre es del catálogo o personalizado
-        if (PREDEFINED_SKILLS.includes(initialData.name)) {
-          setShowCustomInput(false);
-          setCustomName('');
+        const isPredefined = PREDEFINED_SKILLS.includes(initialData.name);
+        if (isPredefined && initialData.name !== 'Otro') {
+          setName(initialData.name);
+          setIsCustom(false);
         } else {
-          setShowCustomInput(true);
+          setName('Otro');
           setCustomName(initialData.name);
+          setIsCustom(true);
         }
       } else {
-        // Estado predeterminado
         setName('');
         setCustomName('');
-        setSelectedLevel('Básico');
-        setShowCustomInput(false);
+        setSelectedLevel('Básico'); // Criterio: Básico por defecto
+        setIsCustom(false);
       }
-      setError(null);
-      setTouched(false);
+      setShowError(false);
     }
   }, [isOpen, initialData]);
 
-  const handleNameSelect = (value: string) => {
-    setTouched(true);
-    if (value === 'Otro') {
-      setShowCustomInput(true);
-      setName('');
-      setCustomName('');
-    } else {
-      setShowCustomInput(false);
-      setName(value);
-      setCustomName('');
+  const handleNameChange = (val: string) => {
+    setName(val);
+    setIsCustom(val === 'Otro');
+    if (val !== 'Otro') setShowError(false);
+  };
+
+  const handleAction = async () => {
+    const finalName = isCustom ? customName.trim() : name;
+
+    // Validación de campo vacío (Criterio de la HU)
+    if (!finalName || finalName === 'Otro' || finalName === '') {
+      setShowError(true);
+      return;
     }
-  };
 
-  const handleCustomNameChange = (value: string) => {
-    setCustomName(value);
-    setName(value);
-    setTouched(true);
-  };
-
-  const handleLevelSelect = (level: SkillLevel) => {
-    setSelectedLevel(level);
-  };
-
-  const validate = (): boolean => {
-    const finalName = showCustomInput ? customName.trim() : name.trim();
-    if (!finalName) {
-      setError('El nombre de la habilidad es obligatorio');
-      return false;
-    }
-    setError(null);
-    return true;
-  };
-
-  const handleSave = async () => {
-    setTouched(true);
-    if (!validate()) return;
-    const finalName = showCustomInput ? customName.trim() : name.trim();
     try {
       await onSave(finalName, selectedLevel);
       onClose();
     } catch (err) {
-      // El error ya se maneja en el hook con toast, aquí solo evitamos cerrar
+      console.error('Error capturado en el modal:', err);
     }
   };
-
-  const finalName = showCustomInput ? customName : name;
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-src-0f111a w-full max-w-md rounded-2xl shadow-2xl border border-white/10 overflow-hidden animate-fade-in">
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-white/10">
-          <h2 className="text-white text-xl font-semibold">
-            {isEditing ? 'Editar Habilidad' : 'Agregar Habilidad'}
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      <div className="bg-[#0f111a] w-full max-w-md rounded-[32px] border border-white/10 shadow-2xl overflow-hidden">
+        <div className="p-8 pb-0">
+          <h2 className="text-white text-2xl font-bold mb-6">
+            {initialData ? 'Editar Habilidad' : 'Agregar Habilidad'}
           </h2>
-        </div>
 
-        {/* Body */}
-        <div className="p-6 space-y-5">
-          {/* Campo: Nombre de la habilidad */}
-          <div>
-            <label className="block text-sm font-medium text-src-a7aab9 mb-2">
-              Nombre de la habilidad
-            </label>
-            {!showCustomInput ? (
+          <div className="space-y-6">
+            {/* Campo Nombre */}
+            <div className="space-y-2">
+              <label className="text-[#a7aab9] text-xs font-bold uppercase tracking-widest ml-1">
+                Nombre de la habilidad
+              </label>
               <select
                 value={name}
-                onChange={(e) => handleNameSelect(e.target.value)}
-                className={cn(
-                  'w-full px-4 py-3 bg-src-0d1117 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-src-6b72ff/50 transition',
-                  error && touched && !name
-                    ? 'border-red-500'
-                    : 'border-white/10'
-                )}
+                onChange={(e) => handleNameChange(e.target.value)}
+                className={`w-full bg-[#0d1117] border ${showError && !isCustom ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 transition-all appearance-none cursor-pointer`}
               >
                 <option value="" disabled>
                   Selecciona una habilidad
                 </option>
-                {PREDEFINED_SKILLS.map((skill) => (
-                  <option key={skill} value={skill}>
-                    {skill}
+                {PREDEFINED_SKILLS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
                   </option>
                 ))}
               </select>
-            ) : (
-              <input
-                type="text"
-                value={customName}
-                onChange={(e) => handleCustomNameChange(e.target.value)}
-                placeholder="Escribe el nombre de la habilidad"
-                className={cn(
-                  'w-full px-4 py-3 bg-src-0d1117 border rounded-xl text-white placeholder:text-src-6b7280 focus:outline-none focus:ring-2 focus:ring-src-6b72ff/50 transition',
-                  error && touched && !customName
-                    ? 'border-red-500'
-                    : 'border-white/10'
-                )}
-                autoFocus
-              />
-            )}
-            {error && touched && !finalName && (
-              <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <circle cx="12" cy="16" r="1" fill="currentColor" />
-                </svg>
-                {error}
-              </p>
-            )}
-          </div>
 
-          {/* Niveles de dominio */}
-          <div>
-            <label className="block text-sm font-medium text-src-a7aab9 mb-3">
-              Nivel de dominio
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {SKILL_LEVELS.map((level) => (
-                <button
-                  key={level}
-                  type="button"
-                  onClick={() => handleLevelSelect(level)}
-                  className={cn(
-                    'px-4 py-2 rounded-full text-sm font-medium transition-all border',
-                    selectedLevel === level
-                      ? 'bg-[#C9BEFF] text-src-1c1154 border-[#C9BEFF] shadow-md'
-                      : 'bg-src-0d1117 text-src-a7aab9 border-white/10 hover:bg-src-2a2d3e hover:text-white'
-                  )}
-                >
-                  {level}
-                </button>
-              ))}
+              {isCustom && (
+                <input
+                  type="text"
+                  placeholder="Escribe tu habilidad..."
+                  value={customName}
+                  onChange={(e) => {
+                    setCustomName(e.target.value);
+                    setShowError(false);
+                  }}
+                  className={`w-full bg-[#0d1117] border ${showError ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 mt-3 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 animate-in slide-in-from-top-2`}
+                  autoFocus
+                />
+              )}
+              {showError && (
+                <p className="text-red-400 text-xs mt-2 ml-1">
+                  El nombre de la habilidad es obligatorio
+                </p>
+              )}
             </div>
-          </div>
 
-          {/* Tarjeta informativa de nivel */}
-          <div className="mt-4 p-4 bg-src-0d1117/80 rounded-xl border border-white/5">
-            <p className="text-src-c4bef8 text-sm leading-relaxed">
-              <span className="font-semibold text-white">{selectedLevel}:</span>{' '}
-              {LEVEL_DESCRIPTIONS[selectedLevel]}
-            </p>
+            {/* Selector de Niveles */}
+            <div className="space-y-3">
+              <label className="text-[#a7aab9] text-xs font-bold uppercase tracking-widest ml-1">
+                Nivel de dominio
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {SKILL_LEVELS.map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => setSelectedLevel(level)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                      selectedLevel === level
+                        ? 'bg-[#C9BEFF] text-[#1c1154] border-[#C9BEFF] shadow-[0_0_15px_rgba(201,190,255,0.3)]'
+                        : 'bg-[#0d1117] text-[#a7aab9] border-white/5 hover:bg-white/5'
+                    }`}
+                  >
+                    {level}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tarjeta Informativa */}
+            <div className="bg-[#0d1117] rounded-2xl p-4 border border-white/5 border-l-4 border-l-[#6b72ff]">
+              <p className="text-[#c4bef8] text-sm leading-relaxed">
+                <span className="font-bold text-white mr-1">
+                  {selectedLevel}:
+                </span>
+                {LEVEL_DESCRIPTIONS[selectedLevel]}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-src-0d1117/50 border-t border-white/10 flex justify-end gap-3">
+        <div className="p-8 flex gap-3">
           <button
-            type="button"
             onClick={onClose}
-            disabled={isSaving}
-            className="px-5 py-2.5 rounded-xl text-src-a7aab9 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+            className="flex-1 py-4 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 rounded-2xl transition-colors"
           >
             Cancelar
           </button>
           <button
-            type="button"
-            onClick={handleSave}
+            onClick={handleAction}
             disabled={isSaving}
-            className="px-6 py-2.5 rounded-xl bg-src-6b72ff hover:bg-src-585fe6 text-white font-medium transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="flex-1 py-4 bg-[#6b72ff] hover:bg-[#585fe6] text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg flex justify-center items-center gap-2"
           >
             {isSaving ? (
-              <>
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                Guardando...
-              </>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               'Aceptar'
             )}
