@@ -5,6 +5,7 @@ import {
   LEVEL_DESCRIPTIONS,
   PREDEFINED_SKILLS,
 } from '../../../domain/skillLevels';
+import { LevelIcon } from './icons/LevelIcon';
 
 interface SkillFormModalProps {
   isOpen: boolean;
@@ -146,15 +147,37 @@ export default function SkillFormModal({
                 ))}
               </div>
             </div>
+            <div
+              key={`icon-${selectedLevel}`}
+              className="bg-[#22242a] rounded-[40px] p-5 shadow-inner transition-all duration-700 ease-in-out animate-text-change"
+            >
+              <div className="flex items-center gap-5 min-h-[80px]">
+                {/* Contenedor del Icono: Corregido el className */}
+                <div
+                  className="flex-shrink-0 animate-text-change"
+                  key={`icon-${selectedLevel}`}
+                >
+                  <LevelIcon
+                    key={selectedLevel}
+                    level={selectedLevel}
+                    size="w-12 h-12"
+                  />
+                </div>
 
-            {/* Tarjeta Informativa */}
-            <div className="bg-[#0d1117] rounded-2xl p-4 border border-white/5 border-l-4 border-l-[#6b72ff]">
-              <p className="text-[#c4bef8] text-sm leading-relaxed">
-                <span className="font-bold text-white mr-1">
-                  {selectedLevel}:
-                </span>
-                {LEVEL_DESCRIPTIONS[selectedLevel]}
-              </p>
+                {/* Texto informativo */}
+                <div className="flex-1 overflow-hidden">
+                  <p
+                    key={selectedLevel}
+                    className="text-[#e2e4e7] text-[15px] leading-tight font-thin animate-text-change"
+                  >
+                    El nivel{' '}
+                    <span className="font-bold text-[#f1af51]">
+                      {selectedLevel}
+                    </span>{' '}
+                    {LEVEL_DESCRIPTIONS[selectedLevel]}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

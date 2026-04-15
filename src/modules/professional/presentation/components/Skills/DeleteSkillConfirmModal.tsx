@@ -20,8 +20,8 @@ export default function DeleteSkillConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Eliminar habilidad"
-      description={`¿Estás seguro de que deseas eliminar permanentemente "${skillName}"? Esta acción no se puede deshacer.`}
+      title="¿Confirmar eliminación?"
+      description={`Esta acción eliminará permanentemente la habilidad "${skillName}"y afectará a todos los portafolios que la muestran siendo eliminada en ellos también.`}
       confirmText="ELIMINAR PERMANENTEMENTE"
       cancelText="CANCELAR"
       confirmColor="red"
@@ -31,11 +31,10 @@ export default function DeleteSkillConfirmModal({
           width="32"
           height="32"
           viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
+          fill="currentColor"
+          stroke="none"
         >
-          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+          <path d="M12 2L2 20h20L12 2m0 4l7 12H5l7-12zm0 4h0v4h0v-4zm0 6h0v2h0v-2z" />
         </svg>
       }
     />

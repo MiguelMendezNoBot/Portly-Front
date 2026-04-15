@@ -5,6 +5,7 @@ import SkillCard from '../Skills/SkillCard';
 import SkillFormModal from '../Skills/SkillFormModal';
 import DeleteSkillConfirmModal from '../Skills/DeleteSkillConfirmModal';
 import { PlusIcon } from '../icons'; // Asumo existe, si no usar SVG inline
+import SkillCardSkeleton from './SkillCardSkeleton';
 
 export const TechnicalSkills = () => {
   const { skills, loading, addSkill, updateSkill, deleteSkill } = useSkills();
@@ -71,13 +72,20 @@ export const TechnicalSkills = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-[#1a1a2e]/50 rounded-3xl border border-white/5">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#6b72ff] border-t-transparent"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Renderizamos varios skeletons para llenar el espacio */}
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
           </div>
         ) : skills.length === 0 ? (
-          <div className="bg-[#1a1a2e] p-16 rounded-3xl border border-white/5 text-center">
-            <p className="text-[#9ca3af] text-lg">
-              Aún no has agregado habilidades técnicas.
+          <div className="text-center p-10 bg-[#1a1c29]/30 rounded-2xl border-2 border-dashed border-white/10">
+            <h4 className="text-white text-lg font-bold mb-2">
+              No tienes Habilidades Tecnicas.
+            </h4>
+            <p className="text-[#9ca3af] text-sm mb-6">
+              Agrega tus habilidades técnicas para destacar tu perfil ante los
+              reclutadores. Cuantas más habilidades relevantes agregues, más
+              atractivo será tu perfil.
             </p>
           </div>
         ) : (
