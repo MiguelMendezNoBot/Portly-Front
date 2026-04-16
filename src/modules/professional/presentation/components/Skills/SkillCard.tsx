@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Skill } from '../../../domain/entities/Skill';
-import GlowIcon from './icons/GlowIcon';
 import { LevelIcon } from './icons/LevelIcon';
 import { TechIcon } from './icons/TechIcon';
 
@@ -26,31 +25,15 @@ export default function SkillCard({
   }, []);
 
   return (
-    <div className="group relative bg-[#1a1a2e] rounded-2xl p-5 flex items-center justify-between border border-white/5 hover:border-[#6b72ff]/40 transition-all duration-300 shadow-md">
-      <div className="flex items-center gap-4">
-        {/* Contenedor del Logo de Tecnología */}
-        <div className="w-12 h-12 rounded-xl  flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
-          <TechIcon name={skill.name} />
-        </div>
+    <div className="relative bg-[#1a1a2e] rounded-2xl border border-white/5 hover:border-[#6b72ff]/40 transition-all duration-300 shadow-md grid grid-cols-[36px_1fr_1px_130px] items-stretch">
 
-        <div>
-          <h3 className="text-white font-bold text-lg">{skill.name}</h3>
-          {/* Nivel con su Icono SVG al lado */}
-          <div className="flex items-center gap-1.5">
-            <LevelIcon level={skill.level} />
-            <p className="text-[#ac8144] text-xs font-bold uppercase tracking-wider">
-              {skill.level}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="relative" ref={menuRef}>
+      {/* Menú de tres puntos — columna izquierda */}
+      <div className="relative flex items-center" ref={menuRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center text-[#9ca3af] transition-colors"
+          className="h-full px-3 flex items-center justify-center text-[#4b4f6b] hover:text-[#9ca3af] hover:bg-white/5 rounded-l-2xl transition-colors"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="2" />
             <circle cx="12" cy="12" r="2" />
             <circle cx="12" cy="19" r="2" />
@@ -58,41 +41,21 @@ export default function SkillCard({
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 top-12 w-40 bg-[#0f111a] rounded-2xl shadow-2xl border border-white/10 py-2 z-50 animate-in zoom-in-95 duration-150">
+          <div className="absolute left-0 top-full mt-1 w-40 bg-[#0f111a] rounded-2xl shadow-2xl border border-white/10 py-2 z-50 animate-in zoom-in-95 duration-150">
             <button
-              onClick={() => {
-                onEdit();
-                setMenuOpen(false);
-              }}
+              onClick={() => { onEdit(); setMenuOpen(false); }}
               className="w-full text-left px-4 py-3 text-white hover:bg-[#6b72ff] text-sm font-medium flex items-center gap-3 transition-colors"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 20h9M16.5 3.5L20 7l-9 9-4 1 1-4 9-9z" />
               </svg>
               Editar
             </button>
             <button
-              onClick={() => {
-                onDelete();
-                setMenuOpen(false);
-              }}
+              onClick={() => { onDelete(); setMenuOpen(false); }}
               className="w-full text-left px-4 py-3 text-red-400 hover:bg-red-500 hover:text-white text-sm font-medium flex items-center gap-3 border-t border-white/5 transition-colors"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
               </svg>
               Eliminar
@@ -100,6 +63,31 @@ export default function SkillCard({
           </div>
         )}
       </div>
+
+      {/* Ícono + Nombre — columna flexible (1fr) */}
+      <div className="flex items-center gap-2 px-3 py-3 min-w-0">
+        <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-white/5 flex-shrink-0">
+          <TechIcon name={skill.name} />
+        </div>
+        <h3 className="text-white font-bold text-sm truncate">{skill.name}</h3>
+      </div>
+
+      {/* Separador vertical — columna de 1px */}
+      <div className="bg-white/10 my-3" />
+
+      {/* Nivel de dominio — columna auto (toma solo el ancho necesario) */}
+      <div className="flex flex-col items-center justify-center gap-1.5 px-5 py-4">
+        <span className="text-[#a7aab9] text-[11px] font-semibold whitespace-nowrap">
+          Nivel de dominio
+        </span>
+        <div className="flex items-center gap-2">
+          <LevelIcon level={skill.level} size="w-6 h-6" />
+          <span className="text-[#ac8144] text-sm font-bold whitespace-nowrap">
+            {skill.level}
+          </span>
+        </div>
+      </div>
+
     </div>
   );
 }

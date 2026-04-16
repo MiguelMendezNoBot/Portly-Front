@@ -72,7 +72,7 @@ export const TechnicalSkills = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Renderizamos varios skeletons para llenar el espacio */}
             <SkillCardSkeleton />
             <SkillCardSkeleton />
@@ -89,7 +89,7 @@ export const TechnicalSkills = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {skills.map((skill) => (
               <SkillCard
                 key={skill.id}

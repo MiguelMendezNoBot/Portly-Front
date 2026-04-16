@@ -27,6 +27,7 @@ export default function SkillFormModal({
   const [selectedLevel, setSelectedLevel] = useState<SkillLevel>('Básico');
   const [isCustom, setIsCustom] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +49,7 @@ export default function SkillFormModal({
         setIsCustom(false);
       }
       setShowError(false);
+      setServerError(null);
     }
   }, [isOpen, initialData]);
 
@@ -55,6 +57,7 @@ export default function SkillFormModal({
     setName(val);
     setIsCustom(val === 'Otro');
     if (val !== 'Otro') setShowError(false);
+    setServerError(null);
   };
 
   const handleAction = async () => {
@@ -66,11 +69,16 @@ export default function SkillFormModal({
       return;
     }
 
+    setServerError(null);
     try {
       await onSave(finalName, selectedLevel);
       onClose();
-    } catch (err) {
-      console.error('Error capturado en el modal:', err);
+    } catch (err: unknown) {
+      const msg =
+        err && typeof err === 'object' && 'message' in err
+          ? String((err as { message: string }).message)
+          : 'Error al guardar la habilidad';
+      setServerError(msg);
     }
   };
 
@@ -113,6 +121,7 @@ export default function SkillFormModal({
                   onChange={(e) => {
                     setCustomName(e.target.value);
                     setShowError(false);
+                    setServerError(null);
                   }}
                   className={`w-full bg-[#0d1117] border ${showError ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 mt-3 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 animate-in slide-in-from-top-2`}
                   autoFocus
@@ -121,6 +130,11 @@ export default function SkillFormModal({
               {showError && (
                 <p className="text-red-400 text-xs mt-2 ml-1">
                   El nombre de la habilidad es obligatorio
+                </p>
+              )}
+              {serverError && !showError && (
+                <p className="text-red-400 text-xs mt-2 ml-1">
+                  {serverError}
                 </p>
               )}
             </div>
