@@ -75,8 +75,8 @@ export default function SkillCard({
       {/* Separador vertical — columna de 1px */}
       <div className="bg-white/10 my-3" />
 
-      {/* Nivel de dominio — columna auto (toma solo el ancho necesario) */}
-      <div className="flex flex-col items-center justify-center gap-1.5 px-5 py-4">
+      {/* Nivel de dominio — columna fija 130px */}
+      <div className="flex flex-col items-center justify-center gap-1 px-3 py-3">
         <span className="text-[#a7aab9] text-[11px] font-semibold whitespace-nowrap">
           Nivel de dominio
         </span>
