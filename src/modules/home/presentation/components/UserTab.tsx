@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import ChangePasswordForm from '../../../profile/presentation/components/ChangePasswordForm';
+import { verifyAccountLink } from '../../../auth/infrastructure/authService';
 
 const UserIcon = () => (
   <svg
@@ -65,9 +66,25 @@ export const UserTab = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [canChangePassword, setCanChangePassword] = useState(true);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
     useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (user?.email) {
+      verifyAccountLink(user.email)
+        .then((res) => {
+          console.log('[UserTab] verifyAccountLink response:', res);
+          const isOAuth = res?.isOAuthWithoutPassword === true;
+          setCanChangePassword(!isOAuth);
+        })
+        .catch((err) => {
+          console.error('[UserTab] verifyAccountLink error:', err);
+          setCanChangePassword(true);
+        });
+    }
+  }, [user?.email]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -119,20 +136,22 @@ export const UserTab = () => {
             </span>
           </Link>
 
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              setIsChangePasswordModalOpen(true);
-            }}
-            className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors text-left"
-          >
-            <span className="text-src-6b72ff">
-              <LockIcon />
-            </span>
-            <span className="text-[#e2e2e8] font-medium tracking-wide">
-              Cambiar contraseña
-            </span>
-          </button>
+          {canChangePassword && (
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                setIsChangePasswordModalOpen(true);
+              }}
+              className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors text-left w-full"
+            >
+              <span className="text-src-6b72ff">
+                <LockIcon />
+              </span>
+              <span className="text-[#e2e2e8] font-medium tracking-wide">
+                Cambiar contraseña
+              </span>
+            </button>
+          )}
 
           <button
             onClick={() => {

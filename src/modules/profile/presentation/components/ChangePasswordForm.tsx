@@ -9,6 +9,15 @@ interface ChangePasswordFormProps {
   onCancel?: () => void;
 }
 
+interface FieldErrors {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+}
+
+const MAX_LENGTH = 64;
+const MIN_NEW_LENGTH = 8;
+
 export default function ChangePasswordForm({
   email,
   onCancel,
@@ -21,17 +30,53 @@ export default function ChangePasswordForm({
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const { toast, showToast } = useToast();
 
-  const passwordsMatch = newPassword === confirmPassword;
+  const validateField = (name: string, value: string): string => {
+    if (!value.trim()) return 'Este campo es obligatorio';
+    if (name === 'newPassword') {
+      if (value.length < MIN_NEW_LENGTH)
+        return `La nueva contraseña debe tener un mínimo de ${MIN_NEW_LENGTH} caracteres`;
+      if (value.length > MAX_LENGTH)
+        return `El texto no puede superar los ${MAX_LENGTH} caracteres`;
+    }
+    if (name === 'confirmPassword') {
+      if (value.length > MAX_LENGTH)
+        return `El texto no puede superar los ${MAX_LENGTH} caracteres`;
+      if (value !== newPassword) return 'Las contraseñas no coinciden';
+    }
+    if (name === 'currentPassword' && value.length > MAX_LENGTH)
+      return `El texto no puede superar los ${MAX_LENGTH} caracteres`;
+    return '';
+  };
 
-  const canSubmit =
-    currentPassword.length > 0 && newPassword.length >= 8 && passwordsMatch;
+  const handleBlur = (name: string, value: string) => {
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setFieldErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+  };
+
+  const validateAll = (): FieldErrors => {
+    return {
+      currentPassword: validateField('currentPassword', currentPassword),
+      newPassword: validateField('newPassword', newPassword),
+      confirmPassword: validateField('confirmPassword', confirmPassword),
+    };
+  };
+
+  const hasErrors = (errors: FieldErrors) =>
+    Object.values(errors).some((e) => e && e.length > 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+
+    const errors = validateAll();
+    setFieldErrors(errors);
+    setTouched({ currentPassword: true, newPassword: true, confirmPassword: true });
+
+    if (hasErrors(errors)) return;
 
     setIsLoading(true);
     try {
@@ -41,23 +86,38 @@ export default function ChangePasswordForm({
         nuevaContrasena: newPassword,
       });
 
-      showToast('Contraseña actualizada con éxito', 'success');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      showToast('Cambio de contraseña exitoso', 'success');
       setTimeout(() => {
         if (onCancel) onCancel();
       }, 1500);
     } catch (error: unknown) {
-      showToast(
+      const msg =
         error instanceof Error
           ? error.message
-          : 'Error al actualizar contraseña',
-        'error'
-      );
+          : (error as { message?: string })?.message || 'Error al actualizar contraseña';
+
+      // Detect wrong current password
+      if (
+        msg.toLowerCase().includes('incorrecta') ||
+        msg.toLowerCase().includes('incorrect') ||
+        msg.toLowerCase().includes('actual') ||
+        msg.toLowerCase().includes('wrong') ||
+        (error as { status?: number })?.status === 401
+      ) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          currentPassword: 'La contraseña actual es incorrecta',
+        }));
+      } else {
+        showToast(msg, 'error');
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) onCancel();
   };
 
   return (
@@ -69,7 +129,8 @@ export default function ChangePasswordForm({
         contraseña
       </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        {/* Contraseña actual */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
             Contraseña actual
@@ -79,9 +140,21 @@ export default function ChangePasswordForm({
               type={showCurrentPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
-              required
+              onChange={(e) => {
+                setCurrentPassword(e.target.value);
+                if (touched.currentPassword) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    currentPassword: validateField('currentPassword', e.target.value),
+                  }));
+                }
+              }}
+              onBlur={(e) => handleBlur('currentPassword', e.target.value)}
+              className={`w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400 ${
+                touched.currentPassword && fieldErrors.currentPassword
+                  ? 'ring-2 ring-red-400'
+                  : ''
+              }`}
             />
             <button
               type="button"
@@ -95,8 +168,14 @@ export default function ChangePasswordForm({
               )}
             </button>
           </div>
+          {touched.currentPassword && fieldErrors.currentPassword && (
+            <p className="text-red-400 text-[12px] px-1 mt-0.5">
+              {fieldErrors.currentPassword}
+            </p>
+          )}
         </div>
 
+        {/* Nueva contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
             Nueva contraseña
@@ -106,9 +185,21 @@ export default function ChangePasswordForm({
               type={showNewPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
-              required
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                if (touched.newPassword) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    newPassword: validateField('newPassword', e.target.value),
+                  }));
+                }
+              }}
+              onBlur={(e) => handleBlur('newPassword', e.target.value)}
+              className={`w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400 ${
+                touched.newPassword && fieldErrors.newPassword
+                  ? 'ring-2 ring-red-400'
+                  : ''
+              }`}
             />
             <button
               type="button"
@@ -122,8 +213,14 @@ export default function ChangePasswordForm({
               )}
             </button>
           </div>
+          {touched.newPassword && fieldErrors.newPassword && (
+            <p className="text-red-400 text-[12px] px-1 mt-0.5">
+              {fieldErrors.newPassword}
+            </p>
+          )}
         </div>
 
+        {/* Confirmar contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
             Confirmar contraseña
@@ -133,9 +230,21 @@ export default function ChangePasswordForm({
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400"
-              required
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (touched.confirmPassword) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    confirmPassword: validateField('confirmPassword', e.target.value),
+                  }));
+                }
+              }}
+              onBlur={(e) => handleBlur('confirmPassword', e.target.value)}
+              className={`w-full bg-white text-slate-800 text-[14px] font-bold tracking-[0.1em] px-4 py-3 rounded-full outline-none pr-11 transition-all placeholder-gray-400 ${
+                touched.confirmPassword && fieldErrors.confirmPassword
+                  ? 'ring-2 ring-red-400'
+                  : ''
+              }`}
             />
             <button
               type="button"
@@ -149,14 +258,19 @@ export default function ChangePasswordForm({
               )}
             </button>
           </div>
+          {touched.confirmPassword && fieldErrors.confirmPassword && (
+            <p className="text-red-400 text-[12px] px-1 mt-0.5">
+              {fieldErrors.confirmPassword}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2.5 mt-3">
           <button
             type="submit"
-            disabled={!canSubmit || isLoading}
+            disabled={isLoading}
             className={`w-full py-3 rounded-full text-src-1c1154 font-bold text-[13px] tracking-wide uppercase transition-all ${
-              canSubmit && !isLoading
+              !isLoading
                 ? 'bg-[#c3b6f9] hover:bg-[#a998f5] active:scale-[0.98] cursor-pointer'
                 : 'bg-[#c3b6f9]/50 cursor-not-allowed text-src-1c1154/50'
             }`}
@@ -165,7 +279,7 @@ export default function ChangePasswordForm({
           </button>
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="w-full py-3 rounded-full bg-transparent border border-white/20 text-white font-bold text-[13px] tracking-wide uppercase hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer"
           >
             CANCELAR
