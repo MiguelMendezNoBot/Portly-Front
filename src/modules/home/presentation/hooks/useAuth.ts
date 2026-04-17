@@ -22,6 +22,15 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
     localStorage.removeItem('token');
     localStorage.removeItem('usuarioId');
     localStorage.removeItem('email');
+
+    // Flag for success toast on home page
+    sessionStorage.setItem('logout_success', '1');
+
+    // Replace current history entry so back button doesn't return here
+    window.history.replaceState(null, '', '/');
+    // Push home state to ensure clean navigation stack
+    window.history.pushState(null, '', '/');
+
     window.location.href = '/';
   };
 

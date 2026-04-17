@@ -9,7 +9,7 @@ const NAV_LINKS = [
 
 export const Navbar = () => {
   return (
-    <nav className="flex items-center gap-6 px-6 py-4">
+    <nav className="flex items-center gap-6 px-6">
       <Link to="/" className="flex items-center gap-2.5 group">
         <div className="w-10 h-10 rounded-xl bg-src-0d1830 border border-teal-500/20 flex items-center justify-center shadow-lg shadow-teal-500/10 group-hover:border-teal-500/40 transition-colors">
           <img src="/portly_logo.png" alt="Portly" className="w-7 h-7" />
