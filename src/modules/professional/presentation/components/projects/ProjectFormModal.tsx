@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Project, GitHubRepo } from '../../../domain/entities/Project';
+import { Project, GitHubRepo, ProjectEvidence } from '../../../domain/entities/Project';
 import { HttpProjectRepository } from '../../../infrastructure/repositories/HttpProjectRepository';
+import { httpClient } from '../../../../../infrastructure/http/httpClient';
 import { DateRangeInput } from '../../../../../shared/components/DateRangeInput';
 import TechTags from './TechTags';
 import EvidenceUploader, { LocalEvidence } from './EvidenceUploader';
@@ -39,6 +40,7 @@ export default function ProjectFormModal({
   const [formData, setFormData] = useState<Project>({ ...emptyProject });
   const [localEvidences, setLocalEvidences] = useState<LocalEvidence[]>([]);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [iconFile, setIconFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
@@ -92,7 +94,7 @@ export default function ProjectFormModal({
     setToast({ message, type });
   };
 
-  // Icon upload
+  // Icon upload (guarda el File para subirlo al guardar)
   const handleIconSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -100,9 +102,9 @@ export default function ProjectFormModal({
       showToast('Tipo de archivo no permitido', 'error');
       return;
     }
+    setIconFile(file);
     const url = URL.createObjectURL(file);
     setIconPreview(url);
-    setFormData({ ...formData, iconoUrl: url });
   };
 
   // GitHub import
@@ -153,12 +155,51 @@ export default function ProjectFormModal({
     });
   };
 
-  // Save handler
+  // Save handler: sube archivos al servidor antes de guardar el proyecto
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const projectToSave = {
+      // 1. Subir ícono si se seleccionó uno nuevo
+      let finalIconUrl = formData.iconoUrl;
+      if (iconFile) {
+        const iconRes = await httpClient.uploadFile<{ url: string }>(
+          '/api/profile/proyectos/icono',
+          iconFile,
+          'file',
+          'Error al subir el ícono'
+        );
+        finalIconUrl = iconRes.url;
+      }
+
+      // 2. Subir evidencias nuevas (las que tienen File local)
+      const uploadedEvidences: ProjectEvidence[] = [...formData.evidencias];
+      for (const localEv of localEvidences) {
+        const evRes = await httpClient.uploadFile<{
+          idEvidenciaProyecto: number;
+          nombreOriginal: string;
+          enlaceEvidencia: string;
+          formato: string;
+          tamanoBytes: number;
+        }>(
+          '/api/profile/proyectos/evidencias',
+          localEv.file,
+          'file',
+          'Error al subir evidencia'
+        );
+        uploadedEvidences.push({
+          id: evRes.idEvidenciaProyecto,
+          nombre: evRes.nombreOriginal,
+          url: evRes.enlaceEvidencia,
+          tipo: evRes.formato,
+          pesoBytes: evRes.tamanoBytes,
+        });
+      }
+
+      // 3. Guardar proyecto
+      const projectToSave: Project = {
         ...formData,
+        iconoUrl: finalIconUrl,
+        evidencias: uploadedEvidences,
         repositorios: formData.repositorios.filter((r) => r.trim() !== ''),
       };
 

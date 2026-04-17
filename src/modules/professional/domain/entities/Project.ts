@@ -30,6 +30,7 @@ export interface GitHubRepo {
   html_url: string;
   created_at: string;
   updated_at: string;
+  stargazers_count: number;
   languages: string[];
   topics: string[];
 }
