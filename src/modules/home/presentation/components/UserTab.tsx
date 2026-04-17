@@ -81,12 +81,20 @@ export const UserTab = () => {
 
   if (!user) {
     return (
-      <Link
-        to="/login"
-        className="flex items-center gap-2 text-src-6b72ff font-bold text-sm hover:text-src-585fe6 transition-colors"
-      >
-        Iniciar Sesión
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link
+          to="/login"
+          className="flex items-center gap-2 text-src-6b72ff font-bold text-sm hover:text-src-585fe6 transition-colors"
+        >
+          Iniciar Sesión
+        </Link>
+        <Link
+          to="/register"
+          className="flex items-center gap-2 bg-src-6b72ff hover:bg-src-585fe6 text-white font-bold text-sm px-4 py-2 rounded-full transition-colors"
+        >
+          Crear cuenta
+        </Link>
+      </div>
     );
   }
 

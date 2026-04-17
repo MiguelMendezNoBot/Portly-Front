@@ -209,13 +209,22 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
               {codeError && (
                 <p className="text-red-500 text-xs text-center mt-1">{codeError}</p>
               )}
-              <button
-                onClick={goStep2}
-                disabled={loading}
-                className="mt-5 w-full py-2 rounded-lg text-sm text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors disabled:opacity-60"
-              >
-                {loading ? 'Verificando...' : 'VERIFICAR'}
-              </button>
+              <div className="flex gap-3 mt-5">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="w-1/3 py-2 rounded-lg text-src-6c63ff font-light text-sm border border-src-6c63ff hover:bg-gray-50 transition-colors"
+                >
+                  Volver
+                </button>
+                <button
+                  onClick={goStep2}
+                  disabled={loading}
+                  className="w-2/3 py-2 rounded-lg text-sm text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors disabled:opacity-60"
+                >
+                  {loading ? 'Verificando...' : 'VERIFICAR'}
+                </button>
+              </div>
               <Countdown onResend={handleResend} />
             </form>
           </div>
@@ -271,7 +280,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 error={errors.profesion}
               />
               <Input
-                label="Biografía"
+                label="Descripción Personal"
                 textArea={true}
                 placeholder="Cuéntanos un poco sobre ti..."
                 value={fields.biografia}

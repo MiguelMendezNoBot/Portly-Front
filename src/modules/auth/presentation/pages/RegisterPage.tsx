@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RegisterForm } from '../components/RegisterForm';
-import { Stepper } from '../../../../shared/components/Stepper';
 import BotonInicio from '../../../../shared/components/BotonInicio';
 
 export const RegisterPage = () => {
@@ -12,12 +11,20 @@ export const RegisterPage = () => {
                 <BotonInicio>
                     <Link
                         to="/"
-                        className="text-src-1c1154 font-extrabold text-xs uppercase tracking-wide hover:opacity-70 transition-opacity"
+                        className="text-src-1c1154 hover:opacity-70 transition-opacity flex items-center"
+                        aria-label="Ir al inicio"
                     >
-                        INICIO
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" strokeWidth="2.5"
+                            strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+                            <path d="M9 21V12h6v9" />
+                        </svg>
                     </Link>
                     <div className="w-px h-4 bg-src-1c1154/30" />
-                    <Stepper currentStep={step} totalSteps={3} />
+                    <span className="bg-src-1a1b41 text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-wide">
+                        PASO {step}
+                    </span>
                 </BotonInicio>
                 <RegisterForm step={step} setStep={setStep} />
             </div>
