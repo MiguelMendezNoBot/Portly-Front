@@ -102,7 +102,7 @@ export const UserTab = () => {
         to="/login"
         className="flex items-center gap-2 text-src-6b72ff font-bold text-sm hover:text-src-585fe6 transition-colors"
       >
-        Iniciar Sesión
+        Ingresar
       </Link>
     );
   }

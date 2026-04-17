@@ -11,6 +11,11 @@ import { CompleteProfilePage } from '../modules/auth/presentation/pages/Complete
 import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
 import ProfessionalProfilePage from "../modules/professional/presentation/pages/ProfessionalProfilePage"
 
+const PrivateRoute = ({ element }: { element: JSX.Element }) => {
+  const token = localStorage.getItem('token');
+  return token ? element : <Navigate to="/login" replace />;
+};
+
 export const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -22,8 +27,8 @@ export const AppRouter = () => {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
-        <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/complete-profile" element={<CompleteProfilePage />} />
+        <Route path="/profile" element={<PrivateRoute element={<UserProfilePage />} />} />
         {/* Rutas autenticadas con layout compartido */}
         <Route element={<AuthenticatedLayout />}>
           <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
