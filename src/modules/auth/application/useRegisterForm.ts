@@ -1,96 +1,120 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { executeRegisterUseCase } from './registerUseCase';
 import { authHttpRepository } from '../infrastructure/authRepository';
-import { validateRegisterFields } from '../domain/registerValidation';
+import { sendRegistrationCode, verifyRegistrationCode } from '../infrastructure/authService';
+import { validateStep1, validateStep3, RegisterFormErrors } from '../domain/registerValidation';
 import { useToast } from '../../../shared/hooks/useToast';
-import {
-  saveToken,
-  saveUsuarioId,
-  saveEmail,
-} from '../../../infrastructure/storage/storage';
+import { saveToken, saveUsuarioId, saveEmail } from '../../../infrastructure/storage/storage';
 
-interface FormFields {
+export interface RegisterFields {
+  email: string;
   nombre: string;
   apellido: string;
   profesion: string;
-  email: string;
   biografia: string;
   password: string;
   confirmPassword: string;
 }
 
-interface FormErrors {
-  nombre?: string;
-  apellido?: string;
-  profesion?: string;
-  email?: string;
-  biografia?: string;
-  password?: string;
-  confirmPassword?: string;
-}
-
 export const useRegisterForm = () => {
   const navigate = useNavigate();
-  const [fields, setFields] = useState<FormFields>({
+  const [fields, setFields] = useState<RegisterFields>({
+    email: '',
     nombre: '',
     apellido: '',
     profesion: '',
     biografia: '',
-    email: '',
     password: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<RegisterFormErrors>({});
+  const [codeError, setCodeError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
   const { toast, showToast } = useToast();
 
   const handleChange =
-    (field: keyof FormFields) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
+    (field: keyof RegisterFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setFields((prev) => ({ ...prev, [field]: e.target.value }));
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     };
 
-  const validate = (step?: number): boolean => {
-    const { errors: newErrors, isValid } = validateRegisterFields(fields, step);
-    setErrors((prev) => ({ ...prev, ...newErrors }));
-    return isValid;
+  const submitStep1 = async (): Promise<boolean> => {
+    const { errors: newErrors, isValid } = validateStep1({ email: fields.email });
+    setErrors(newErrors);
+    if (!isValid) return false;
+
+    setLoading(true);
+    try {
+      await sendRegistrationCode(fields.email);
+      return true;
+    } catch {
+      showToast('Error al enviar el código. Intenta de nuevo.', 'error');
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitStep2 = async (code: string): Promise<boolean> => {
+    if (code.length < 6 || code.includes(' ')) {
+      setCodeError('Campo inválido');
+      return false;
+    }
+    setCodeError(undefined);
+    setLoading(true);
     try {
-      const result = await executeRegisterUseCase(authHttpRepository, fields);
-      if (!result.success) {
-        setErrors((prev) => ({ ...prev, ...result.errors }));
-        showToast('Por favor corrige los errores del formulario', 'error');
-        return;
-      }
+      await verifyRegistrationCode(fields.email, code);
+      return true;
+    } catch {
+      setCodeError('Código incorrecto');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const data = result.response;
+  const submitStep3 = async (): Promise<boolean> => {
+    const { errors: newErrors, isValid } = validateStep3(fields);
+    setErrors(newErrors);
+    if (!isValid) return false;
+
+    setLoading(true);
+    try {
+      const data = await authHttpRepository.register({
+        nombre: fields.nombre,
+        apellido: fields.apellido,
+        profesion: fields.profesion,
+        correoElectronico: fields.email,
+        biografia: fields.biografia,
+        contrasena: fields.password,
+        confirmarContrasena: fields.confirmPassword,
+      });
       saveToken(data.token);
       saveUsuarioId(data.idUsuario);
       saveEmail(data.email);
       showToast('¡Cuenta creada exitosamente!', 'success');
-      navigate('/');
+      setTimeout(() => navigate('/'), 1200);
+      return true;
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-      if (err.status === 409 || err.message?.toLowerCase().includes('correo')) {
-        setErrors((prev) => ({
-          ...prev,
-          email: 'Este correo ya está registrado',
-        }));
-      }
-      showToast(
-        err.message ?? 'Error al registrarse, intenta de nuevo',
-        'error'
-      );
+      const err = error as { message?: string };
+      showToast(err.message ?? 'Error al registrarse, intenta de nuevo.', 'error');
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { fields, errors, toast, handleChange, handleSubmit, validate };
+  return {
+    fields,
+    errors,
+    codeError,
+    loading,
+    toast,
+    handleChange,
+    submitStep1,
+    submitStep2,
+    submitStep3,
+    setCodeError,
+  };
 };

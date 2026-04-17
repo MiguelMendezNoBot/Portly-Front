@@ -5,6 +5,12 @@ import type {
 } from '../domain/authTypes';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 
+export const sendRegistrationCode = (email: string) =>
+  httpClient.post('/auth/register/send-code', { email });
+
+export const verifyRegistrationCode = (email: string, codigo: string) =>
+  httpClient.post('/auth/register/verify-code', { email, codigo }, 'Código incorrecto o expirado.');
+
 export const registerUser = (data: RegisterData) =>
   httpClient.post<AuthResponse>('/auth/register', data);
 
