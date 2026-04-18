@@ -12,7 +12,7 @@ interface EvidenceUploaderProps {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -27,30 +27,35 @@ export default function EvidenceUploader({
 }: EvidenceUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-
-    const newEvidences: LocalEvidence[] = [];
-
-    Array.from(files).forEach((file) => {
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        onToast('Tipo de archivo no permitido', 'error');
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        onToast('El tamaño de la imagen supera los 10MB', 'error');
-        return;
-      }
-      newEvidences.push({
-        file,
-        previewUrl: URL.createObjectURL(file),
-      });
-    });
-
-    if (newEvidences.length > 0) {
-      onChange([...evidences, ...newEvidences]);
+const handleFiles = async (files: FileList | null) => {
+  if (!files) return;
+  const newEvidences: LocalEvidence[] = [];
+  for (const file of Array.from(files)) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      onToast(`El archivo tiene un tipo no permitido`, 'error');
+      continue;
     }
-  };
+    if (file.size > MAX_FILE_SIZE) {
+      onToast(`El tamaño de la imagen supera los 10MB`, 'error');
+      continue;
+    }
+    const isRealImage = await validateImageSignature(file);
+    if (!isRealImage) {
+      onToast(
+        `"${file.name}" no es una imagen válida. El contenido no corresponde a su extensión`,
+        'error'
+      );
+      continue;
+    }
+    newEvidences.push({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    });
+  }
+  if (newEvidences.length > 0) {
+    onChange([...evidences, ...newEvidences]);
+  }
+};
 
   const handleRemove = (index: number) => {
     URL.revokeObjectURL(evidences[index].previewUrl);
@@ -67,7 +72,21 @@ export default function EvidenceUploader({
     e.stopPropagation();
     handleFiles(e.dataTransfer.files);
   };
-
+  const validateImageSignature = (file: File): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      const arr = new Uint8Array(e.target?.result as ArrayBuffer);
+      const isPNG =
+        arr[0] === 0x89 && arr[1] === 0x50 &&
+        arr[2] === 0x4e && arr[3] === 0x47;
+      const isJPEG =
+        arr[0] === 0xff && arr[1] === 0xd8 && arr[2] === 0xff;
+      resolve(isPNG || isJPEG);
+    };
+    reader.readAsArrayBuffer(file.slice(0, 4));
+  });
+};
   return (
     <div className="space-y-4">
       {/* Drop zone */}
@@ -102,7 +121,7 @@ export default function EvidenceUploader({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/gif"
+          accept="image/png,image/jpeg"
           multiple
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
