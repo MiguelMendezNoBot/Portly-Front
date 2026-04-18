@@ -157,7 +157,7 @@ export default function SocialLinksForm({
             `}
           >
             {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
-            {isLinkedinConnected ? 'LinkedIn conectado' : 'Vincular LinkedIn'}
+            {isLinkedinConnected ? 'LinkedIn vinculado' : 'Vincular LinkedIn'}
           </button>
         </div>
 
