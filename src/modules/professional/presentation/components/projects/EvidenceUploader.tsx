@@ -82,10 +82,7 @@ const handleFiles = async (files: FileList | null) => {
         arr[2] === 0x4e && arr[3] === 0x47;
       const isJPEG =
         arr[0] === 0xff && arr[1] === 0xd8 && arr[2] === 0xff;
-      const isGIF =
-        arr[0] === 0x47 && arr[1] === 0x49 &&
-        arr[2] === 0x46 && arr[3] === 0x38;
-      resolve(isPNG || isJPEG || isGIF);
+      resolve(isPNG || isJPEG);
     };
     reader.readAsArrayBuffer(file.slice(0, 4));
   });
@@ -124,7 +121,7 @@ const handleFiles = async (files: FileList | null) => {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/gif"
+          accept="image/png,image/jpeg"
           multiple
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
