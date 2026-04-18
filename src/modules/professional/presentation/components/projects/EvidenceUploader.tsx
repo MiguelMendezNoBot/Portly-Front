@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { ProjectEvidence } from '../../../domain/entities/Project';
 
 export interface LocalEvidence {
   file: File;
@@ -9,6 +10,8 @@ interface EvidenceUploaderProps {
   evidences: LocalEvidence[];
   onChange: (evidences: LocalEvidence[]) => void;
   onToast: (message: string, type: 'success' | 'error') => void;
+  existingEvidences?: ProjectEvidence[];
+  onRemoveExisting?: (index: number) => void;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -24,6 +27,8 @@ export default function EvidenceUploader({
   evidences,
   onChange,
   onToast,
+  existingEvidences = [],
+  onRemoveExisting,
 }: EvidenceUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -129,14 +134,55 @@ const handleFiles = async (files: FileList | null) => {
       </div>
 
       {/* Uploaded files list */}
-      {evidences.length > 0 && (
+      {(evidences.length > 0 || existingEvidences.length > 0) && (
         <div className="space-y-2">
           <p className="text-[#9ca3af] text-sm font-medium">
-            Archivos subidos ({evidences.length})
+            Archivos subidos ({evidences.length + existingEvidences.length})
           </p>
+          
+          {/* Existing Evidences */}
+          {existingEvidences.map((ev, index) => (
+            <div
+              key={`existing-${index}`}
+              className="flex items-center gap-3 bg-[#1a1c29] rounded-xl p-3 border border-white/5"
+            >
+              <img
+                src={ev.url}
+                alt={ev.nombre}
+                className="w-10 h-10 rounded-lg object-cover shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-sm truncate">{ev.nombre}</p>
+                <p className="text-[#6b7280] text-xs">
+                  {formatFileSize(ev.pesoBytes)} •{' '}
+                  {ev.tipo ? ev.tipo.toUpperCase() : 'ARCHIVO'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onRemoveExisting && onRemoveExisting(index)}
+                className="text-[#9ca3af] hover:text-red-400 transition-colors shrink-0 p-1"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          ))}
+
+          {/* Local Evidences */}
           {evidences.map((ev, index) => (
             <div
-              key={index}
+              key={`local-${index}`}
               className="flex items-center gap-3 bg-[#1a1c29] rounded-xl p-3 border border-white/5"
             >
               <img

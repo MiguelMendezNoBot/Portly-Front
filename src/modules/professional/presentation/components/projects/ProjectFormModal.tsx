@@ -604,6 +604,12 @@ export default function ProjectFormModal({
               evidences={localEvidences}
               onChange={setLocalEvidences}
               onToast={showToast}
+              existingEvidences={formData.evidencias}
+              onRemoveExisting={(index) => {
+                const newEvidences = [...formData.evidencias];
+                newEvidences.splice(index, 1);
+                setFormData({ ...formData, evidencias: newEvidences });
+              }}
             />
           </section>
         </div>
