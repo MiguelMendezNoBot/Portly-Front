@@ -209,7 +209,7 @@ export default function GitHubImportDropdown({
                   </div>
 
                   {/* Stars */}
-                  <div className="flex items-center gap-1 text-[#facc15] text-sm">
+                  <div className="flex items-center gap-1 text-[#7367f0] text-sm">
                     <span>★</span>
                     <span>{formatStars(repo.stargazers_count || 0)}</span>
                   </div>

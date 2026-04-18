@@ -97,7 +97,7 @@ export default function EvidenceUploader({
           <p className="text-white text-sm font-medium">
             Haz clic para subir o arrastra archivos
           </p>
-          <p className="text-[#6b7280] text-xs">PNG, JPG o GIF hasta 10MB</p>
+          <p className="text-[#6b7280] text-xs">PNG, JPG o JPEG hasta 10MB</p>
         </div>
         <input
           ref={fileInputRef}
