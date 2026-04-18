@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { RegisterPage } from '../modules/auth/presentation/pages/RegisterPage';
 import LoginPage from '../modules/auth/presentation/pages/LoginPage';
@@ -9,11 +10,24 @@ import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
 import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
 import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
-import ProfessionalProfilePage from "../modules/professional/presentation/pages/ProfessionalProfilePage"
+import ProfessionalProfilePage from '../modules/professional/presentation/pages/ProfessionalProfilePage';
 
-const PrivateRoute = ({ element }: { element: JSX.Element }) => {
+const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
-  return token ? element : <Navigate to="/login" replace />;
+  if (!token) return null;
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch {
+    return null;
+  }
+};
+
+// Requiere token Y perfilCompleto = true
+const ProfileCompleteRoute = ({ element }: { element: ReactElement }) => {
+  const payload = getTokenPayload();
+  if (!payload) return <Navigate to="/login" replace />;
+  if (payload.perfilCompleto === false) return <Navigate to="/complete-profile" replace />;
+  return element;
 };
 
 export const AppRouter = () => {
@@ -28,14 +42,16 @@ export const AppRouter = () => {
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/complete-profile" element={<CompleteProfilePage />} />
-        <Route path="/profile" element={<PrivateRoute element={<UserProfilePage />} />} />
-        {/* Rutas autenticadas con layout compartido */}
+
+        <Route path="/profile" element={<ProfileCompleteRoute element={<UserProfilePage />} />} />
+
         <Route element={<AuthenticatedLayout />}>
           <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
           <Route path="/analytics" element={<div className="text-white p-8">analytics</div>} />
           <Route path="/portfolios" element={<div className="text-white p-8">portfolios</div>} />
-          <Route path="/professional-profile" element={<ProfessionalProfilePage />} />
+          <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
         </Route>
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
