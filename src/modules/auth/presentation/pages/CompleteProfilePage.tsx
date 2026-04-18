@@ -87,9 +87,9 @@ export const CompleteProfilePage = () => {
                 onChange={(e) => setProfesion(e.target.value)}
                 className={`w-full text-xs px-2 pt-2 pb-1 border rounded-xl outline-none bg-white ${
                   errors.profesion ? 'border-red-400' : 'border-gray-400'
-                }`}
+                } ${profesion === '' ? 'text-gray-400' : 'text-black'}`}
               >
-                <option value="">Ej: UI/UX designer</option>
+                <option value="" disabled className="text-gray-400">Ej: UI/UX designer</option>
                 {PROFESIONES.map((p) => (
                   <option key={p} value={p}>
                     {p}
@@ -104,10 +104,10 @@ export const CompleteProfilePage = () => {
             {/* Reseña Profesional */}
             <div className="flex flex-col gap-1 mb-4">
               <label className="text-black text-[13.5px] font-semibold mt-3">
-                Reseña Profesional
+                 Descripcion Profesional
               </label>
               <textarea
-                placeholder="Escribe tu reseña personal."
+                placeholder="Escribe tu descripcion profesional."
                 value={resena}
                 onChange={(e) => setResena(e.target.value)}
                 rows={4}
@@ -115,12 +115,14 @@ export const CompleteProfilePage = () => {
                   errors.resena ? 'border-red-400' : 'border-gray-400'
                 }`}
               />
-              <span className={`text-[10px] mt-1 text-right block ${charCountColor}`}>
-                {resena.length}/{MAX_CHARS}
-              </span>
-              {errors.resena && (
-                <span className="text-red-500 text-[11px]">{errors.resena}</span>
-              )}
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-red-500 text-[11px]">
+                  {errors.resena ?? ''}
+                </span>
+                <span className={`text-[10px] ${charCountColor}`}>
+                  {resena.length}/{MAX_CHARS}
+                </span>
+              </div>
             </div>
 
             <button
@@ -128,7 +130,7 @@ export const CompleteProfilePage = () => {
               disabled={loading}
               className="w-full py-2 rounded-lg text-sm text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? 'Procesando...' : 'Finalizar Registro'}
+              {loading ? 'Procesando...' : 'Completar Perfil'}
             </button>
           </form>
         </div>
