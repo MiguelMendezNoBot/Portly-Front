@@ -77,4 +77,33 @@ export const httpClient = {
     ),
   deleteAuth: <T>(path: string, fallback = 'Error al eliminar datos') =>
     request<T>(path, { method: 'DELETE' }, true, fallback),
+
+  //para proyectos
+  uploadFile: async <T>(
+    path: string,
+    file: File,
+    fieldName = 'file',
+    fallback = 'Error al subir archivo'
+  ): Promise<T> => {
+    const formData = new FormData();
+    formData.append(fieldName, file);
+
+    const headers: Record<string, string> = {};
+    const token = getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const message = await parseErrorMessage(res, fallback);
+      throw { status: res.status, message };
+    }
+
+    const text = await res.text();
+    return text ? JSON.parse(text) : ({} as T);
+  },
 };
