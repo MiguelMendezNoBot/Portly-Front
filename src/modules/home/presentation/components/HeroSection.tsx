@@ -33,7 +33,7 @@ export const HeroSection = () => {
             onClick={() => navigate('/profesionales')}
             className="px-6 py-3 rounded-full border border-white/20 text-white font-semibold text-sm tracking-wide hover:bg-white/5 hover:border-white/30 transition-all duration-200 active:scale-[0.98]"
           >
-            Ver portafolios
+            Ver Profesionales
           </button>
         </div>
       </div>
