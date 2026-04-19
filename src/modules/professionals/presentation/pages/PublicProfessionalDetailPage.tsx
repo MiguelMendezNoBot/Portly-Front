@@ -17,10 +17,10 @@ interface PublicProfessional {
   instagram?: string;
   facebook?: string;
   youtube?: string;
-  habilidadesTecnicas?: SkillDto[];
-  habilidadesBlandas?: string[];
-  trayectoria?: ExperienciaDto[];
-  formacion?: FormacionDto[];
+  habilidadesTecnicas?: SkillDto[] | null;
+  habilidadesBlandas?: string[] | null;
+  trayectoria?: ExperienciaDto[] | null;
+  formacion?: FormacionDto[] | null;
 }
 
 const LEVEL_COLOR: Record<string, string> = {
@@ -53,6 +53,10 @@ function SocialBtn({ href, children }: { href: string; children: React.ReactNode
     </a>
   );
 }
+
+function YTIcon() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5v-7l6.25 3.5-6.25 3.5z"/></svg>; }
+function FBIcon() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg>; }
+function IGIcon() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>; }
 
 export default function PublicProfessionalDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -87,11 +91,14 @@ export default function PublicProfessionalDetailPage() {
     : <PersonIcon />;
 
   const hasSocials = p.youtube || p.facebook || p.instagram;
-  const hasTrayectoria = p.trayectoria && p.trayectoria.length > 0;
-  const hasTecnicas = p.habilidadesTecnicas && p.habilidadesTecnicas.length > 0;
-  const hasBlandas = p.habilidadesBlandas && p.habilidadesBlandas.length > 0;
-  const hasFormacion = p.formacion && p.formacion.length > 0;
-  const hasRightCol = hasTecnicas || hasBlandas || hasFormacion;
+
+  // null = visibility OFF (backend didn't include it)
+  // [] or [...] = visibility ON (may or may not have data)
+  const showTrayectoria = p.trayectoria != null;
+  const showTecnicas    = p.habilidadesTecnicas != null;
+  const showBlandas     = p.habilidadesBlandas != null;
+  const showFormacion   = p.formacion != null;
+  const showRightCol    = showTecnicas || showBlandas || showFormacion;
 
   return (
     <div className="min-h-screen bg-[#0d1120] text-white pb-16">
@@ -126,21 +133,9 @@ export default function PublicProfessionalDetailPage() {
 
               {hasSocials && (
                 <div className="flex items-center gap-2 shrink-0">
-                  {p.youtube && (
-                    <SocialBtn href={p.youtube}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5v-7l6.25 3.5-6.25 3.5z"/></svg>
-                    </SocialBtn>
-                  )}
-                  {p.facebook && (
-                    <SocialBtn href={p.facebook}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
-                    </SocialBtn>
-                  )}
-                  {p.instagram && (
-                    <SocialBtn href={p.instagram}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    </SocialBtn>
-                  )}
+                  {p.youtube && <SocialBtn href={p.youtube}><YTIcon /></SocialBtn>}
+                  {p.facebook && <SocialBtn href={p.facebook}><FBIcon /></SocialBtn>}
+                  {p.instagram && <SocialBtn href={p.instagram}><IGIcon /></SocialBtn>}
                 </div>
               )}
             </div>
@@ -152,79 +147,95 @@ export default function PublicProfessionalDetailPage() {
         </div>
 
         {/* ── Two-column grid (mirrors preview modal) ── */}
-        {(hasTrayectoria || hasRightCol) && (
+        {(showTrayectoria || showRightCol) && (
           <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6">
 
             {/* Left — Trayectoria */}
-            {hasTrayectoria && (
+            {showTrayectoria && (
               <div className="bg-[#141829] rounded-[16px] p-5">
                 <h2 className="text-white font-extrabold text-lg mb-4">Trayectoria Profesional</h2>
-                <div className="flex flex-col gap-5">
-                  {p.trayectoria!.map((exp, i) => (
-                    <div key={i}>
-                      <p className="text-white font-bold text-sm">{exp.cargo}</p>
-                      <p className="text-src-9fa2ff text-xs mt-0.5">
-                        {exp.empresa}
-                        {exp.fechaInicio && ` • ${fmt(exp.fechaInicio)} - ${exp.esEmpleoActual ? 'Presente' : fmt(exp.fechaFin)}`}
-                      </p>
-                      {exp.descripcion && (
-                        <p className="text-slate-400 text-xs mt-2 leading-relaxed">{exp.descripcion}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                {p.trayectoria!.length > 0 ? (
+                  <div className="flex flex-col gap-5">
+                    {p.trayectoria!.map((exp, i) => (
+                      <div key={i}>
+                        <p className="text-white font-bold text-sm">{exp.cargo}</p>
+                        <p className="text-src-9fa2ff text-xs mt-0.5">
+                          {exp.empresa}
+                          {exp.fechaInicio && ` • ${fmt(exp.fechaInicio)} - ${exp.esEmpleoActual ? 'Presente' : fmt(exp.fechaFin)}`}
+                        </p>
+                        {exp.descripcion && (
+                          <p className="text-slate-400 text-xs mt-2 leading-relaxed">{exp.descripcion}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-500 text-sm italic">Sin experiencia registrada</p>
+                )}
               </div>
             )}
 
             {/* Right — Skills + Education */}
-            {hasRightCol && (
+            {showRightCol && (
               <div className="flex flex-col gap-5">
 
-                {hasTecnicas && (
+                {showTecnicas && (
                   <div>
                     <h2 className="text-white font-bold text-sm mb-3">Habilidades técnicas</h2>
-                    <div className="flex flex-col gap-2">
-                      {p.habilidadesTecnicas!.map((sk, i) => (
-                        <div key={i} className="flex items-center justify-between">
-                          <span className="text-src-e5e7f6 text-sm">{sk.nombre}</span>
-                          <span className={`text-[10px] font-bold uppercase tracking-wider ${LEVEL_COLOR[sk.nivel] ?? 'text-slate-400'}`}>
-                            {sk.nivel}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    {p.habilidadesTecnicas!.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {p.habilidadesTecnicas!.map((sk, i) => (
+                          <div key={i} className="flex items-center justify-between">
+                            <span className="text-src-e5e7f6 text-sm">{sk.nombre}</span>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${LEVEL_COLOR[sk.nivel] ?? 'text-slate-400'}`}>
+                              {sk.nivel}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-500 text-xs italic">Sin habilidades registradas</p>
+                    )}
                   </div>
                 )}
 
-                {hasBlandas && (
+                {showBlandas && (
                   <div>
                     <h2 className="text-white font-bold text-sm mb-3">Habilidades blandas</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {p.habilidadesBlandas!.map((sk, i) => (
-                        <span key={i} className="bg-[#171B28] border border-white/10 text-src-e5e7f6 text-xs px-3 py-1 rounded-full">
-                          {sk}
-                        </span>
-                      ))}
-                    </div>
+                    {p.habilidadesBlandas!.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {p.habilidadesBlandas!.map((sk, i) => (
+                          <span key={i} className="bg-[#171B28] border border-white/10 text-src-e5e7f6 text-xs px-3 py-1 rounded-full">
+                            {sk}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-500 text-xs italic">Sin habilidades registradas</p>
+                    )}
                   </div>
                 )}
 
-                {hasFormacion && (
+                {showFormacion && (
                   <div>
                     <h2 className="text-white font-bold text-sm mb-3">Formación académica</h2>
-                    <div className="flex flex-col gap-2">
-                      {p.formacion!.map((edu, i) => (
-                        <div key={i} className="bg-[#171B28] border border-white/5 rounded-[10px] px-4 py-3">
-                          <p className="text-white text-xs font-semibold">{edu.carrera}</p>
-                          <p className="text-slate-400 text-[11px] mt-0.5">
-                            {edu.institucion}
-                            {edu.fechaInicio && ` • ${fmt(edu.fechaInicio)}`}
-                            {edu.actualmenteEstudiando ? '' : edu.fechaFinalizacion ? ` - ${fmt(edu.fechaFinalizacion)}` : ''}
-                          </p>
-                          {edu.nivel && <p className="text-slate-500 text-[10px] mt-0.5">{edu.nivel}</p>}
-                        </div>
-                      ))}
-                    </div>
+                    {p.formacion!.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {p.formacion!.map((edu, i) => (
+                          <div key={i} className="bg-[#171B28] border border-white/5 rounded-[10px] px-4 py-3">
+                            <p className="text-white text-xs font-semibold">{edu.carrera}</p>
+                            <p className="text-slate-400 text-[11px] mt-0.5">
+                              {edu.institucion}
+                              {edu.fechaInicio && ` • ${fmt(edu.fechaInicio)}`}
+                              {edu.actualmenteEstudiando ? '' : edu.fechaFinalizacion ? ` - ${fmt(edu.fechaFinalizacion)}` : ''}
+                            </p>
+                            {edu.nivel && <p className="text-slate-500 text-[10px] mt-0.5">{edu.nivel}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-500 text-xs italic">Sin formación registrada</p>
+                    )}
                   </div>
                 )}
 
