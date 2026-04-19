@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { RegisterPage } from '../modules/auth/presentation/pages/RegisterPage';
 import LoginPage from '../modules/auth/presentation/pages/LoginPage';
 import { AuthCallbackPage } from '../modules/auth/presentation/pages/AuthCallbackPage';
+import { OAuthCallbackRedirectPage } from '../modules/auth/presentation/pages/OAuthCallbackRedirectPage';
 import { ForgotPasswordPage } from '../modules/auth/presentation/pages/ForgotPasswordPage';
 import { VerifyCodePage } from '../modules/auth/presentation/pages/VerifyCodePage';
 import { NewPasswordPage } from '../modules/auth/presentation/pages/NewPasswordPage';
@@ -40,6 +41,8 @@ export const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/auth/github/callback" element={<OAuthCallbackRedirectPage provider="github" />} />
+        <Route path="/auth/linkedin/callback" element={<OAuthCallbackRedirectPage provider="linkedin" />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
