@@ -255,10 +255,12 @@ export function UserProfilePage() {
     if (!providersBaselineReadyRef.current) {
       providersBaselineReadyRef.current = true;
       const raw = sessionStorage.getItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
-      if (raw && isPortlyOAuthProvider(raw) && currentProviders.includes(raw)) {
+      if (raw && isPortlyOAuthProvider(raw)) {
         sessionStorage.removeItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        triggerLinkedFlash();
+        if (currentProviders.includes(raw)) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          triggerLinkedFlash();
+        }
       }
       prevConnectedProvidersRef.current = currentProviders;
       return;
