@@ -3,7 +3,7 @@ import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../../domain/userProfile.entity';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
@@ -18,6 +18,7 @@ import {
   PORTLY_PENDING_OAUTH_PROVIDER_KEY,
   type PortlyOAuthLinkProvider,
 } from '../constants/oauthLink.constants';
+import { Toast } from '../../../../shared/components/Toast';
 
 const LINKED_FLASH_MS = 4000;
 
@@ -224,6 +225,8 @@ export function UserProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
+  const [oauthError, setOauthError] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [socialErrors, setSocialErrors] = useState<
     Partial<Record<keyof UserProfileEntity['socialLinks'], string>>
   >({});
@@ -231,7 +234,20 @@ export function UserProfilePage() {
   const prevConnectedProvidersRef = useRef<string[]>([]);
   const providersBaselineReadyRef = useRef(false);
 
-
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error === 'already_linked') {
+      setOauthError('Esta cuenta ya está vinculada a otro usuario.');
+      searchParams.delete('error');
+      setSearchParams(searchParams, { replace: true });
+      setTimeout(() => setOauthError(null), 6000);
+    } else if (error === 'access_denied') {
+      setOauthError('Se canceló la vinculación.');
+      searchParams.delete('error');
+      setSearchParams(searchParams, { replace: true });
+      setTimeout(() => setOauthError(null), 6000);
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     return () => {
@@ -378,6 +394,7 @@ export function UserProfilePage() {
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
+      {oauthError && <Toast toast={{ message: oauthError, type: 'error' }} />}
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0F131F] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
