@@ -115,7 +115,7 @@ export default function SocialLinksForm({
   }
 
   return (
-    <div className="flex flex-col bg-src-0f111a border border-white/5 rounded-[16px] overflow-hidden">
+    <div className="flex flex-col bg-[#171B28] border border-white/5 rounded-[16px] overflow-hidden">
       <div className="px-4 sm:px-8 py-6 sm:py-8 border-b border-white/5">
         <h2 className="text-src-e5e7f6 font-bold text-lg sm:text-3xl">
           Redes Sociales
@@ -139,7 +139,7 @@ export default function SocialLinksForm({
             `}
           >
             {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
-            {isGithubConnected ? 'GitHub conectado' : 'Vincular GitHub'}
+            {isGithubConnected ? 'GITHUB VINCULADO' : 'VINCULAR GITHUB'}
           </button>
 
           <button
@@ -190,7 +190,7 @@ export default function SocialLinksForm({
             }[]
           ).map(({ key, icon, placeholder, label }) => (
             <div key={key} className="flex items-start gap-2 sm:gap-4">
-              <div className="w-10 h-10 rounded-[8px] bg-src-1e293b border border-transparent flex items-center justify-center text-src-a7aab9 shrink-0 mt-0.5">
+              <div className="w-10 h-10 rounded-[8px] bg-[#2D3449] border border-transparent flex items-center justify-center text-src-a7aab9 shrink-0 mt-0.5">
                 {icon}
               </div>
               <div className="flex flex-col flex-1 min-w-0">
@@ -201,7 +201,7 @@ export default function SocialLinksForm({
                   placeholder={placeholder}
                   aria-label={`URL de ${label}`}
                   className={`
-                    w-full min-w-0 bg-src-1e293b border rounded-[12px] px-3 sm:px-4 py-3
+                    w-full min-w-0 bg-[#2D3449] border rounded-[12px] px-3 sm:px-4 py-3
                     text-white text-sm placeholder-src-6b7280
                     focus:outline-none focus:ring-0
                     transition-colors truncate overflow-x-hidden

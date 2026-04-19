@@ -196,7 +196,7 @@ export const VerifyCodeForm = () => {
           disabled={isLoading}
           className={`w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] tracking-wide ${isLoading ? 'bg-src-5a52d5 cursor-wait' : 'bg-src-6c63ff hover:bg-src-5a52d5'}`}
         >
-          {isLoading ? 'Verificando...' : 'Verificar'}
+          {isLoading ? 'VERIFICANDO...' : 'VERIFICAR'}
         </button>
       </form>
 

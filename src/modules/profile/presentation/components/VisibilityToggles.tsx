@@ -20,7 +20,7 @@ export default function VisibilityToggles({
   onChange,
 }: VisibilityTogglesProps) {
   return (
-    <div className="flex flex-col bg-src-0f111a border border-white/5 rounded-[12px] overflow-hidden">
+    <div className="flex flex-col bg-[#171B28] border border-white/5 rounded-[12px] overflow-hidden">
       <div className="px-6 py-4 border-b border-white/5">
         <p className="text-src-a7aab9 text-xs font-semibold tracking-[1.2px] uppercase">
           Visibilidad rápida

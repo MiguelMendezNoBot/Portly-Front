@@ -32,7 +32,7 @@ function Field({
         placeholder={placeholder}
         disabled={disabled}
         className="
-          w-full bg-src-1e293b border border-transparent rounded-[12px] px-4 py-3
+          w-full bg-[#2D3449] border border-transparent rounded-[12px] px-4 py-3
           text-white text-sm placeholder-src-727582
           focus:outline-none focus:border-transparent focus:ring-0
           transition-colors
@@ -62,7 +62,7 @@ export default function GeneralInfoForm({
   const bioLen = (form.bio ?? '').length;
 
   return (
-    <div className="flex flex-col bg-src-0f111a border border-white/5 rounded-[16px] overflow-hidden">
+    <div className="flex flex-col bg-[#171B28] border border-white/5 rounded-[16px] overflow-hidden">
       <div className="flex items-center justify-between px-8 py-8 border-b border-white/5">
         <h2 className="text-src-dae2fd font-bold text-3xl">
           Información Personal
@@ -116,7 +116,7 @@ export default function GeneralInfoForm({
             rows={4}
             placeholder="Cuéntanos sobre ti..."
             className="
-              w-full bg-src-1e293b border border-transparent rounded-[12px] px-4 py-3
+              w-full bg-[#2D3449] border border-transparent rounded-[12px] px-4 py-3
               text-white text-sm placeholder-src-727582 resize-none
               focus:outline-none focus:border-transparent focus:ring-0
               transition-colors

@@ -74,7 +74,11 @@ export default function ChangePasswordForm({
 
     const errors = validateAll();
     setFieldErrors(errors);
-    setTouched({ currentPassword: true, newPassword: true, confirmPassword: true });
+    setTouched({
+      currentPassword: true,
+      newPassword: true,
+      confirmPassword: true,
+    });
 
     if (hasErrors(errors)) return;
 
@@ -94,7 +98,8 @@ export default function ChangePasswordForm({
       const msg =
         error instanceof Error
           ? error.message
-          : (error as { message?: string })?.message || 'Error al actualizar contraseña';
+          : (error as { message?: string })?.message ||
+            'Error al actualizar contraseña';
 
       // Detect wrong current password
       if (
@@ -133,7 +138,7 @@ export default function ChangePasswordForm({
         {/* Contraseña actual */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
-            Contraseña actual
+            Contraseña actual *
           </label>
           <div className="relative">
             <input
@@ -145,7 +150,10 @@ export default function ChangePasswordForm({
                 if (touched.currentPassword) {
                   setFieldErrors((prev) => ({
                     ...prev,
-                    currentPassword: validateField('currentPassword', e.target.value),
+                    currentPassword: validateField(
+                      'currentPassword',
+                      e.target.value
+                    ),
                   }));
                 }
               }}
@@ -178,7 +186,7 @@ export default function ChangePasswordForm({
         {/* Nueva contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
-            Nueva contraseña
+            Nueva contraseña *
           </label>
           <div className="relative">
             <input
@@ -223,7 +231,7 @@ export default function ChangePasswordForm({
         {/* Confirmar contraseña */}
         <div className="flex flex-col gap-1.5 relative">
           <label className="text-[#a1a1aa] text-[13px] font-medium">
-            Confirmar contraseña
+            Confirmar contraseña *
           </label>
           <div className="relative">
             <input
@@ -235,7 +243,10 @@ export default function ChangePasswordForm({
                 if (touched.confirmPassword) {
                   setFieldErrors((prev) => ({
                     ...prev,
-                    confirmPassword: validateField('confirmPassword', e.target.value),
+                    confirmPassword: validateField(
+                      'confirmPassword',
+                      e.target.value
+                    ),
                   }));
                 }
               }}
