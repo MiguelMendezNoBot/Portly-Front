@@ -10,6 +10,13 @@ export interface UserProfileEntity {
     showEmail: boolean;
     showProfession: boolean;
     showBio: boolean;
+    showInstagram: boolean;
+    showFacebook: boolean;
+    showYoutube: boolean;
+    showTechSkills: boolean;
+    showSoftSkills: boolean;
+    showExperience: boolean;
+    showEducation: boolean;
   };
   socialLinks: {
     github?: string;

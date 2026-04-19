@@ -8,6 +8,7 @@ import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
 import VisibilityToggles from '../components/VisibilityToggles';
+import ProfilePreviewModal from '../components/ProfilePreviewModal';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
 import Sidebar from '../../../../shared/components/Sidebar';
@@ -217,10 +218,11 @@ function PillContentMobile({
 export function UserProfilePage() {
   const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
-  const { form, dirty, setField, setVisibility, setSocialLink } =
+  const { form, dirty, setField, patchVisibility, setSocialLink } =
     useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
   const [socialErrors, setSocialErrors] = useState<
     Partial<Record<keyof UserProfileEntity['socialLinks'], string>>
@@ -314,6 +316,24 @@ export function UserProfilePage() {
       }
     }
     return errors;
+  }
+
+  async function handleVisibilityToggle(
+    key: keyof UserProfileEntity['visibility'],
+    value: boolean
+  ) {
+    patchVisibility(key, value); // update UI without dirtying the form
+    try {
+      await saveProfile({
+        firstName:  profile!.firstName,
+        lastName:   profile!.lastName,
+        profession: profile!.profession,
+        bio:        profile!.bio,
+        visibility: { ...(form.visibility as UserProfileEntity['visibility']), [key]: value },
+      });
+    } catch {
+      patchVisibility(key, !value); // revert on failure, also without dirty
+    }
   }
 
   async function handleSave() {
@@ -426,17 +446,26 @@ export function UserProfilePage() {
                   />
                   <VisibilityToggles
                     visibility={{
-                      showEmail:
-                        form.visibility?.showEmail ??
-                        profile.visibility.showEmail,
-                      showProfession:
-                        form.visibility?.showProfession ??
-                        profile.visibility.showProfession,
-                      showBio:
-                        form.visibility?.showBio ?? profile.visibility.showBio,
+                      showEmail:      form.visibility?.showEmail      ?? profile.visibility.showEmail,
+                      showProfession: form.visibility?.showProfession ?? profile.visibility.showProfession,
+                      showBio:        form.visibility?.showBio        ?? profile.visibility.showBio,
+                      showInstagram:  form.visibility?.showInstagram  ?? profile.visibility.showInstagram,
+                      showFacebook:   form.visibility?.showFacebook   ?? profile.visibility.showFacebook,
+                      showYoutube:    form.visibility?.showYoutube    ?? profile.visibility.showYoutube,
+                      showTechSkills: form.visibility?.showTechSkills ?? profile.visibility.showTechSkills,
+                      showSoftSkills: form.visibility?.showSoftSkills ?? profile.visibility.showSoftSkills,
+                      showExperience: form.visibility?.showExperience ?? profile.visibility.showExperience,
+                      showEducation:  form.visibility?.showEducation  ?? profile.visibility.showEducation,
                     }}
-                    onChange={setVisibility}
+                    onChange={handleVisibilityToggle}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewOpen(true)}
+                    className="w-full py-2.5 rounded-[10px] bg-src-9fa2ff/10 hover:bg-src-9fa2ff/20 border border-src-9fa2ff/20 text-src-9fa2ff text-xs font-bold uppercase tracking-widest transition-all cursor-pointer"
+                  >
+                    Visualizar perfil
+                  </button>
                 </div>
                 <div className="flex flex-col gap-8 w-full md:w-[583px]">
                   <GeneralInfoForm
@@ -461,6 +490,14 @@ export function UserProfilePage() {
             </div>
           </div>
         </div>
+
+        {previewOpen && (
+          <ProfilePreviewModal
+            profile={profile}
+            form={form}
+            onClose={() => setPreviewOpen(false)}
+          />
+        )}
 
         {sidebarOpen && (
           <>

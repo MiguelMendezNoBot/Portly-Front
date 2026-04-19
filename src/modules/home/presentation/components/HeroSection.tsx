@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import { HeroMockup } from './HeroMockup';
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between gap-12 px-20 pt-5 pb-16">
       <div className="flex-1 max-w-xl">
@@ -27,7 +29,10 @@ export const HeroSection = () => {
           <button className="px-6 py-3 rounded-full bg-src-6b72ff hover:bg-src-585fe6 text-white font-semibold text-sm tracking-wide shadow-lg shadow-src-6b72ff/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
             Comenzar ahora
           </button>
-          <button className="px-6 py-3 rounded-full border border-white/20 text-white font-semibold text-sm tracking-wide hover:bg-white/5 hover:border-white/30 transition-all duration-200 active:scale-[0.98]">
+          <button
+            onClick={() => navigate('/profesionales')}
+            className="px-6 py-3 rounded-full border border-white/20 text-white font-semibold text-sm tracking-wide hover:bg-white/5 hover:border-white/30 transition-all duration-200 active:scale-[0.98]"
+          >
             Ver portafolios
           </button>
         </div>

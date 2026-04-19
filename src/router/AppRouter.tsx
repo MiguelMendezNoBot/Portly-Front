@@ -11,6 +11,8 @@ import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfi
 import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
 import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
 import ProfessionalProfilePage from '../modules/professional/presentation/pages/ProfessionalProfilePage';
+import ProfessionalsPage from '../modules/professionals/presentation/pages/ProfessionalsPage';
+import PublicProfessionalDetailPage from '../modules/professionals/presentation/pages/PublicProfessionalDetailPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -51,6 +53,9 @@ export const AppRouter = () => {
           <Route path="/portfolios" element={<div className="text-white p-8">portfolios</div>} />
           <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
         </Route>
+
+        <Route path="/profesionales" element={<ProfessionalsPage />} />
+        <Route path="/profesionales/:id" element={<PublicProfessionalDetailPage />} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

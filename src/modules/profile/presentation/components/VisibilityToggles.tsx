@@ -10,9 +10,16 @@ interface VisibilityTogglesProps {
 }
 
 const items: { key: keyof UserProfileEntity['visibility']; label: string }[] = [
-  { key: 'showEmail', label: 'Mostrar Correo' },
+  { key: 'showInstagram',  label: 'Mostrar links de Instagram' },
+  { key: 'showFacebook',   label: 'Mostrar links de Facebook' },
+  { key: 'showYoutube',    label: 'Mostrar links de YouTube' },
+  { key: 'showEmail',      label: 'Mostrar Correo electrónico' },
   { key: 'showProfession', label: 'Mostrar Profesión' },
-  { key: 'showBio', label: 'Mostrar Biografía' },
+  { key: 'showBio',        label: 'Descripción profesional' },
+  { key: 'showTechSkills', label: 'Mostrar habilidades técnicas' },
+  { key: 'showSoftSkills', label: 'Mostrar habilidades blandas' },
+  { key: 'showExperience', label: 'Mostrar trayectoria profesional' },
+  { key: 'showEducation',  label: 'Mostrar formación académica' },
 ];
 
 export default function VisibilityToggles({

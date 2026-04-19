@@ -41,6 +41,9 @@ async function request<T>(
 }
 
 export const httpClient = {
+  get: <T>(path: string, fallback = 'Error al cargar datos') =>
+    request<T>(path, { method: 'GET' }, false, fallback),
+
   post: <T>(path: string, body: unknown, fallback = 'Error en la petición') =>
     request<T>(
       path,
