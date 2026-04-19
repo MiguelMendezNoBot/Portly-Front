@@ -7,7 +7,7 @@ import ExperienceSection from './ExperienceSection';
 type TabType = 'habilidades' | 'trayectoria' | 'proyectos';
 
 export default function ProfileTabs() {
-  const [activeTab, setActiveTab] = useState<TabType>('trayectoria');
+  const [activeTab, setActiveTab] = useState<TabType>('habilidades');
 
   const tabs = [
     { id: 'habilidades', label: 'Habilidades' }, // [cite: 11]

@@ -81,8 +81,8 @@ export default function ExperienceFormModal({
   const handleBlur = (field: string, value: string) => {
     let error = '';
     if ((field === 'nombreEmpresa' || field === 'cargo') && value.trim()) {
-      if (value.length < 5)
-        error = 'El texto debe tener al menos 5 caracteres.';
+      if (value.length < 2)
+        error = 'El texto debe tener al menos 2 caracteres.';
       if (value.length > 100)
         error = 'El texto no puede superar los 100 caracteres.';
     }
