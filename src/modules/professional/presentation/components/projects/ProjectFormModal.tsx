@@ -450,11 +450,12 @@ export default function ProjectFormModal({
                     onClick={() =>
                       setFormData({ ...formData, visibilidad: 'publico' })
                     }
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all focus:outline-none outline-none focus:ring-0 focus:ring-offset-0 active:outline-none border ${
                       formData.visibilidad === 'publico'
-                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border border-[#6c63ff]/40 rounded-xl'
-                        : 'text-[#6b7280] hover:text-white'
+                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border-[#6c63ff]/40 rounded-xl'
+                        : 'border-transparent text-[#6b7280] hover:text-white rounded-xl'
                     }`}
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <svg
                       width="14"
@@ -474,11 +475,12 @@ export default function ProjectFormModal({
                     onClick={() =>
                       setFormData({ ...formData, visibilidad: 'privado' })
                     }
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all focus:outline-none outline-none focus:ring-0 focus:ring-offset-0 active:outline-none border ${
                       formData.visibilidad === 'privado'
-                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border border-[#6c63ff]/40 rounded-xl'
-                        : 'text-[#6b7280] hover:text-white'
+                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border-[#6c63ff]/40 rounded-xl'
+                        : 'border-transparent text-[#6b7280] hover:text-white rounded-xl'
                     }`}
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
                     <svg
                       width="14"
@@ -604,6 +606,12 @@ export default function ProjectFormModal({
               evidences={localEvidences}
               onChange={setLocalEvidences}
               onToast={showToast}
+              existingEvidences={formData.evidencias}
+              onRemoveExisting={(index) => {
+                const newEvidences = [...formData.evidencias];
+                newEvidences.splice(index, 1);
+                setFormData({ ...formData, evidencias: newEvidences });
+              }}
             />
           </section>
         </div>

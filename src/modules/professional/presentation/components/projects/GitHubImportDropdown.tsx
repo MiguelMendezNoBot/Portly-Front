@@ -129,7 +129,7 @@ export default function GitHubImportDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-[700px] bg-[#0f111a] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] left-0 sm:left-auto sm:right-0 mt-2 w-[calc(100vw-6rem)] sm:w-[480px] md:w-[700px] bg-[#0f111a] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
           {/* Header: Search + Count */}
           <div className="flex items-center justify-between p-4 border-b border-white/5">
             <div className="relative flex-1 max-w-[320px]">
@@ -160,11 +160,11 @@ export default function GitHubImportDropdown({
           </div>
 
           {/* Table header */}
-          <div className="grid grid-cols-[180px_90px_1fr_90px] gap-2 px-4 py-2.5 border-b border-white/5 text-[#6b7280] text-[10px] font-bold uppercase tracking-wider">
+          <div className="grid grid-cols-[1fr_70px] sm:grid-cols-[180px_90px_1fr_90px] gap-2 px-4 py-2.5 border-b border-white/5 text-[#6b7280] text-[10px] sm:text-xs font-bold uppercase tracking-wider">
             <span>Nombre del repositorio</span>
-            <span>Estrellas</span>
-            <span>Descripción</span>
-            <span className="text-right">Fecha</span>
+            <span className="text-right sm:text-left">Estrellas</span>
+            <span className="hidden sm:inline">Descripción</span>
+            <span className="text-right hidden sm:inline">Fecha</span>
           </div>
 
           {/* Rows */}
@@ -188,7 +188,7 @@ export default function GitHubImportDropdown({
                   key={repo.id}
                   type="button"
                   onClick={() => handleSelect(repo)}
-                  className="w-full grid grid-cols-[180px_90px_1fr_90px] gap-2 items-center px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-b-0 text-left"
+                  className="w-full grid grid-cols-[1fr_70px] sm:grid-cols-[180px_90px_1fr_90px] gap-2 items-center px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-b-0 text-left"
                 >
                   {/* Name */}
                   <div className="flex items-center gap-2 min-w-0">
@@ -209,18 +209,18 @@ export default function GitHubImportDropdown({
                   </div>
 
                   {/* Stars */}
-                  <div className="flex items-center gap-1 text-[#7367f0] text-sm">
+                  <div className="flex items-center justify-end sm:justify-start gap-1 text-[#7367f0] text-sm">
                     <span>★</span>
                     <span>{formatStars(repo.stargazers_count || 0)}</span>
                   </div>
 
                   {/* Description */}
-                  <p className="text-[#9ca3af] text-xs truncate">
+                  <p className="text-[#9ca3af] text-xs truncate hidden sm:block">
                     {repo.description || '—'}
                   </p>
 
                   {/* Date */}
-                  <span className="text-[#6b7280] text-xs text-right whitespace-nowrap">
+                  <span className="text-[#6b7280] text-xs text-right whitespace-nowrap hidden sm:block">
                     {formatDate(repo.updated_at)}
                   </span>
                 </button>
