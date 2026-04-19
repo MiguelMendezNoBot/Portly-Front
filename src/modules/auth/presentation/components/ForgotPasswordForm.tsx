@@ -122,8 +122,7 @@ export const ForgotPasswordForm = () => {
           disabled={isLoading}
           className={`mt-8 w-full py-3 rounded-2xl text-white font-semibold flex items-center justify-center transition-colors text-[14px] ${isLoading ? 'bg-src-5a52d5 cursor-wait' : 'bg-src-6c63ff hover:bg-src-5a52d5'}`}
         >
-          {isLoading ? 'Enviando...' : 'Enviar código'}
-          {!isLoading && <ArrowRightIcon />}
+          {isLoading ? 'ENVIANDO...' : 'ENVIAR CÓDIGO'}
         </button>
       </form>
 
@@ -132,7 +131,7 @@ export const ForgotPasswordForm = () => {
         className="mt-8 text-src-3b3066 font-semibold text-[13px] flex items-center cursor-pointer hover:underline"
       >
         <ArrowLeftIcon />
-        Volver al inicio
+        VOLVER AL INICIO
       </Link>
     </div>
   );

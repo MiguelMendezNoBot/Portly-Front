@@ -300,8 +300,8 @@ export const NewPasswordForm = () => {
                 : 'bg-gray-400 cursor-not-allowed shadow-none'
             }`}
           >
-            {isLoading ? 'Cambiando...' : 'Cambiar contraseña'}
-            {!isLoading && <KeyIcon />}
+            {isLoading ? 'CAMBIANDO...' : 'CAMBIAR CONTRASEÑA'}
+            {/*{!isLoading && <KeyIcon />}*/}
           </button>
         </div>
       </form>
