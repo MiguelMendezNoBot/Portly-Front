@@ -101,7 +101,7 @@ export default function GeneralInfoForm({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between px-0.5">
             <label className="text-white text-sm">
-              Biografía
+              Descripción Profesional
             </label>
             <span
               className={`text-xs font-normal ${bioLen > BIO_MAX ? 'text-red-400' : 'text-src-a7aab9'}`}
