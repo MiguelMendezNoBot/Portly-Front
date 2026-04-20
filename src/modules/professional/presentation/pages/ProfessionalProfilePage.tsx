@@ -42,7 +42,7 @@ export default function ProfessionalProfilePage() {
   }, [toast]);
 
   return (
-    <div className="max-w-6xl mx-auto pb-20 relative">
+    <div className="max-w-6xl mx-auto pb-20">
       {toast && <Toast toast={toast} />}
 
       <BotonInicioR
