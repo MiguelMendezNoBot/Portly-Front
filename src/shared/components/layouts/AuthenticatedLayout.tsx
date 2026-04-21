@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../modules/home/presentation/hooks/useAuth';
+import { useUserProfile } from '../../../modules/profile/application/useUserProfile';
 import Sidebar from '../Sidebar';
 import { PortlyLogoBig } from '../AppShell';
 import BotonInicio from '../BotonInicio';
@@ -28,6 +29,7 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
 
 export default function AuthenticatedLayout() {
   const { user } = useAuth();
+  const { profile } = useUserProfile();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,8 +49,8 @@ export default function AuthenticatedLayout() {
     return null;
   }
 
-  const fullName = user.displayName;
-  const avatarUrl = undefined; // Podría venir de perfil, pero no crítico
+  const fullName = profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Usuario');
+  const avatarUrl = profile?.avatarUrl;
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
