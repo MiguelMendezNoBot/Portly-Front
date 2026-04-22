@@ -31,7 +31,7 @@ export default function SkillCard({
       <div className="relative flex items-center" ref={menuRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="h-full px-3 flex items-center justify-center text-[#4b4f6b] hover:text-[#9ca3af] hover:bg-white/5 rounded-l-2xl transition-colors"
+          className="h-full px-2 flex items-center justify-center text-[#4b4f6b] hover:text-[#9ca3af] hover:bg-white/5 rounded-l-2xl transition-colors"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="2" />
@@ -65,11 +65,11 @@ export default function SkillCard({
       </div>
 
       {/* Ícono + Nombre — columna flexible (1fr) */}
-      <div className="flex items-center gap-2 px-3 py-3 min-w-0">
+      <div className="flex items-center gap-2  py-3 min-w-0">
         <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-white/5 flex-shrink-0">
           <TechIcon name={skill.name} />
         </div>
-        <h3 className="text-white font-bold text-sm truncate">{skill.name}</h3>
+        <h3 className="text-white font-bold text-xs truncate">{skill.name}</h3>
       </div>
 
       {/* Separador vertical — columna de 1px */}
