@@ -249,7 +249,7 @@ export default function ProfilePreviewModal({ profile, form, onClose }: Props) {
             onClick={onClose}
             className="px-10 py-2.5 rounded-full bg-src-9fa2ff text-[#0d1120] font-extrabold text-sm tracking-widest hover:brightness-110 transition-all cursor-pointer shadow-lg"
           >
-            Salir
+            SALIR
           </button>
         </div>
 

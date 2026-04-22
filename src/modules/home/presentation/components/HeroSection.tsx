@@ -27,13 +27,13 @@ export const HeroSection = () => {
 
         <div className="flex items-center gap-4 mb-4">
           <button className="px-6 py-3 rounded-full bg-src-6b72ff hover:bg-src-585fe6 text-white font-semibold text-sm tracking-wide shadow-lg shadow-src-6b72ff/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-            Comenzar ahora
+            COMENZAR AHORA
           </button>
           <button
             onClick={() => navigate('/profesionales')}
             className="px-6 py-3 rounded-full border border-white/20 text-white font-semibold text-sm tracking-wide hover:bg-white/5 hover:border-white/30 transition-all duration-200 active:scale-[0.98]"
           >
-            Ver Profesionales
+            VER PROFESIONALES
           </button>
         </div>
       </div>

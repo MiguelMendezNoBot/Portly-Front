@@ -103,13 +103,13 @@ export const UserTab = () => {
           to="/login"
           className="flex items-center gap-2 text-src-6b72ff font-bold text-sm hover:text-src-585fe6 transition-colors"
         >
-          Iniciar Sesión
+          INICIAR SESIÓN
         </Link>
         <Link
           to="/register"
           className="flex items-center gap-2 bg-src-6b72ff hover:bg-src-585fe6 text-white font-bold text-sm px-4 py-2 rounded-full transition-colors"
         >
-          Crear cuenta
+          CREAR CUENTA
         </Link>
       </div>
     );
@@ -140,7 +140,7 @@ export const UserTab = () => {
               <ProfileIcon />
             </span>
             <span className="text-[#e2e2e8] font-medium tracking-wide">
-              Perfil
+              PERFIL
             </span>
           </Link>
 
@@ -156,7 +156,7 @@ export const UserTab = () => {
                 <LockIcon />
               </span>
               <span className="text-[#e2e2e8] font-medium tracking-wide">
-                Cambiar contraseña
+                CAMBIAR CONTRASEÑA
               </span>
             </button>
           )}
@@ -172,7 +172,7 @@ export const UserTab = () => {
               <LogoutIcon />
             </span>
             <span className="text-[#ef4444] font-medium tracking-wide">
-              Cerrar sesión
+              CERRAR SESIÓN
             </span>
           </button>
         </div>

@@ -202,7 +202,7 @@ export default function SkillFormModal({
             onClick={onClose}
             className="flex-1 py-4 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 rounded-2xl transition-colors"
           >
-            Cancelar
+            CANCELAR
           </button>
           <button
             onClick={handleAction}
@@ -212,7 +212,7 @@ export default function SkillFormModal({
             {isSaving ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              'Aceptar'
+              'ACEPTAR'
             )}
           </button>
         </div>

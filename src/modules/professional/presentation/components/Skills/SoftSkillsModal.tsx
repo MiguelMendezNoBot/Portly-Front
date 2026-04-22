@@ -324,14 +324,14 @@ export default function SoftSkillsModal({
             }`}
           >
             {selected.size > 0
-              ? `Guardar cambios (${selected.size})`
-              : 'Guardar cambios'}
+              ? `GUARDAR CAMBIOS (${selected.size})`
+              : 'GUARDAR CAMBIOS'}
           </button>
           <button
             onClick={handleClose}
             className="w-full py-4 rounded-full font-bold text-xs uppercase tracking-widest text-white hover:bg-white/5 border border-white/10 transition-all duration-200 active:scale-95"
           >
-            Cancelar
+            CANCELAR
           </button>
         </div>
       </div>

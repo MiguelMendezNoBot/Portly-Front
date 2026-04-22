@@ -219,7 +219,7 @@ export default function FormacionAcademicaSection() {
                     aria-label="Editar formación académica"
                   >
                     <EditIcon />
-                    <span className="text-[10px] text-gray-400">Editar</span>
+                    <span className="text-[10px] text-gray-400">EDITAR</span>
                   </button>
                   <button
                     onClick={() => handleDeleteClick(rec)}
@@ -228,7 +228,7 @@ export default function FormacionAcademicaSection() {
                   >
                     <TrashIcon />
                     <span className="text-[10px] text-gray-400 hover:text-red-400">
-                      Eliminar
+                      ELIMINAR
                     </span>
                   </button>
                 </div>
