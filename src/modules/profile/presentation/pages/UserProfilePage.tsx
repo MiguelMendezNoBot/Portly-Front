@@ -481,7 +481,7 @@ export function UserProfilePage() {
                     onClick={() => setPreviewOpen(true)}
                     className="w-full py-2.5 rounded-[10px] bg-src-9fa2ff/10 hover:bg-src-9fa2ff/20 border border-src-9fa2ff/20 text-src-9fa2ff text-xs font-bold uppercase tracking-widest transition-all cursor-pointer"
                   >
-                    Visualizar perfil
+                    VISUALIZAR PERFIL
                   </button>
                 </div>
                 <div className="flex flex-col gap-8 w-full md:w-[583px]">

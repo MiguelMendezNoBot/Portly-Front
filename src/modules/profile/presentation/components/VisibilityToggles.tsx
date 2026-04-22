@@ -15,7 +15,7 @@ const items: { key: keyof UserProfileEntity['visibility']; label: string }[] = [
   { key: 'showYoutube',    label: 'Mostrar links de YouTube' },
   { key: 'showEmail',      label: 'Mostrar Correo electrónico' },
   { key: 'showProfession', label: 'Mostrar Profesión' },
-  { key: 'showBio',        label: 'Descripción profesional' },
+  { key: 'showBio',        label: 'Mostrar Descripción profesional' },
   { key: 'showTechSkills', label: 'Mostrar habilidades técnicas' },
   { key: 'showSoftSkills', label: 'Mostrar habilidades blandas' },
   { key: 'showExperience', label: 'Mostrar trayectoria profesional' },
@@ -42,7 +42,7 @@ export default function VisibilityToggles({
               checked={visibility[key]}
               onChange={(val) => onChange(key, val)}
             />
-          </div>
+          </div> 
         ))}
       </div>
     </div>
