@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Input } from '../../../../shared/components/Input';
 import { forgotPassword } from '../../infrastructure/authService';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ResetIcon = () => (
   <div className="w-14 h-14 bg-src-eef2ff rounded-full flex items-center justify-center mb-6">
@@ -22,30 +22,6 @@ const ResetIcon = () => (
       />
     </svg>
   </div>
-);
-
-const ArrowRightIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 ml-2">
-    <path
-      d="M5 12H19M19 12L12 5M19 12L12 19"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const ArrowLeftIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 mr-2">
-    <path
-      d="M19 12H5M5 12L12 19M5 12L12 5"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
 );
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -126,13 +102,6 @@ export const ForgotPasswordForm = () => {
         </button>
       </form>
 
-      <Link
-        to="/login"
-        className="mt-8 text-src-3b3066 font-semibold text-[13px] flex items-center cursor-pointer hover:underline"
-      >
-        <ArrowLeftIcon />
-        VOLVER AL INICIO
-      </Link>
     </div>
   );
 };

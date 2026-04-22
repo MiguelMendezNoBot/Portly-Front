@@ -146,7 +146,7 @@ export function LoginForm() {
           type="submit"
           className="w-full bg-src-6b72ff hover:bg-src-585fe6 text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg shadow-indigo-200"
         >
-          Iniciar Sesion
+          INICIAR SESIÓN
         </button>
       </form>
 
