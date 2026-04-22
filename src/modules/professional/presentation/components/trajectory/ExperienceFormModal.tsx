@@ -63,7 +63,8 @@ export default function ExperienceFormModal({
   }, [initialData]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    value = value.replace(/[^\d\s+]/g, '');
 
     setFormData({
       ...formData,
