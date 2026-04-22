@@ -63,11 +63,8 @@ export default function ExperienceFormModal({
   }, [initialData]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (!value.startsWith('+591 ')) return;
-    const digits = value.replace('+591 ', '');
-    if (/[^\d]/.test(digits)) return;
-    if (digits.length > 8) return;
+    let value = e.target.value;
+    value = value.replace(/[^\d\s+]/g, '');
 
     setFormData({
       ...formData,
@@ -95,9 +92,13 @@ export default function ExperienceFormModal({
       if (value.length > 20) error = 'Máximo 20 caracteres.';
     }
     if (field === 'numeroJefe') {
-      const digits = value.replace('+591 ', '');
-      if (digits.length > 0 && digits.length < 8)
-        error = 'Debe tener al menos 8 dígitos.';
+      let digits = value.replace(/\D/g, '');
+      if (digits.startsWith('591')) {
+        digits = digits.slice(3);
+      }
+      if (digits.length > 0 && digits.length < 6) {
+        error = 'Debe tener al menos 6 dígitos';
+      }
     }
     setErrors((prev) => ({ ...prev, [field]: error }));
   };
@@ -142,7 +143,7 @@ export default function ExperienceFormModal({
     // Validar nombreEmpresa
     if (
       !formData.nombreEmpresa.trim() ||
-      formData.nombreEmpresa.length < 5 ||
+      formData.nombreEmpresa.length < 2 ||
       formData.nombreEmpresa.length > 100
     ) {
       return false;
@@ -151,7 +152,7 @@ export default function ExperienceFormModal({
     // Validar cargo
     if (
       !formData.cargo.trim() ||
-      formData.cargo.length < 5 ||
+      formData.cargo.length < 2 ||
       formData.cargo.length > 100
     ) {
       return false;
@@ -171,27 +172,6 @@ export default function ExperienceFormModal({
     if (formData.referenciaProfesional.correoJefe.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.referenciaProfesional.correoJefe)) {
-        return false;
-      }
-    }
-
-    // Validar numeroJefe si tiene valor
-    if (formData.referenciaProfesional.numeroJefe !== '+591 ') {
-      const digits = formData.referenciaProfesional.numeroJefe.replace(
-        '+591 ',
-        ''
-      );
-      if (digits.length < 8) {
-        return false;
-      }
-    }
-
-    // Validar cargoJefe si tiene valor
-    if (formData.referenciaProfesional.cargoJefe.trim()) {
-      if (
-        formData.referenciaProfesional.cargoJefe.length < 2 ||
-        formData.referenciaProfesional.cargoJefe.length > 20
-      ) {
         return false;
       }
     }
@@ -377,7 +357,7 @@ export default function ExperienceFormModal({
             <div className="space-y-5">
               <div>
                 <label className="text-[#9ca3af] text-sm block mb-2">
-                  Correo de jefe *
+                  Correo de jefe
                 </label>
                 <input
                   type="email"
@@ -402,7 +382,7 @@ export default function ExperienceFormModal({
               </div>
               <div>
                 <label className="text-[#9ca3af] text-sm block mb-2">
-                  Número de jefe *
+                  Número de jefe
                 </label>
                 <input
                   value={formData.referenciaProfesional.numeroJefe}
@@ -418,7 +398,7 @@ export default function ExperienceFormModal({
               </div>
               <div>
                 <label className="text-[#9ca3af] text-sm block mb-2">
-                  Cargo de jefe *
+                  Cargo de jefe
                 </label>
                 <input
                   className="w-full bg-[#0f111a] border border-white/10 rounded-xl p-3.5 text-white text-sm focus:border-[#6c63ff] outline-none"
@@ -449,7 +429,7 @@ export default function ExperienceFormModal({
             onClick={onClose}
             className="px-8 py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
           >
-            Cancelar
+            CANCELAR
           </button>
           <button
             onClick={handleSave}
@@ -462,7 +442,7 @@ export default function ExperienceFormModal({
                 Guardando...
               </>
             ) : (
-              'Guardar y cerrar'
+              'GUARDAR Y CERRAR'
             )}
           </button>
         </div>

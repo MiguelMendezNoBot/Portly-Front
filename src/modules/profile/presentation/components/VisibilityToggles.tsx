@@ -29,7 +29,7 @@ export default function VisibilityToggles({
   return (
     <div className="flex flex-col bg-[#171B28] border border-white/5 rounded-[12px] overflow-hidden">
       <div className="px-6 py-4 border-b border-white/5">
-        <p className="text-src-a7aab9 text-xs font-semibold tracking-[1.2px] uppercase">
+        <p className="text-src-a7aab9 text-xs font-semibold tracking-[1.2px]">
           Visibilidad rápida
         </p>
       </div>

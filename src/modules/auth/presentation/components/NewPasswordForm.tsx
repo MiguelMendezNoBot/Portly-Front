@@ -301,7 +301,6 @@ export const NewPasswordForm = () => {
             }`}
           >
             {isLoading ? 'CAMBIANDO...' : 'CAMBIAR CONTRASEÑA'}
-            {/*{!isLoading && <KeyIcon />}*/}
           </button>
         </div>
       </form>

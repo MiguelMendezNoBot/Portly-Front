@@ -479,7 +479,7 @@ export function UserProfilePage() {
                   <button
                     type="button"
                     onClick={() => setPreviewOpen(true)}
-                    className="w-full py-2.5 rounded-[10px] bg-src-9fa2ff/10 hover:bg-src-9fa2ff/20 border border-src-9fa2ff/20 text-src-9fa2ff text-xs font-bold uppercase tracking-widest transition-all cursor-pointer"
+                    className="w-full py-2.5 rounded-[10px] bg-src-9fa2ff/10 hover:bg-src-9fa2ff/20 border border-src-9fa2ff/20 text-src-9fa2ff text-xs font-bold tracking-widest transition-all cursor-pointer"
                   >
                     VISUALIZAR PERFIL
                   </button>

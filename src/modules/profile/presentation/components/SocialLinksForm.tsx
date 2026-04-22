@@ -139,7 +139,7 @@ export default function SocialLinksForm({
             `}
           >
             {isGithubConnected ? <CheckIcon /> : <GithubIcon />}
-            {isGithubConnected ? 'GITHUB VINCULADO' : 'VINCULAR GITHUB'}
+            {isGithubConnected ? 'GitHub vinculado' : 'Vincular GitHub'}
           </button>
 
           <button
@@ -157,7 +157,7 @@ export default function SocialLinksForm({
             `}
           >
             {isLinkedinConnected ? <CheckIcon /> : <LinkedinIcon />}
-            {isLinkedinConnected ? 'LINKEDIN VINCULADO' : 'VINCULAR LINKEDIN'}
+            {isLinkedinConnected ? 'LinkedIn vinculado' : 'Vincular LinkedIn'}
           </button>
         </div>
 

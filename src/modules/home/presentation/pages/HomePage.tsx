@@ -22,10 +22,10 @@ export const HomePage = () => {
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center font-sans">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-0d152b rounded-[2rem] shadow-2xl overflow-hidden flex flex-col">
 
-        {/* Toast de logout - posicionado en la parte superior derecha */}
+        {/* Toast de logout - posicionado arriba al centro */}
         {toast && (
           <div
-            className={`fixed top-5 right-5 z-[9999] px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-2xl transition-all ${
+            className={`fixed top-5 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-2xl transition-all ${
               toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
             }`}
           >
