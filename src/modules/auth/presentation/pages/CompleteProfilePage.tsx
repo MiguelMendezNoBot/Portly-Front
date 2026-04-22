@@ -130,7 +130,7 @@ export const CompleteProfilePage = () => {
               disabled={loading}
               className="w-full py-2 rounded-lg text-sm text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? 'Procesando...' : 'Completar Perfil'}
+              {loading ? 'PROCESANDO...' : 'COMPLETAR PERFIL'}
             </button>
           </form>
         </div>

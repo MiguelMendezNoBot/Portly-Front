@@ -93,7 +93,7 @@ function Countdown({ onResend }: { onResend: () => void }) {
           onClick={() => { onResend(); setSeconds(59); }}
           className="text-src-6c63ff font-medium hover:underline"
         >
-          Reenviar
+          REENVIAR
         </button>
       )}
     </p>
@@ -176,7 +176,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 disabled={loading}
                 className="w-full py-2 rounded-lg text-sm text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors disabled:opacity-60"
               >
-                {loading ? 'Enviando...' : 'Siguiente'}
+                {loading ? 'ENVIANDO...' : 'SIGUIENTE'}
               </button>
               <div className="text-center mt-3">
                 <span className="text-gray-500 text-sm">¿Ya tienes cuenta? </span>
@@ -215,7 +215,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                   onClick={() => setStep(1)}
                   className="w-1/3 py-2 rounded-lg text-src-6c63ff font-light text-sm border border-src-6c63ff hover:bg-gray-50 transition-colors"
                 >
-                  Volver
+                  VOLVER
                 </button>
                 <button
                   onClick={goStep2}
@@ -295,7 +295,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 disabled={loading}
                 className="w-full py-2 rounded-lg text-sm text-white font-light bg-src-8781fa hover:bg-src-6960ec transition-colors disabled:opacity-60"
               >
-                {loading ? 'Registrando...' : 'Finalizar registro'}
+                {loading ? 'REGISTRANDO...' : 'FINALIZAR REGISTRO'}
               </button>
               <div className="text-center mt-3">
                 <span className="text-gray-500 text-sm">¿Ya tienes cuenta? </span>

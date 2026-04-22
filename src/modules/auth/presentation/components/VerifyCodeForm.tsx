@@ -208,7 +208,7 @@ export const VerifyCodeForm = () => {
           disabled={!canResend}
           className={`font-semibold transition-colors ${canResend ? 'text-src-6c63ff hover:underline cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
         >
-          Reenviar {canResend ? '' : `en ${formatTime(secondsLeft)}`}
+          REENVIAR {canResend ? '' : `en ${formatTime(secondsLeft)}`}
         </button>
       </div>
     </div>
