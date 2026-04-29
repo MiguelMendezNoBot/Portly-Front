@@ -63,11 +63,14 @@ const formatDate = (dateStr: string | null | undefined): string => {
   return `${months[parseInt(month, 10) - 1]} ${year}`;
 };
 
+type ActionMode = 'edit' | 'delete' | null;
+
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function FormacionAcademicaSection() {
   const [records, setRecords] = useState<FormacionAcademica[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [mode, setMode] = useState<ActionMode>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<
@@ -102,8 +105,9 @@ export default function FormacionAcademicaSection() {
     loadRecords();
   }, [loadRecords]);
 
-  // ── Handlers de modal agregar/editar ────────────────────────────────────
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleOpenAdd = () => {
+    setMode(null);
     setEditingRecord(undefined);
     setIsModalOpen(true);
   };
@@ -118,19 +122,16 @@ export default function FormacionAcademicaSection() {
     id?: number
   ) => {
     if (id !== undefined) {
-      // Edición
       const updated = await repo.update(id, request);
       setRecords((prev) =>
         prev.map((r) => (r.idFormacionAcademica === id ? updated : r))
       );
     } else {
-      // Alta
       const created = await repo.create(request);
       setRecords((prev) => [...prev, created]);
     }
   };
 
-  // ── Handlers de eliminación ──────────────────────────────────────────────
   const handleDeleteClick = (record: FormacionAcademica) => {
     setDeleteModal({ isOpen: true, record });
   };
@@ -159,18 +160,86 @@ export default function FormacionAcademicaSection() {
     }
   };
 
+  const toggleMode = (target: 'edit' | 'delete') => {
+    setMode((prev) => (prev === target ? null : target));
+  };
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <>
-      <section className="flex flex-col gap-6 w-full animate-fade-in bg-[#171B28] p-4 rounded-2xl">
+      <section className="flex flex-col gap-6 w-full animate-fade-in">
         {/* Cabecera */}
-        <header className="flex flex-col gap-1">
-          <h3 className="text-white text-2xl font-bold">Formación Académica</h3>
-          <p className="text-[#9ca3af] text-sm">
-            Mantén actualizado tu perfil académico para mostrar tus
-            certificaciones y grados académicos más recientes.
-          </p>
+        <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <h3 className="text-white text-2xl font-bold">Formación Académica</h3>
+            <p className="text-[#9ca3af] text-sm mt-1">
+              Mantén actualizado tu perfil académico para mostrar tus
+              certificaciones y grados académicos más recientes.
+            </p>
+          </div>
+
+          {/* Botones de acción */}
+          <div className="flex items-center gap-2 self-start sm:self-auto flex-shrink-0">
+            {/* Agregar */}
+            <button
+              onClick={handleOpenAdd}
+              className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Agregar
+            </button>
+
+            {/* Editar */}
+            <button
+              onClick={() => toggleMode('edit')}
+              className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                mode === 'edit'
+                  ? 'bg-white/10 border-white/30 text-white'
+                  : 'border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
+              }`}
+            >
+              <EditIcon />
+              Editar
+            </button>
+
+            {/* Eliminar */}
+            <button
+              onClick={() => toggleMode('delete')}
+              className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                mode === 'delete'
+                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                  : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
+              }`}
+            >
+              <TrashIcon />
+              Eliminar
+            </button>
+          </div>
         </header>
+
+        {/* Indicador de modo activo */}
+        {mode && (
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm border ${
+            mode === 'edit'
+              ? 'bg-white/5 border-white/10 text-[#9ca3af]'
+              : 'bg-red-500/10 border-red-500/20 text-red-400'
+          }`}>
+            {mode === 'edit' ? <EditIcon /> : <TrashIcon />}
+            <span>
+              {mode === 'edit'
+                ? 'Selecciona un ítem para editarlo'
+                : 'Selecciona un ítem para eliminarlo'}
+            </span>
+            <button
+              onClick={() => setMode(null)}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
 
         {/* Error global */}
         {apiError && (
@@ -180,9 +249,8 @@ export default function FormacionAcademicaSection() {
         )}
 
         {/* Lista de registros */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {isLoading ? (
-            /* Skeleton loader */
             <div className="space-y-4">
               {[1, 2].map((i) => (
                 <div
@@ -197,44 +265,50 @@ export default function FormacionAcademicaSection() {
             </div>
           ) : records.length === 0 ? (
             <div className="text-center p-10 bg-[#1a1c29]/30 rounded-2xl border-2 border-dashed border-white/10">
+              <div className="w-16 h-16 bg-[#1a1c29] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4b5563" strokeWidth="1.5">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </div>
               <h4 className="text-white text-lg font-bold mb-2">
                 Tu formación académica está vacía.
               </h4>
-              <p className="text-[#9ca3af] text-sm">
+              <p className="text-[#9ca3af] text-sm mb-6 max-w-md mx-auto">
                 Agrega tus estudios y certificaciones para destacar tu perfil
-                académico.
+                académico y atraer mejores oportunidades.
               </p>
             </div>
           ) : (
             records.map((rec) => (
               <div
                 key={rec.idFormacionAcademica}
-                className="bg-[#2D3449] p-6 rounded-2xl border border-white/5 relative group transition-all hover:bg-[#1f2233]"
+                onClick={() => {
+                  if (mode === 'edit') handleOpenEdit(rec);
+                  else if (mode === 'delete') handleDeleteClick(rec);
+                }}
+                className={`relative bg-[#2D3449] p-6 rounded-2xl border transition-all ${
+                  mode === 'edit'
+                    ? 'border-white/20 cursor-pointer hover:bg-[#2a3060] hover:border-white/30'
+                    : mode === 'delete'
+                    ? 'border-red-500/20 cursor-pointer hover:bg-red-500/10 hover:border-red-500/40'
+                    : 'border-white/5 hover:bg-[#1f2233]'
+                }`}
               >
-                {/* Botones Editar / Eliminar */}
-                <div className="absolute top-5 right-5 flex gap-2">
-                  <button
-                    onClick={() => handleOpenEdit(rec)}
-                    className="p-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-white transition-colors flex flex-col items-center gap-1"
-                    aria-label="Editar formación académica"
-                  >
+                {/* Indicador de acción en el ítem */}
+                {mode === 'edit' && (
+                  <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white">
                     <EditIcon />
-                    <span className="text-[10px] text-gray-400">EDITAR</span>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(rec)}
-                    className="p-2.5 bg-white/5 hover:bg-red-500/20 rounded-lg text-red-400 transition-colors flex flex-col items-center gap-1"
-                    aria-label="Eliminar formación académica"
-                  >
+                  </div>
+                )}
+                {mode === 'delete' && (
+                  <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400">
                     <TrashIcon />
-                    <span className="text-[10px] text-gray-400 hover:text-red-400">
-                      ELIMINAR
-                    </span>
-                  </button>
-                </div>
+                  </div>
+                )}
 
                 {/* Contenido */}
-                <h4 className="text-white text-base font-bold pr-24 max-w-[340px] leading-snug">
+                <h4 className={`text-white text-base font-bold leading-snug ${mode ? 'pr-12' : ''}`}>
                   {rec.carrera}
                 </h4>
                 {rec.nivel && (
@@ -252,24 +326,13 @@ export default function FormacionAcademicaSection() {
                     : formatDate(rec.fechaFinalizacion)}
                 </p>
                 {rec.descripcion && (
-                  <p className="text-[#9ca3af] text-sm mt-3 leading-relaxed pr-2">
+                  <p className="text-[#9ca3af] text-sm mt-3 leading-relaxed">
                     {rec.descripcion}
                   </p>
                 )}
               </div>
             ))
           )}
-        </div>
-
-        {/* Botón Agregar */}
-        <div className="flex justify-center mt-2">
-          <button
-            id="btn-agregar-formacion"
-            onClick={handleOpenAdd}
-            className="bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-3 px-8 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm"
-          >
-            AGREGAR FORMACIÓN ACADÉMICA
-          </button>
         </div>
       </section>
 
