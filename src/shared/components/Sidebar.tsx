@@ -14,6 +14,32 @@ const icons = {
       <path d="M9 21V12h6v9" />
     </svg>
   ),
+  eye: (
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
+  link: (
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+    </svg>
+  ),
   grid: (
     <svg
       width="18"
@@ -93,6 +119,8 @@ const navItems = [
     icon: icons.badge,
   },
   { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
+  { to: '/visibility', label: 'Visibilidad', icon: icons.eye },
+  { to: '/integrations', label: 'Integraciones', icon: icons.link },
 ];
 
 interface SidebarProps {

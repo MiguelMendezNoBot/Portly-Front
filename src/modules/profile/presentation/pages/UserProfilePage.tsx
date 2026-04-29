@@ -1,30 +1,18 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import type {
   UserProfileEntity,
   UpdateUserProfileDTO,
 } from '../../domain/userProfile.entity';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
-import VisibilityToggles from '../components/VisibilityToggles';
 import ProfilePreviewModal from '../components/ProfilePreviewModal';
 import GeneralInfoForm from '../components/GeneralInfoForm';
 import SocialLinksForm from '../components/SocialLinksForm';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import BotonInicio from '../../../../shared/components/BotonInicio';
-import {
-  PORTLY_PENDING_OAUTH_PROVIDER_KEY,
-  type PortlyOAuthLinkProvider,
-} from '../constants/oauthLink.constants';
-import { Toast } from '../../../../shared/components/Toast';
-
-const LINKED_FLASH_MS = 4000;
-
-function isPortlyOAuthProvider(p: string): p is PortlyOAuthLinkProvider {
-  return p === 'github' || p === 'linkedin';
-}
 
 function SaveIcon() {
   return (
@@ -219,79 +207,14 @@ function PillContentMobile({
 export function UserProfilePage() {
   const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
-  const { form, dirty, setField, patchVisibility, setSocialLink } =
+  const { form, dirty, setField, setSocialLink } =
     useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [pillMode, setPillMode] = useState<'normal' | 'linked'>('normal');
-  const [oauthError, setOauthError] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
   const [socialErrors, setSocialErrors] = useState<
     Partial<Record<keyof UserProfileEntity['socialLinks'], string>>
   >({});
-  const pillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevConnectedProvidersRef = useRef<string[]>([]);
-  const providersBaselineReadyRef = useRef(false);
-
-  useEffect(() => {
-    const error = searchParams.get('error');
-    if (error === 'already_linked') {
-      setOauthError('Esta cuenta ya está vinculada a otro usuario.');
-      searchParams.delete('error');
-      setSearchParams(searchParams, { replace: true });
-      setTimeout(() => setOauthError(null), 6000);
-    } else if (error === 'access_denied') {
-      setOauthError('Se canceló la vinculación.');
-      searchParams.delete('error');
-      setSearchParams(searchParams, { replace: true });
-      setTimeout(() => setOauthError(null), 6000);
-    }
-  }, [searchParams, setSearchParams]);
-
-  useEffect(() => {
-    return () => {
-      if (pillTimerRef.current) clearTimeout(pillTimerRef.current);
-    };
-  }, []);
-
-  const triggerLinkedFlash = useCallback(() => {
-    setPillMode('linked');
-    if (pillTimerRef.current) clearTimeout(pillTimerRef.current);
-    pillTimerRef.current = setTimeout(
-      () => setPillMode('normal'),
-      LINKED_FLASH_MS
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!profile) return;
-
-    const currentProviders = profile.connectedProviders;
-    const prevProviders = prevConnectedProvidersRef.current;
-
-    if (!providersBaselineReadyRef.current) {
-      providersBaselineReadyRef.current = true;
-      const raw = sessionStorage.getItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
-      if (raw && isPortlyOAuthProvider(raw)) {
-        sessionStorage.removeItem(PORTLY_PENDING_OAUTH_PROVIDER_KEY);
-        if (currentProviders.includes(raw)) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
-          triggerLinkedFlash();
-        }
-      }
-      prevConnectedProvidersRef.current = currentProviders;
-      return;
-    }
-
-    const prevSet = new Set(prevProviders);
-    const newlyLinked = currentProviders.filter((p) => !prevSet.has(p));
-    if (newlyLinked.some((p) => isPortlyOAuthProvider(p))) {
-      triggerLinkedFlash();
-    }
-
-    prevConnectedProvidersRef.current = currentProviders;
-  }, [profile, triggerLinkedFlash]);
 
   function validateSocialLinks(links: typeof form.socialLinks | undefined) {
     const errors: Partial<
@@ -334,24 +257,6 @@ export function UserProfilePage() {
     return errors;
   }
 
-  async function handleVisibilityToggle(
-    key: keyof UserProfileEntity['visibility'],
-    value: boolean
-  ) {
-    patchVisibility(key, value); // update UI without dirtying the form
-    try {
-      await saveProfile({
-        firstName:  profile!.firstName,
-        lastName:   profile!.lastName,
-        profession: profile!.profession,
-        bio:        profile!.bio,
-        visibility: { ...(form.visibility as UserProfileEntity['visibility']), [key]: value },
-      });
-    } catch {
-      patchVisibility(key, !value); // revert on failure, also without dirty
-    }
-  }
-
   async function handleSave() {
     const errors = validateSocialLinks(form.socialLinks);
     if (Object.keys(errors).length > 0) {
@@ -385,7 +290,7 @@ export function UserProfilePage() {
 
   const fullName = `${profile.firstName} ${profile.lastName}`;
   const pillProps: PillContentProps = {
-    mode: pillMode,
+    mode: 'normal',
     onSave: handleSave,
     onClose: () => navigate('/'),
     saving,
@@ -394,7 +299,6 @@ export function UserProfilePage() {
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
-      {oauthError && <Toast toast={{ message: oauthError, type: 'error' }} />}
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-[#0F131F] rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
@@ -461,21 +365,6 @@ export function UserProfilePage() {
                     onFileChange={uploadAvatar}
                     uploading={saving}
                   />
-                  <VisibilityToggles
-                    visibility={{
-                      showEmail:      form.visibility?.showEmail      ?? profile.visibility.showEmail,
-                      showProfession: form.visibility?.showProfession ?? profile.visibility.showProfession,
-                      showBio:        form.visibility?.showBio        ?? profile.visibility.showBio,
-                      showInstagram:  form.visibility?.showInstagram  ?? profile.visibility.showInstagram,
-                      showFacebook:   form.visibility?.showFacebook   ?? profile.visibility.showFacebook,
-                      showYoutube:    form.visibility?.showYoutube    ?? profile.visibility.showYoutube,
-                      showTechSkills: form.visibility?.showTechSkills ?? profile.visibility.showTechSkills,
-                      showSoftSkills: form.visibility?.showSoftSkills ?? profile.visibility.showSoftSkills,
-                      showExperience: form.visibility?.showExperience ?? profile.visibility.showExperience,
-                      showEducation:  form.visibility?.showEducation  ?? profile.visibility.showEducation,
-                    }}
-                    onChange={handleVisibilityToggle}
-                  />
                   <button
                     type="button"
                     onClick={() => setPreviewOpen(true)}
@@ -495,7 +384,6 @@ export function UserProfilePage() {
                   <div id="social-links-section">
                     <SocialLinksForm
                       links={form.socialLinks ?? profile.socialLinks}
-                      connectedProviders={profile.connectedProviders}
                       onChange={setSocialLink}
                       errors={socialErrors}
                     />

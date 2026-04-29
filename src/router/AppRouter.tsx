@@ -9,6 +9,8 @@ import { VerifyCodePage } from '../modules/auth/presentation/pages/VerifyCodePag
 import { NewPasswordPage } from '../modules/auth/presentation/pages/NewPasswordPage';
 import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
+import { VisibilityPage } from '../modules/profile/presentation/pages/VisibilityPage';
+import { IntegrationsPage } from '../modules/profile/presentation/pages/IntegrationsPage';
 import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
 import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
 import ProfessionalProfilePage from '../modules/professional/presentation/pages/ProfessionalProfilePage';
@@ -55,6 +57,8 @@ export const AppRouter = () => {
           <Route path="/analytics" element={<div className="text-white p-8">analytics</div>} />
           <Route path="/portfolios" element={<div className="text-white p-8">portfolios</div>} />
           <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
+          <Route path="/visibility" element={<ProfileCompleteRoute element={<VisibilityPage />} />} />
+          <Route path="/integrations" element={<ProfileCompleteRoute element={<IntegrationsPage />} />} />
         </Route>
 
         <Route path="/profesionales" element={<ProfessionalsPage />} />

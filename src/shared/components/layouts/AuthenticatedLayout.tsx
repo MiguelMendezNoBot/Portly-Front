@@ -25,6 +25,14 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     subtitle:
       'Puedes editar tu trayectoria laboral y académica además de publicar tus proyectos',
   },
+  '/visibility': {
+    title: 'Visibilidad',
+    subtitle: 'Controla qué información es visible en tu perfil público',
+  },
+  '/integrations': {
+    title: 'Integraciones',
+    subtitle: 'Vincula tus cuentas externas para enriquecer tu perfil',
+  },
 };
 
 export default function AuthenticatedLayout() {
