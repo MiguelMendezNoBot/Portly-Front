@@ -5,7 +5,7 @@ import { httpClient } from '../../../../../infrastructure/http/httpClient';
 import { DateRangeInput } from '../../../../../shared/components/DateRangeInput';
 import TechTags from './TechTags';
 import EvidenceUploader, { LocalEvidence } from './EvidenceUploader';
-import GitHubImportDropdown from './GitHubImportDropdown';
+
 
 const repo = new HttpProjectRepository();
 
@@ -14,6 +14,7 @@ interface ProjectFormModalProps {
   onClose: () => void;
   initialData?: Project;
   onSuccess: () => void;
+  existingProjects?: Project[];
 }
 
 const emptyProject: Project = {
@@ -25,10 +26,9 @@ const emptyProject: Project = {
   esActual: false,
   tecnologias: [],
   visibilidad: 'publico',
-  urlDemo: '',
-  repositorios: [''],
   iconoUrl: null,
   evidencias: [],
+  enlaces: [{ titulo: '', url: '' }],
 };
 
 export default function ProjectFormModal({
@@ -36,6 +36,7 @@ export default function ProjectFormModal({
   onClose,
   initialData,
   onSuccess,
+  existingProjects,
 }: ProjectFormModalProps) {
   const [formData, setFormData] = useState<Project>({ ...emptyProject });
   const [localEvidences, setLocalEvidences] = useState<LocalEvidence[]>([]);
@@ -46,6 +47,7 @@ export default function ProjectFormModal({
     message: string;
     type: 'success' | 'error';
   } | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState(false);
 
   const iconInputRef = useRef<HTMLInputElement>(null);
 
@@ -69,10 +71,10 @@ export default function ProjectFormModal({
     if (initialData) {
       setFormData({
         ...initialData,
-        repositorios:
-          initialData.repositorios?.length > 0
-            ? initialData.repositorios
-            : [''],
+        enlaces:
+          initialData.enlaces?.length > 0
+            ? initialData.enlaces
+            : [{ titulo: '', url: '' }],
       });
       setIconPreview(initialData.iconoUrl || null);
     } else {
@@ -81,6 +83,11 @@ export default function ProjectFormModal({
       setLocalEvidences([]);
     }
   }, [initialData]);
+
+  // Reset duplicate warning when name changes
+  useEffect(() => {
+    setDuplicateWarning(false);
+  }, [formData.nombre]);
 
   // Auto-hide toast
   useEffect(() => {
@@ -107,56 +114,42 @@ export default function ProjectFormModal({
     setIconPreview(url);
   };
 
-  // GitHub import
-  const handleGitHubSelect = (ghRepo: GitHubRepo) => {
-    const createdDate = ghRepo.created_at
-      ? ghRepo.created_at.substring(0, 10)
-      : '';
-    const updatedDate = ghRepo.updated_at
-      ? ghRepo.updated_at.substring(0, 10)
-      : '';
 
+  // Links management
+  const handleLinkChange = (index: number, field: 'titulo' | 'url', value: string) => {
+    const newLinks = [...formData.enlaces];
+    newLinks[index] = { ...newLinks[index], [field]: value };
+    setFormData({ ...formData, enlaces: newLinks });
+  };
+
+  const addLink = () => {
     setFormData({
       ...formData,
-      nombre: ghRepo.name,
-      descripcionCorta: ghRepo.description || '',
-      fechaInicio: createdDate,
-      fechaFin: updatedDate,
-      tecnologias: [
-        ...new Set([
-          ...formData.tecnologias,
-          ...(ghRepo.languages || []),
-          ...(ghRepo.topics || []),
-        ]),
-      ],
-      repositorios: [ghRepo.html_url],
+      enlaces: [...formData.enlaces, { titulo: '', url: '' }],
     });
   };
 
-  // Repositories management
-  const handleRepoChange = (index: number, value: string) => {
-    const newRepos = [...formData.repositorios];
-    newRepos[index] = value;
-    setFormData({ ...formData, repositorios: newRepos });
-  };
-
-  const addRepo = () => {
+  const removeLink = (index: number) => {
+    if (formData.enlaces.length <= 1) return;
     setFormData({
       ...formData,
-      repositorios: [...formData.repositorios, ''],
-    });
-  };
-
-  const removeRepo = (index: number) => {
-    if (formData.repositorios.length <= 1) return;
-    setFormData({
-      ...formData,
-      repositorios: formData.repositorios.filter((_, i) => i !== index),
+      enlaces: formData.enlaces.filter((_, i) => i !== index),
     });
   };
 
   // Save handler: sube archivos al servidor antes de guardar el proyecto
   const handleSave = async () => {
+    const isDuplicate = existingProjects?.some(
+      (p) =>
+        p.nombre.trim().toLowerCase() === formData.nombre.trim().toLowerCase() &&
+        p.id !== initialData?.id
+    );
+
+    if (isDuplicate && !duplicateWarning) {
+      setDuplicateWarning(true);
+      return;
+    }
+
     setIsLoading(true);
     try {
       // 1. Subir ícono si se seleccionó uno nuevo
@@ -200,7 +193,9 @@ export default function ProjectFormModal({
         ...formData,
         iconoUrl: finalIconUrl,
         evidencias: uploadedEvidences,
-        repositorios: formData.repositorios.filter((r) => r.trim() !== ''),
+        enlaces: formData.enlaces.filter(
+          (l) => l.titulo.trim() !== '' && l.url.trim() !== ''
+        ),
       };
 
       if (initialData?.id) {
@@ -226,8 +221,26 @@ export default function ProjectFormModal({
     onClose();
   };
 
+  const isValidUrl = (url: string) => {
+    if (!url) return true;
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const isFormValid = () => {
-    return formData.nombre.trim() !== '' && formData.fechaInicio !== '';
+    return (
+      formData.nombre.trim() !== '' &&
+      formData.fechaInicio !== '' &&
+      formData.enlaces.every(
+        (l) =>
+          (l.titulo.trim() === '' && l.url.trim() === '') ||
+          (l.titulo.trim() !== '' && isValidUrl(l.url))
+      )
+    );
   };
 
   if (!isOpen) return null;
@@ -259,15 +272,9 @@ export default function ProjectFormModal({
         <div className="space-y-8">
           {/* Section 1: Basic info + GitHub import */}
           <section>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-              <h3 className="text-white text-lg font-semibold">
-                Información del proyecto
-              </h3>
-              <GitHubImportDropdown
-                onSelect={handleGitHubSelect}
-                onToast={showToast}
-              />
-            </div>
+            <h3 className="text-white text-lg font-semibold mb-6">
+              Información del proyecto
+            </h3>
 
             <div className="flex gap-6">
               {/* Icon upload */}
@@ -415,156 +422,65 @@ export default function ProjectFormModal({
           {/* Section 4: Config & links */}
           <section>
             <h3 className="text-white text-lg font-semibold mb-1">
-              Configuración y enlaces
+              Enlaces
             </h3>
             <p className="text-[#6b7280] text-xs mb-4">
               Gestiona la visibilidad y las conexiones externas.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Visibility */}
-              <div>
-                <label className="text-[#9ca3af] text-sm flex items-center gap-1.5 mb-3">
-                  Visibilidad
-                  <span
-                    className="text-[#6b7280] cursor-help"
-                    title="Define si tu proyecto será visible en portafolios públicos"
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                      <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                  </span>
-                </label>
-                <div className="flex bg-[#1a1c29] rounded-xl border border-white/10 overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({ ...formData, visibilidad: 'publico' })
-                    }
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all focus:outline-none outline-none focus:ring-0 focus:ring-offset-0 active:outline-none border ${
-                      formData.visibilidad === 'publico'
-                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border-[#6c63ff]/40 rounded-xl'
-                        : 'border-transparent text-[#6b7280] hover:text-white rounded-xl'
-                    }`}
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    Público
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({ ...formData, visibilidad: 'privado' })
-                    }
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all focus:outline-none outline-none focus:ring-0 focus:ring-offset-0 active:outline-none border ${
-                      formData.visibilidad === 'privado'
-                        ? 'bg-[#6c63ff]/20 text-[#bdbefe] border-[#6c63ff]/40 rounded-xl'
-                        : 'border-transparent text-[#6b7280] hover:text-white rounded-xl'
-                    }`}
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0110 0v4" />
-                    </svg>
-                    Privado
-                  </button>
-                </div>
-              </div>
-
-              {/* Demo URL */}
-              <div>
-                <label className="text-[#9ca3af] text-sm block mb-3">
-                  URL de demo
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6c63ff]">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                    </svg>
-                  </span>
-                  <input
-                    className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 pl-10 text-white outline-none focus:border-[#6c63ff] text-sm"
-                    placeholder="https://demo.dashboard.com"
-                    value={formData.urlDemo}
-                    onChange={(e) =>
-                      setFormData({ ...formData, urlDemo: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Repositories */}
-            <div className="mt-6">
-              <label className="text-[#9ca3af] text-sm block mb-3">
-                Repositorios de código
-              </label>
-              <div className="space-y-3">
-                {formData.repositorios.map((repoUrl, index) => (
-                  <div key={index} className="flex gap-2">
-                    <div className="relative flex-1">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6c63ff]">
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                        </svg>
-                      </span>
+              <div className="space-y-4 mt-2">
+                {formData.enlaces.map((link, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Título */}
                       <input
-                        className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 pl-10 text-white outline-none focus:border-[#6c63ff] text-sm"
-                        placeholder="https://github.com/user/repo"
-                        value={repoUrl}
+                        className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm"
+                        placeholder="Título del enlace"
+                        value={link.titulo}
                         onChange={(e) =>
-                          handleRepoChange(index, e.target.value)
+                          handleLinkChange(index, 'titulo', e.target.value)
                         }
                       />
+                      
+                      {/* URL */}
+                      <div>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6c63ff]">
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                            </svg>
+                          </span>
+                          <input
+                            className={`w-full bg-[#1a1c29] border rounded-xl p-3.5 pl-10 text-white outline-none focus:border-[#6c63ff] text-sm ${
+                              link.url && !isValidUrl(link.url)
+                                ? 'border-red-500'
+                                : 'border-white/10'
+                            }`}
+                            placeholder="https://tuenlace.com"
+                            value={link.url}
+                            onChange={(e) =>
+                              handleLinkChange(index, 'url', e.target.value)
+                            }
+                          />
+                        </div>
+                        {link.url && !isValidUrl(link.url) && (
+                          <p className="text-red-500 text-xs mt-1.5 ml-1">URL inválida</p>
+                        )}
+                      </div>
                     </div>
-                    {formData.repositorios.length > 1 && (
+                    {formData.enlaces.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => removeRepo(index)}
-                        className="p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors shrink-0"
+                        onClick={() => removeLink(index)}
+                        className="p-3 mt-0.5 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors shrink-0"
                       >
                         <svg
                           width="16"
@@ -583,15 +499,15 @@ export default function ProjectFormModal({
                     )}
                   </div>
                 ))}
+                
+                <button
+                  type="button"
+                  onClick={addLink}
+                  className="text-[#bdbefe] text-sm mt-3 hover:text-white transition-colors flex items-center gap-1"
+                >
+                  <span>+</span> Añadir otro enlace
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={addRepo}
-                className="text-[#bdbefe] text-sm mt-3 hover:text-white transition-colors"
-              >
-                + Añadir otro repositorio
-              </button>
-            </div>
           </section>
 
           {/* Section 5: Evidence & gallery */}
@@ -617,27 +533,79 @@ export default function ProjectFormModal({
         </div>
 
         {/* Footer buttons */}
-        <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
-          <button
-            onClick={handleCancel}
-            className="px-8 py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
-          >
-            CANCELAR
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={!isFormValid() || isLoading}
-            className="px-8 py-3 rounded-full bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] text-sm font-bold hover:brightness-110 shadow-[0_0_15px_rgba(108,99,255,0.2)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-[#471499] border-t-transparent rounded-full animate-spin" />
-                Guardando...
-              </>
-            ) : (
-              'GUARDAR Y CERRAR'
-            )}
-          </button>
+        <div className="flex flex-col gap-4 mt-8 pt-6 border-t border-white/10">
+          {duplicateWarning ? (
+            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl flex flex-col gap-3 animate-fade-in w-full">
+              <div className="flex items-start gap-3">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#fbbf24"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 mt-0.5"
+                >
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <p className="text-amber-400 text-sm font-medium leading-relaxed">
+                  Ya existe otro proyecto con el nombre "{formData.nombre}". <br />
+                  ¿Está seguro que desea añadir el proyecto de todas formas?
+                </p>
+              </div>
+              <div className="flex justify-end gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setDuplicateWarning(false)}
+                  className="px-6 py-2.5 rounded-full border border-amber-500/30 text-amber-400 text-sm font-bold hover:bg-amber-500/10 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isLoading}
+                  className="px-6 py-2.5 rounded-full bg-amber-500 text-black text-sm font-bold hover:bg-amber-400 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    'Sí, añadir'
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={handleCancel}
+                className="px-8 py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
+              >
+                CANCELAR
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!isFormValid() || isLoading}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] text-sm font-bold hover:brightness-110 shadow-[0_0_15px_rgba(108,99,255,0.2)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-[#471499] border-t-transparent rounded-full animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  'GUARDAR Y CERRAR'
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
