@@ -43,6 +43,9 @@ export function mapBackendToUserProfile(
     email: String(data.email ?? ''),
     profession: String(data.titularProfesional ?? ''),
     bio: String(data.acercaDeMi ?? ''),
+    phone: data.telefono ? String(data.telefono) : '',
+    phoneCode: data.codigoTelefono ? String(data.codigoTelefono) : '+591',
+    nationality: data.pais ? String(data.pais) : '',
     avatarUrl: data.enlaceFoto ? String(data.enlaceFoto) : undefined,
     visibility: {
       showEmail:      data.mostrarCorreo              !== undefined ? Boolean(data.mostrarCorreo)              : true,
@@ -69,6 +72,9 @@ export function mapUpdateDtoToBackend(
     apellido: dto.lastName,
     titularProfesional: dto.profession,
     acercaDeMi: dto.bio,
+    codigoTelefono: dto.phoneCode,
+    telefono: dto.phone,
+    pais: dto.nationality,
     ...(dto.visibility !== undefined && {
       mostrarCorreo:              dto.visibility.showEmail,
       mostrarProfesion:           dto.visibility.showProfession,

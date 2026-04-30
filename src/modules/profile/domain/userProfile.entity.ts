@@ -5,6 +5,9 @@ export interface UserProfileEntity {
   email: string;
   profession: string;
   bio: string;
+  phone?: string;
+  phoneCode?: string;
+  nationality?: string;
   avatarUrl?: string;
   visibility: {
     showEmail: boolean;
@@ -33,6 +36,9 @@ export interface UpdateUserProfileDTO {
   lastName?: string;
   profession?: string;
   bio?: string;
+  phone?: string;
+  phoneCode?: string;
+  nationality?: string;
   visibility?: Partial<UserProfileEntity['visibility']>;
   socialLinks?: Partial<UserProfileEntity['socialLinks']>;
 }

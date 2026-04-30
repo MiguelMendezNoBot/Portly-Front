@@ -174,8 +174,8 @@ export default function ProjectsSection() {
             {mode === 'edit' ? <EditIcon /> : <TrashIcon />}
             <span>
               {mode === 'edit'
-                ? 'Selecciona un ítem para editarlo'
-                : 'Selecciona un ítem para eliminarlo'}
+                ? 'Da click a un ítem para editarlo'
+                : 'Da click a un ítem para eliminarlo'}
             </span>
             <button
               onClick={() => setMode(null)}

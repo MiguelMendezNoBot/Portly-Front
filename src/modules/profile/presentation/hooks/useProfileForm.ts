@@ -36,6 +36,9 @@ export function useProfileForm(profile: UserProfileEntity | null) {
       lastName:    profile.lastName,
       profession:  profile.profession,
       bio:         profile.bio,
+      phone:       profile.phone ?? '',
+      phoneCode:   profile.phoneCode ?? '+591',
+      nationality: profile.nationality ?? '',
       visibility:  fullVisibility(profile.visibility),
       socialLinks: { ...profile.socialLinks },
     });
@@ -89,6 +92,9 @@ export function useProfileForm(profile: UserProfileEntity | null) {
       lastName:    p.lastName,
       profession:  p.profession,
       bio:         p.bio,
+      phone:       p.phone ?? '',
+      phoneCode:   p.phoneCode ?? '+591',
+      nationality: p.nationality ?? '',
       visibility:  fullVisibility(p.visibility),
       socialLinks: { ...p.socialLinks },
     });
