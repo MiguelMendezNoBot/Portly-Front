@@ -148,6 +148,7 @@ export default function FormacionAcademicaSection() {
         )
       );
       setDeleteModal({ isOpen: false });
+      setMode(null);
     } catch (err: unknown) {
       const msg =
         typeof err === 'object' && err !== null && 'message' in err
@@ -229,8 +230,8 @@ export default function FormacionAcademicaSection() {
             {mode === 'edit' ? <EditIcon /> : <TrashIcon />}
             <span>
               {mode === 'edit'
-                ? 'Da click a un ítem para editarlo'
-                : 'Da click a un ítem para eliminarlo'}
+                ? 'Da clic a un ítem para editarlo'
+                : 'Da clic a un ítem para eliminarlo'}
             </span>
             <button
               onClick={() => setMode(null)}
@@ -340,9 +341,10 @@ export default function FormacionAcademicaSection() {
       {isModalOpen && (
         <AcademicFormModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => { setIsModalOpen(false); setMode(null); }}
           initialData={editingRecord}
           onSave={handleSave}
+          existingRecords={records}
         />
       )}
 
@@ -351,7 +353,7 @@ export default function FormacionAcademicaSection() {
         <DeleteConfirmModal
           isOpen={deleteModal.isOpen}
           title={deleteModal.record?.carrera ?? ''}
-          onClose={() => setDeleteModal({ isOpen: false })}
+          onClose={() => { setDeleteModal({ isOpen: false }); setMode(null); }}
           onConfirm={confirmDelete}
           isLoading={isDeleting}
         />
