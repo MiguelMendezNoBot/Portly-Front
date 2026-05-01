@@ -62,7 +62,7 @@ export default function ProjectsSection() {
     } catch (error) {
       console.error(error);
     } finally {
-      setTimeout(() => setIsLoading(false), 500);
+      setIsLoading(false);
     }
   };
 
@@ -99,6 +99,7 @@ export default function ProjectsSection() {
     try {
       await repository.delete(deleteModal.id);
       setDeleteModal({ isOpen: false, id: undefined, name: '' });
+      setMode(null);
       loadData();
     } catch (error) {
       console.error(error);
@@ -232,7 +233,10 @@ export default function ProjectsSection() {
       {isModalOpen && (
         <ProjectFormModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setMode(null);
+          }}
           initialData={editingProject}
           onSuccess={loadData}
           existingProjects={projects}
@@ -243,9 +247,10 @@ export default function ProjectsSection() {
       <DeleteProjectModal
         isOpen={deleteModal.isOpen}
         projectName={deleteModal.name}
-        onClose={() =>
-          setDeleteModal({ isOpen: false, id: undefined, name: '' })
-        }
+        onClose={() => {
+          setDeleteModal({ isOpen: false, id: undefined, name: '' });
+          setMode(null);
+        }}
         onConfirm={confirmDelete}
         isLoading={isDeleting}
       />

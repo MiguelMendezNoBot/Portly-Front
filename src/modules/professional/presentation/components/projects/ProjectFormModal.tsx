@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Project, GitHubRepo, ProjectEvidence } from '../../../domain/entities/Project';
+import { Project, GitHubRepo, ProjectEvidence, ProjectDocument } from '../../../domain/entities/Project';
 import { HttpProjectRepository } from '../../../infrastructure/repositories/HttpProjectRepository';
 import { httpClient } from '../../../../../infrastructure/http/httpClient';
 import { DateRangeInput } from '../../../../../shared/components/DateRangeInput';
 import TechTags from './TechTags';
 import EvidenceUploader, { LocalEvidence } from './EvidenceUploader';
+import DocumentUploader, { LocalDocument } from './DocumentUploader';
 
 
 const repo = new HttpProjectRepository();
@@ -28,6 +29,7 @@ const emptyProject: Project = {
   visibilidad: 'publico',
   iconoUrl: null,
   evidencias: [],
+  documentos: [],
   enlaces: [{ titulo: '', url: '' }],
 };
 
@@ -40,6 +42,7 @@ export default function ProjectFormModal({
 }: ProjectFormModalProps) {
   const [formData, setFormData] = useState<Project>({ ...emptyProject });
   const [localEvidences, setLocalEvidences] = useState<LocalEvidence[]>([]);
+  const [localDocuments, setLocalDocuments] = useState<LocalDocument[]>([]);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +84,7 @@ export default function ProjectFormModal({
       setFormData({ ...emptyProject });
       setIconPreview(null);
       setLocalEvidences([]);
+      setLocalDocuments([]);
     }
   }, [initialData]);
 
@@ -152,47 +156,79 @@ export default function ProjectFormModal({
 
     setIsLoading(true);
     try {
-      // 1. Subir ícono si se seleccionó uno nuevo
-      let finalIconUrl = formData.iconoUrl;
-      if (iconFile) {
-        const iconRes = await httpClient.uploadFile<{ url: string }>(
-          '/api/profile/proyectos/icono',
-          iconFile,
-          'file',
-          'Error al subir el ícono'
-        );
-        finalIconUrl = iconRes.url;
-      }
+      // Ejecutar todas las subidas en paralelo para optimizar la velocidad
+      const [iconRes, newEvidences, newDocuments] = await Promise.all([
+        // 1. Promesa del ícono
+        iconFile
+          ? httpClient.uploadFile<{ url: string }>(
+              '/api/profile/proyectos/icono',
+              iconFile,
+              'file',
+              'Error al subir el ícono'
+            )
+          : Promise.resolve(null),
+          
+        // 2. Promesas de evidencias
+        Promise.all(
+          localEvidences.map(async (localEv) => {
+            const evRes = await httpClient.uploadFile<{
+              idEvidenciaProyecto: number;
+              nombreOriginal: string;
+              enlaceEvidencia: string;
+              formato: string;
+              tamanoBytes: number;
+            }>(
+              '/api/profile/proyectos/evidencias',
+              localEv.file,
+              'file',
+              'Error al subir evidencia'
+            );
+            return {
+              id: evRes.idEvidenciaProyecto,
+              nombre: evRes.nombreOriginal,
+              url: evRes.enlaceEvidencia,
+              tipo: evRes.formato,
+              pesoBytes: evRes.tamanoBytes,
+            };
+          })
+        ),
 
-      // 2. Subir evidencias nuevas (las que tienen File local)
-      const uploadedEvidences: ProjectEvidence[] = [...formData.evidencias];
-      for (const localEv of localEvidences) {
-        const evRes = await httpClient.uploadFile<{
-          idEvidenciaProyecto: number;
-          nombreOriginal: string;
-          enlaceEvidencia: string;
-          formato: string;
-          tamanoBytes: number;
-        }>(
-          '/api/profile/proyectos/evidencias',
-          localEv.file,
-          'file',
-          'Error al subir evidencia'
-        );
-        uploadedEvidences.push({
-          id: evRes.idEvidenciaProyecto,
-          nombre: evRes.nombreOriginal,
-          url: evRes.enlaceEvidencia,
-          tipo: evRes.formato,
-          pesoBytes: evRes.tamanoBytes,
-        });
-      }
+        // 3. Promesas de documentos
+        Promise.all(
+          localDocuments.map(async (localDoc) => {
+            const docRes = await httpClient.uploadFile<{
+              idDocumentoProyecto: number;
+              nombreOriginal: string;
+              urlDescarga: string;
+              formato: string;
+              tamanoBytes: number;
+            }>(
+              '/api/profile/proyectos/documentos',
+              localDoc.file,
+              'file',
+              'Error al subir documento'
+            );
+            return {
+              id: docRes.idDocumentoProyecto,
+              nombre: docRes.nombreOriginal,
+              urlDescarga: docRes.urlDescarga,
+              tipo: docRes.formato,
+              pesoBytes: docRes.tamanoBytes,
+            };
+          })
+        ),
+      ]);
 
-      // 3. Guardar proyecto
+      const finalIconUrl = iconRes ? iconRes.url : formData.iconoUrl;
+      const uploadedEvidences = [...formData.evidencias, ...newEvidences];
+      const uploadedDocuments = [...(formData.documentos || []), ...newDocuments];
+
+      // 4. Guardar proyecto
       const projectToSave: Project = {
         ...formData,
         iconoUrl: finalIconUrl,
         evidencias: uploadedEvidences,
+        documentos: uploadedDocuments,
         enlaces: formData.enlaces.filter(
           (l) => l.titulo.trim() !== '' && l.url.trim() !== ''
         ),
@@ -217,6 +253,7 @@ export default function ProjectFormModal({
   const handleCancel = () => {
     setFormData({ ...emptyProject });
     setLocalEvidences([]);
+    setLocalDocuments([]);
     setIconPreview(null);
     onClose();
   };
@@ -234,11 +271,11 @@ export default function ProjectFormModal({
   const isFormValid = () => {
     return (
       formData.nombre.trim() !== '' &&
-      formData.fechaInicio !== '' &&
+      formData.descripcionCorta.trim() !== '' &&
       formData.enlaces.every(
         (l) =>
           (l.titulo.trim() === '' && l.url.trim() === '') ||
-          (l.titulo.trim() !== '' && isValidUrl(l.url))
+          (l.titulo.trim() !== '' && l.url.trim() !== '' && isValidUrl(l.url))
       )
     );
   };
@@ -333,7 +370,7 @@ export default function ProjectFormModal({
                 </div>
                 <div>
                   <label className="text-[#9ca3af] text-sm block mb-2">
-                    Descripción corta
+                    Descripción *
                   </label>
                   <input
                     className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm"
@@ -366,7 +403,7 @@ export default function ProjectFormModal({
                 isActiveField: 'esActual',
               }}
               labels={{
-                startDateLabel: 'Fecha de inicio *',
+                startDateLabel: 'Fecha de inicio',
                 endDateLabel: 'Fecha de finalización',
                 currentJobLabel: 'Actual',
               }}
@@ -374,39 +411,16 @@ export default function ProjectFormModal({
             />
           </section>
 
-          {/* Section 3: Narrative & details */}
+          {/* Section 3: Herramientas */}
           <section>
             <h3 className="text-white text-lg font-semibold mb-4">
-              Narrativa y detalles
+              Herramientas
             </h3>
-
-            <div className="mb-4">
-              <div className="flex justify-between mb-2">
-                <label className="text-[#9ca3af] text-sm">
-                  Descripción detallada
-                </label>
-                <span className="text-[#6b7280] text-xs">
-                  {formData.descripcionDetallada.length}/2000
-                </span>
-              </div>
-              <textarea
-                maxLength={2000}
-                className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white h-28 resize-none text-sm focus:border-[#6c63ff] outline-none"
-                placeholder="Describe en detalle tu proyecto, su propósito y los problemas que resuelve..."
-                value={formData.descripcionDetallada}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    descripcionDetallada: e.target.value,
-                  })
-                }
-              />
-            </div>
 
             {/* Tech tags */}
             <div>
               <label className="text-[#9ca3af] text-sm block mb-3">
-                Tecnologías usadas
+                Herramientas que se utilizaron para desarrollar el proyecto
               </label>
               <div className="bg-[#1a1c29] border border-white/10 rounded-xl p-3.5">
                 <TechTags
@@ -433,14 +447,23 @@ export default function ProjectFormModal({
                   <div key={index} className="flex items-start gap-3">
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Título */}
-                      <input
-                        className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm"
-                        placeholder="Título del enlace"
-                        value={link.titulo}
-                        onChange={(e) =>
-                          handleLinkChange(index, 'titulo', e.target.value)
-                        }
-                      />
+                      <div>
+                        <input
+                          className={`w-full bg-[#1a1c29] border rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm ${
+                            link.url.trim() !== '' && link.titulo.trim() === ''
+                              ? 'border-red-500'
+                              : 'border-white/10'
+                          }`}
+                          placeholder="Título del enlace"
+                          value={link.titulo}
+                          onChange={(e) =>
+                            handleLinkChange(index, 'titulo', e.target.value)
+                          }
+                        />
+                        {link.url.trim() !== '' && link.titulo.trim() === '' && (
+                          <p className="text-red-500 text-xs mt-1.5 ml-1">Título obligatorio</p>
+                        )}
+                      </div>
                       
                       {/* URL */}
                       <div>
@@ -460,7 +483,7 @@ export default function ProjectFormModal({
                           </span>
                           <input
                             className={`w-full bg-[#1a1c29] border rounded-xl p-3.5 pl-10 text-white outline-none focus:border-[#6c63ff] text-sm ${
-                              link.url && !isValidUrl(link.url)
+                              (link.titulo.trim() !== '' && link.url.trim() === '') || (link.url && !isValidUrl(link.url))
                                 ? 'border-red-500'
                                 : 'border-white/10'
                             }`}
@@ -471,6 +494,9 @@ export default function ProjectFormModal({
                             }
                           />
                         </div>
+                        {link.titulo.trim() !== '' && link.url.trim() === '' && (
+                          <p className="text-red-500 text-xs mt-1.5 ml-1">URL obligatoria</p>
+                        )}
                         {link.url && !isValidUrl(link.url) && (
                           <p className="text-red-500 text-xs mt-1.5 ml-1">URL inválida</p>
                         )}
@@ -516,7 +542,7 @@ export default function ProjectFormModal({
               Evidencias y galería
             </h3>
             <p className="text-[#6b7280] text-xs mb-4">
-              Sube capturas de pantalla, diagramas o documentos relevantes.
+              Sube capturas de pantalla o imágenes relevantes.
             </p>
             <EvidenceUploader
               evidences={localEvidences}
@@ -527,6 +553,27 @@ export default function ProjectFormModal({
                 const newEvidences = [...formData.evidencias];
                 newEvidences.splice(index, 1);
                 setFormData({ ...formData, evidencias: newEvidences });
+              }}
+            />
+          </section>
+
+          {/* Section 6: Documents */}
+          <section>
+            <h3 className="text-white text-lg font-semibold mb-1">
+              Documentos adjuntos
+            </h3>
+            <p className="text-[#6b7280] text-xs mb-4">
+              Sube PDFs, archivos de Word o documentos adicionales.
+            </p>
+            <DocumentUploader
+              documents={localDocuments}
+              onChange={setLocalDocuments}
+              onToast={showToast}
+              existingDocuments={formData.documentos || []}
+              onRemoveExisting={(index) => {
+                const newDocs = [...(formData.documentos || [])];
+                newDocs.splice(index, 1);
+                setFormData({ ...formData, documentos: newDocs });
               }}
             />
           </section>
@@ -561,7 +608,8 @@ export default function ProjectFormModal({
                 <button
                   type="button"
                   onClick={() => setDuplicateWarning(false)}
-                  className="px-6 py-2.5 rounded-full border border-amber-500/30 text-amber-400 text-sm font-bold hover:bg-amber-500/10 transition-colors"
+                  disabled={isLoading}
+                  className="px-6 py-2.5 rounded-full border border-amber-500/30 text-amber-400 text-sm font-bold hover:bg-amber-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancelar
                 </button>
@@ -586,7 +634,8 @@ export default function ProjectFormModal({
             <div className="flex justify-end gap-4">
               <button
                 onClick={handleCancel}
-                className="px-8 py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
+                disabled={isLoading}
+                className="px-8 py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 CANCELAR
               </button>

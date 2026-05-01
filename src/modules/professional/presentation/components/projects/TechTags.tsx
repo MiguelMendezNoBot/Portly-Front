@@ -79,7 +79,7 @@ export default function TechTags({ technologies, onChange }: TechTagsProps) {
           onClick={() => setIsAdding(true)}
           className="text-[#bdbefe] text-sm hover:text-white transition-colors cursor-pointer"
         >
-          + Añadir tecnología
+          + Hecho con:
         </button>
       )}
     </div>

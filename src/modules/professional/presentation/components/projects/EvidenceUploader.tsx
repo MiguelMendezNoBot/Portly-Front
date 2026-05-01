@@ -119,7 +119,7 @@ const handleFiles = async (files: FileList | null) => {
             </svg>
           </div>
           <p className="text-white text-sm font-medium">
-            Haz clic para subir o arrastra archivos
+            Haz clic para subir o arrastra una imagen
           </p>
           <p className="text-[#6b7280] text-xs">PNG, JPG o JPEG hasta 10MB</p>
         </div>
