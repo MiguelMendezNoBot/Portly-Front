@@ -138,7 +138,7 @@ export const SOFT_SKILLS_CATALOG: SoftSkillDefinition[] = [
 interface SoftSkillsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (skills: string[]) => void;
+  onAdd: (skill: string) => void;
   /** Habilidades que el usuario ya tiene agregadas (para deshabilitarlas o marcarlas) */
   existingSkills?: string[];
 }
@@ -150,11 +150,11 @@ export default function SoftSkillsModal({
   existingSkills = [],
 }: SoftSkillsModalProps) {
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setSelected(new Set(existingSkills));
+      setSelected(null);
       setSearch('');
     }
   }, [isOpen]);
@@ -168,16 +168,14 @@ export default function SoftSkillsModal({
   );
 
   const toggleSkill = (name: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
+    if (existingSkills.includes(name)) return;
+    setSelected((prev) => (prev === name ? null : name));
   };
 
   const handleAdd = () => {
-    onAdd(Array.from(selected));
+    if (selected) {
+      onAdd(selected);
+    }
     onClose();
   };
 
@@ -253,15 +251,19 @@ export default function SoftSkillsModal({
             </div>
           ) : (
             filteredSkills.map((skill) => {
-              const isChecked = selected.has(skill.name);
+              const isAlreadyAdded = existingSkills.includes(skill.name);
+              const isChecked = selected === skill.name;
 
               return (
                 <button
                   key={skill.name}
                   type="button"
                   onClick={() => toggleSkill(skill.name)}
+                  disabled={isAlreadyAdded}
                   className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 text-left group ${
-                    isChecked
+                    isAlreadyAdded
+                      ? 'opacity-50 cursor-not-allowed bg-white/5'
+                      : isChecked
                       ? 'bg-[#6b72ff]/20 border border-[#6b72ff]/40'
                       : 'hover:bg-white/5 border border-transparent'
                   }`}
@@ -270,31 +272,47 @@ export default function SoftSkillsModal({
                     {/* Ícono con color morado */}
                     <span
                       className={`transition-colors duration-200 ${
-                        isChecked ? 'text-[#8b5cf6]' : 'text-[#6b72ff]'
+                        isAlreadyAdded ? 'text-[#6b7280]' : isChecked ? 'text-[#8b5cf6]' : 'text-[#6b72ff]'
                       }`}
                     >
                       {skill.icon}
                     </span>
                     <span
                       className={`text-sm font-medium transition-colors duration-200 ${
-                        isChecked ? 'text-white' : 'text-[#d1d5db]'
+                        isAlreadyAdded ? 'text-[#6b7280]' : isChecked ? 'text-white' : 'text-[#d1d5db]'
                       }`}
                     >
                       {skill.name}
                     </span>
                   </div>
 
-                  {/* Checkbox */}
+                  {/* Checkbox / Indicador */}
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center border-2 flex-shrink-0 transition-all duration-200 ${
-                      isChecked
+                      isAlreadyAdded
+                        ? 'border-[#4b5563] bg-transparent'
+                        : isChecked
                         ? 'bg-[#6b72ff] border-[#6b72ff]'
                         : 'border-[#4b5563] group-hover:border-[#6b72ff]/60'
                     }`}
                   >
-                    {isChecked && (
+                    {isChecked && !isAlreadyAdded && (
                       <svg
                         className="w-3 h-3 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12l5 5l10 -10" />
+                      </svg>
+                    )}
+                    {isAlreadyAdded && (
+                      <svg
+                        className="w-3 h-3 text-[#6b7280]"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="none"
@@ -317,15 +335,14 @@ export default function SoftSkillsModal({
         <div className="p-6 pt-4 space-y-3">
           <button
             onClick={handleAdd}
+            disabled={!selected}
             className={`w-full py-4 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-200 ${
-              selected.size > 0
+              selected
                 ? 'bg-gradient-to-r from-[#bdbefe] to-[#a092ec] text-[#0D0096] shadow-[0_0_20px_rgba(108,99,255,0.4)] active:scale-95'
-                : 'bg-[#1a1d2e] text-[#9ca3af] hover:bg-white/5 border border-white/5 active:scale-95'
+                : 'bg-[#1a1d2e] text-[#9ca3af] hover:bg-white/5 border border-white/5 cursor-not-allowed'
             }`}
           >
-            {selected.size > 0
-              ? `GUARDAR CAMBIOS (${selected.size})`
-              : 'GUARDAR CAMBIOS'}
+            AÑADIR HABILIDAD
           </button>
           <button
             onClick={handleClose}
