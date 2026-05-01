@@ -114,9 +114,9 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onC
               )}
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                 {!isDeleteMode && p.publicUrl && (
+                  {!isDeleteMode && (
                     <a
-                      href={p.publicUrl}
+                      href={`/p/${p.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
@@ -128,7 +128,7 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onC
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
                     </a>
-                 )}
+                  )}
               </div>
             </div>
 
