@@ -44,6 +44,7 @@ export default function ProjectCard({
   onClick,
 }: ProjectCardProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const images = project.evidencias || [];
   const hasImages = images.length > 0;
@@ -79,7 +80,7 @@ export default function ProjectCard({
         </div>
       )}
 
-      {/* Header: Icon + Name */}
+      {/* Header: Icon + Name + Date */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           {project.iconoUrl ? (
@@ -104,7 +105,32 @@ export default function ProjectCard({
               </svg>
             </div>
           )}
-          <h3 className="text-white text-xl font-bold pr-12">{project.nombre}</h3>
+          <div className="flex flex-col">
+            <h3 className="text-white text-xl font-bold pr-12">{project.nombre}</h3>
+            {(project.fechaInicio || project.esActual) && (
+              <div className="flex items-center gap-1.5 mt-1 text-[#9ca3af] text-xs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <span>
+                  {project.fechaInicio
+                    ? new Date(project.fechaInicio + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
+                    : ''}
+                  {project.fechaInicio && (project.fechaFin || project.esActual) ? ' — ' : ''}
+                  {project.esActual ? (
+                    <span className="inline-block bg-green-500/15 text-green-400 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider">
+                      Actual
+                    </span>
+                  ) : project.fechaFin ? (
+                    new Date(project.fechaFin + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
+                  ) : null}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -118,7 +144,11 @@ export default function ProjectCard({
                 <img
                   src={images[currentSlide].url}
                   alt={images[currentSlide].nombre}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(images[currentSlide].url);
+                  }}
                 />
                 {images.length > 1 && (
                   <>
@@ -222,7 +252,7 @@ export default function ProjectCard({
               <h4 className="text-white text-base font-semibold mb-2">
                 Enlaces:
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="flex flex-wrap gap-3">
                 {project.enlaces.map((link, index) => (
                   <a
                     key={index}
@@ -230,7 +260,7 @@ export default function ProjectCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center justify-center gap-2 bg-[#1a1c29] border border-white/10 rounded-xl py-3 px-4 text-white text-sm font-medium hover:border-[#6c63ff]/40 transition-colors whitespace-nowrap"
+                    className="flex items-center justify-center gap-2 bg-[#1a1c29] border border-white/10 rounded-xl py-3 px-4 text-white text-sm font-medium hover:border-[#6c63ff]/40 transition-colors max-w-full"
                   >
                     <svg
                       width="14"
@@ -251,8 +281,108 @@ export default function ProjectCard({
               </div>
             </div>
           )}
+
+          {/* Documents */}
+          {project.documentos && project.documentos.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-white text-base font-semibold mb-2">
+                Documentos:
+              </h4>
+              <div className="space-y-2">
+                {project.documentos.map((doc, index) => {
+                  const ext = doc.tipo?.toLowerCase() || doc.nombre?.split('.').pop()?.toLowerCase() || '';
+                  const isPdf = ext === 'pdf';
+                  const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
+
+                  return (
+                    <a
+                      key={index}
+                      href={`${baseUrl}${doc.urlDescarga}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-3 bg-[#0f111a] border border-white/5 rounded-xl p-3 hover:border-[#6c63ff]/30 transition-colors group"
+                    >
+                      {/* Icon */}
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                        isPdf ? 'bg-red-500/15' : 'bg-blue-500/15'
+                      }`}>
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke={isPdf ? '#ef4444' : '#3b82f6'}
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate group-hover:text-[#a3a6ff] transition-colors">
+                          {doc.nombre}
+                        </p>
+                        <p className="text-[#6b7280] text-xs mt-0.5">
+                          {ext.toUpperCase()}
+                          {doc.pesoBytes ? ` • ${(doc.pesoBytes / (1024 * 1024)).toFixed(1)} MB` : ''}
+                        </p>
+                      </div>
+
+                      {/* Download arrow */}
+                      {!isPdf && (
+                        <div className="shrink-0 text-[#6b7280] group-hover:text-[#6c63ff] transition-colors">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
+                        </div>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedImage(null);
+          }}
+        >
+          <img 
+            src={selectedImage} 
+            alt="Detalle" 
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

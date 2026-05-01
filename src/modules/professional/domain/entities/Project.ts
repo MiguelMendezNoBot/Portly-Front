@@ -10,7 +10,16 @@ export interface Project {
   visibilidad: 'publico' | 'privado';
   iconoUrl: string | null;
   evidencias: ProjectEvidence[];
+  documentos: ProjectDocument[];
   enlaces: ProjectLink[];
+}
+
+export interface ProjectDocument {
+  id?: number;
+  nombre: string;
+  urlDescarga: string;
+  tipo: string;
+  pesoBytes: number;
 }
 
 export interface ProjectLink {
