@@ -26,6 +26,8 @@ export const userProfileRepository: IUserProfileRepository = {
           instagram?: string;
           facebook?: string;
           youtube?: string;
+          github?: string;
+          linkedin?: string;
         }>(
           '/api/redes-sociales/user',
           { email: profile.email },
@@ -33,8 +35,10 @@ export const userProfileRepository: IUserProfileRepository = {
         );
 
         if (redes.instagram) profile.socialLinks.instagram = redes.instagram;
-        if (redes.facebook) profile.socialLinks.facebook = redes.facebook;
-        if (redes.youtube) profile.socialLinks.youtube = redes.youtube;
+        if (redes.facebook)  profile.socialLinks.facebook  = redes.facebook;
+        if (redes.youtube)   profile.socialLinks.youtube   = redes.youtube;
+        if (redes.github)    profile.socialLinks.github    = redes.github;
+        if (redes.linkedin)  profile.socialLinks.linkedin  = redes.linkedin;
       } catch (err) {
         console.error('Aviso: Redes sociales no pudieron ser cargadas', err);
       }
@@ -55,10 +59,12 @@ export const userProfileRepository: IUserProfileRepository = {
       await httpClient.postAuth(
         '/api/redes-sociales',
         {
-          gmail: '',
+          gmail:     '',
           instagram: dto.socialLinks.instagram || '',
-          facebook: dto.socialLinks.facebook || '',
-          youtube: dto.socialLinks.youtube || '',
+          facebook:  dto.socialLinks.facebook  || '',
+          youtube:   dto.socialLinks.youtube   || '',
+          github:    dto.socialLinks.github    || '',
+          linkedin:  dto.socialLinks.linkedin  || '',
         },
         'Error al guardar redes sociales'
       );

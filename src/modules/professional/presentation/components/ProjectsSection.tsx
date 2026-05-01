@@ -8,9 +8,43 @@ import ProjectSkeleton from './projects/ProjectSkeleton';
 
 const repository = new HttpProjectRepository();
 
+type ActionMode = 'edit' | 'delete' | null;
+
+const EditIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+
 export default function ProjectsSection() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [mode, setMode] = useState<ActionMode>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
   const [deleteModal, setDeleteModal] = useState({
@@ -37,8 +71,13 @@ export default function ProjectsSection() {
   }, []);
 
   const handleOpenAdd = () => {
+    setMode(null);
     setEditingProject(undefined);
     setIsModalOpen(true);
+  };
+
+  const toggleMode = (target: 'edit' | 'delete') => {
+    setMode((prev) => (prev === target ? null : target));
   };
 
   const handleEdit = (project: Project) => {
@@ -72,20 +111,80 @@ export default function ProjectsSection() {
     <>
       <section className="flex flex-col gap-6 w-full animate-fade-in">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h3 className="text-white text-2xl font-bold">Tus Proyectos</h3>
             <p className="text-[#9ca3af] text-sm mt-1">
               Gestiona y publica tus últimos trabajos.
             </p>
           </div>
-          <button
-            onClick={handleOpenAdd}
-            className="bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-3 px-6 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap self-start sm:self-auto"
-          >
-            AÑADIR NUEVO PROYECTO PERSONAL
-          </button>
+
+          {/* Botones de acción */}
+          <div className="flex items-center gap-2 self-start sm:self-auto flex-shrink-0">
+            {/* Agregar */}
+            <button
+              onClick={handleOpenAdd}
+              className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Agregar
+            </button>
+
+            {projects.length > 0 && (
+              <>
+                {/* Editar */}
+                <button
+                  onClick={() => toggleMode('edit')}
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    mode === 'edit'
+                      ? 'bg-white/10 border-white/30 text-white'
+                      : 'border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  <EditIcon />
+                  Editar
+                </button>
+
+                {/* Eliminar */}
+                <button
+                  onClick={() => toggleMode('delete')}
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    mode === 'delete'
+                      ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                      : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
+                  }`}
+                >
+                  <TrashIcon />
+                  Eliminar
+                </button>
+              </>
+            )}
+          </div>
         </header>
+
+        {/* Indicador de modo activo */}
+        {mode && (
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm border ${
+            mode === 'edit'
+              ? 'bg-white/5 border-white/10 text-[#9ca3af]'
+              : 'bg-red-500/10 border-red-500/20 text-red-400'
+          }`}>
+            {mode === 'edit' ? <EditIcon /> : <TrashIcon />}
+            <span>
+              {mode === 'edit'
+                ? 'Da click a un ítem para editarlo'
+                : 'Da click a un ítem para eliminarlo'}
+            </span>
+            <button
+              onClick={() => setMode(null)}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
 
         {/* Content */}
         <div className="space-y-6">
@@ -118,8 +217,11 @@ export default function ProjectsSection() {
               <ProjectCard
                 key={project.id}
                 project={project}
-                onEdit={() => handleEdit(project)}
-                onDelete={() => handleDeleteRequest(project)}
+                mode={mode}
+                onClick={() => {
+                  if (mode === 'edit') handleEdit(project);
+                  else if (mode === 'delete') handleDeleteRequest(project);
+                }}
               />
             ))
           )}
@@ -133,6 +235,7 @@ export default function ProjectsSection() {
           onClose={() => setIsModalOpen(false)}
           initialData={editingProject}
           onSuccess={loadData}
+          existingProjects={projects}
         />
       )}
 

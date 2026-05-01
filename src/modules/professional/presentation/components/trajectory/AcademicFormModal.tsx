@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FormacionAcademica, FormacionAcademicaRequest } from '../../../domain/entities/FormacionAcademica';
 
-// Re-export for backward compatibility with FormacionAcademicaSection
 export type { FormacionAcademica };
 
 export const NIVELES = [
@@ -23,6 +22,7 @@ interface Props {
   onClose: () => void;
   initialData?: FormacionAcademica;
   onSave: (data: FormacionAcademicaRequest, id?: number) => Promise<void>;
+  existingRecords?: FormacionAcademica[];
 }
 
 interface FormState {
@@ -45,30 +45,31 @@ const EMPTY_FORM: FormState = {
   nivel: '',
 };
 
-export default function AcademicFormModal({ isOpen, onClose, initialData, onSave }: Props) {
+const getToday = () => {
+  const formatter = new Intl.DateTimeFormat('es-BO', {
+    timeZone: 'America/La_Paz',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = formatter.formatToParts(new Date());
+  const y = parts.find((p) => p.type === 'year')!.value;
+  const m = parts.find((p) => p.type === 'month')!.value;
+  const d = parts.find((p) => p.type === 'day')!.value;
+  return `${y}-${m}-${d}`;
+};
+
+export default function AcademicFormModal({ isOpen, onClose, initialData, onSave, existingRecords = [] }: Props) {
   const [formData, setFormData] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [charCount, setCharCount] = useState(0);
-
-  // Fecha máxima = hoy en zona horaria de Bolivia
-  const getToday = () => {
-    const formatter = new Intl.DateTimeFormat('es-BO', {
-      timeZone: 'America/La_Paz',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-    const parts = formatter.formatToParts(new Date());
-    const y = parts.find((p) => p.type === 'year')!.value;
-    const m = parts.find((p) => p.type === 'month')!.value;
-    const d = parts.find((p) => p.type === 'day')!.value;
-    return `${y}-${m}-${d}`;
-  };
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState<FormacionAcademicaRequest | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const today = getToday();
 
-  // Inicializar / resetear formulario al abrir/cerrar o cambiar initialData
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -86,29 +87,11 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
       setCharCount(0);
     }
     setErrors({});
+    setShowDuplicateWarning(false);
+    setPendingRequest(null);
+    setShowSuccess(false);
   }, [initialData, isOpen]);
 
-  // ── Validaciones blur ────────────────────────────────────────────────────────
-  const handleBlur = (field: string, value: string) => {
-    let error = '';
-    if (field === 'institucion') {
-      if (!value.trim()) {
-        error = 'La institución es obligatoria.';
-      } else if (value.length > 100) {
-        error = 'El texto no puede superar los 100 caracteres.';
-      }
-    }
-    if (field === 'carrera') {
-      if (!value.trim()) {
-        error = 'El título / carrera es obligatorio.';
-      } else if (value.length > 100) {
-        error = 'El texto no puede superar los 100 caracteres.';
-      }
-    }
-    setErrors((prev) => ({ ...prev, [field]: error }));
-  };
-
-  // ── Validación completa al enviar ───────────────────────────────────────────
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -140,29 +123,57 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
     return Object.keys(newErrors).length === 0;
   };
 
-  // ── Submit ───────────────────────────────────────────────────────────────────
-  const handleSave = async () => {
-    if (!validate()) return;
+  const isDuplicate = (request: FormacionAcademicaRequest): boolean => {
+    return existingRecords.some((rec) => {
+      if (rec.idFormacionAcademica === initialData?.idFormacionAcademica) return false;
+      return (
+        rec.institucion.trim().toLowerCase() === request.institucion.toLowerCase() &&
+        rec.carrera.trim().toLowerCase() === request.carrera.toLowerCase() &&
+        rec.nivel === request.nivel
+      );
+    });
+  };
 
-    const request: FormacionAcademicaRequest = {
-      institucion: formData.institucion.trim(),
-      carrera: formData.carrera.trim(),
-      fechaInicio: formData.fechaInicio,
-      fechaFinalizacion: formData.actualmenteEstudiando ? null : formData.fechaFinalizacion || null,
-      actualmenteEstudiando: formData.actualmenteEstudiando,
-      descripcion: formData.descripcion.trim(),
-      nivel: formData.nivel,
-    };
+  const buildRequest = (): FormacionAcademicaRequest => ({
+    institucion: formData.institucion.trim(),
+    carrera: formData.carrera.trim(),
+    fechaInicio: formData.fechaInicio,
+    fechaFinalizacion: formData.actualmenteEstudiando ? null : formData.fechaFinalizacion || null,
+    actualmenteEstudiando: formData.actualmenteEstudiando,
+    descripcion: formData.descripcion.trim(),
+    nivel: formData.nivel,
+  });
 
+  const executeSave = async (request: FormacionAcademicaRequest) => {
     setIsLoading(true);
     try {
       await onSave(request, initialData?.idFormacionAcademica);
-      onClose();
+      setShowSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 1200);
     } catch (e) {
       console.error(e);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (!validate()) return;
+    const request = buildRequest();
+    if (isDuplicate(request)) {
+      setPendingRequest(request);
+      setShowDuplicateWarning(true);
+      return;
+    }
+    await executeSave(request);
+  };
+
+  const handleForceSave = async () => {
+    if (!pendingRequest) return;
+    setShowDuplicateWarning(false);
+    await executeSave(pendingRequest);
   };
 
   if (!isOpen) return null;
@@ -176,10 +187,22 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
           __html: `.date-input-ac::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }`,
         }}
       />
-      <div className="bg-[#0f111a] w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[24px] border border-white/10 p-8 shadow-2xl scrollbar-thin scrollbar-thumb-[#2c2f48]">
+
+      {/* Modal principal */}
+      <div className="bg-[#0f111a] w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[24px] border border-white/10 p-8 shadow-2xl scrollbar-thin scrollbar-thumb-[#2c2f48] relative">
+
+        {/* Toast de éxito */}
+        {showSuccess && (
+          <div className="absolute inset-x-8 top-6 z-10 flex items-center gap-3 bg-green-500/15 border border-green-500/30 rounded-xl px-4 py-3 animate-fade-in">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span className="text-green-400 text-sm font-medium">Se guardó con éxito</span>
+          </div>
+        )}
 
         {/* Header */}
-        <div className="mb-6">
+        <div className={`mb-6 ${showSuccess ? 'mt-12' : ''}`}>
           <h2 className="text-white text-2xl font-bold">
             {isEditing ? 'Editar formación académica' : 'Agregar formación académica'}
           </h2>
@@ -208,8 +231,10 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
                 placeholder="Ej. Universidad Complutense"
                 value={formData.institucion}
                 maxLength={120}
-                onChange={(e) => setFormData({ ...formData, institucion: e.target.value })}
-                onBlur={(e) => handleBlur('institucion', e.target.value)}
+                onChange={(e) => {
+                  setFormData({ ...formData, institucion: e.target.value });
+                  if (errors.institucion) setErrors((prev) => ({ ...prev, institucion: '' }));
+                }}
               />
             </div>
             {errors.institucion && (
@@ -270,8 +295,10 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
                 placeholder="Ej. Ingeniería en Sistemas"
                 value={formData.carrera}
                 maxLength={120}
-                onChange={(e) => setFormData({ ...formData, carrera: e.target.value })}
-                onBlur={(e) => handleBlur('carrera', e.target.value)}
+                onChange={(e) => {
+                  setFormData({ ...formData, carrera: e.target.value });
+                  if (errors.carrera) setErrors((prev) => ({ ...prev, carrera: '' }));
+                }}
               />
             </div>
             {errors.carrera && (
@@ -290,16 +317,10 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
                 id="ac-fecha-inicio"
                 type="date"
                 max={today}
-                onKeyDown={(e) => e.preventDefault()}
-                onClick={(e) => (e.currentTarget as HTMLInputElement).showPicker?.()}
                 className={`date-input-ac w-full bg-[#1a1c29] border ${errors.fechaInicio ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-[#9ca3af] text-sm cursor-pointer outline-none focus:border-[#6c63ff] transition-colors`}
                 value={formData.fechaInicio}
                 onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    fechaInicio: e.target.value,
-                    fechaFinalizacion: '',
-                  });
+                  setFormData({ ...formData, fechaInicio: e.target.value, fechaFinalizacion: '' });
                   if (e.target.value) setErrors((prev) => ({ ...prev, fechaInicio: '' }));
                 }}
               />
@@ -309,7 +330,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
             </div>
 
             {/* Fecha finalización */}
-            <div className="relative">
+            <div>
               <label className="text-[#9ca3af] text-sm block mb-2">
                 Fecha de finalización {!formData.actualmenteEstudiando && '*'}
               </label>
@@ -317,11 +338,6 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
                 id="ac-fecha-fin"
                 type="date"
                 disabled={formData.actualmenteEstudiando || !formData.fechaInicio}
-                onKeyDown={(e) => e.preventDefault()}
-                onClick={(e) =>
-                  !e.currentTarget.disabled &&
-                  (e.currentTarget as HTMLInputElement).showPicker?.()
-                }
                 min={formData.fechaInicio || undefined}
                 max={today}
                 className={`date-input-ac w-full bg-[#1a1c29] border ${errors.fechaFinalizacion ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-[#9ca3af] text-sm disabled:opacity-30 cursor-pointer outline-none focus:border-[#6c63ff] transition-colors`}
@@ -394,7 +410,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
           <button
             id="ac-btn-aceptar"
             onClick={handleSave}
-            disabled={isLoading}
+            disabled={isLoading || showSuccess}
             className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] text-sm font-bold hover:brightness-110 shadow-[0_0_15px_rgba(108,99,255,0.2)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
@@ -409,13 +425,62 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
           <button
             id="ac-btn-cancelar"
             onClick={onClose}
-            disabled={isLoading}
+            disabled={isLoading || showSuccess}
             className="w-full py-3.5 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all disabled:opacity-50"
           >
             CANCELAR
           </button>
         </div>
       </div>
+
+      {/* ── Modal de advertencia de duplicidad ── */}
+      {showDuplicateWarning && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#0f111a] w-full max-w-sm rounded-[20px] border border-yellow-500/20 p-7 shadow-2xl">
+            <div className="flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-yellow-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-white text-base font-bold leading-snug">
+                  Formación duplicada detectada
+                </h3>
+                <p className="text-[#9ca3af] text-sm mt-2 leading-relaxed">
+                  Detectamos que ya tienes una Formación con estos datos. ¿Deseas registrar esta formación igualmente?
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleForceSave}
+                disabled={isLoading}
+                className="w-full py-3 rounded-full bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] text-sm font-bold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-[#471499] border-t-transparent rounded-full animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  'GUARDAR DE TODAS FORMAS'
+                )}
+              </button>
+              <button
+                onClick={() => setShowDuplicateWarning(false)}
+                disabled={isLoading}
+                className="w-full py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all disabled:opacity-50"
+              >
+                CANCELAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

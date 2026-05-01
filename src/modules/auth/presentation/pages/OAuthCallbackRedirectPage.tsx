@@ -9,7 +9,7 @@ export function OAuthCallbackRedirectPage({ provider }: { provider: string }) {
 
     if (error) {
       
-      window.location.replace('/profile?error=access_denied');
+      window.location.replace('/integrations?error=access_denied');
       return;
     }
 

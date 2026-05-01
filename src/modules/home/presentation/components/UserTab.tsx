@@ -47,6 +47,20 @@ const ProfileIcon = () => (
   </svg>
 );
 
+const CompleteProfileIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+  </svg>
+);
+
 const LogoutIcon = () => (
   <svg
     width="16"
@@ -131,34 +145,51 @@ export const UserTab = () => {
 
       {isOpen && (
         <div className="absolute right-0 top-[calc(100%+0.5rem)] w-[220px] bg-src-0f111a rounded-[1.25rem] shadow-2xl py-2 flex flex-col z-50 origin-top-right transition-all">
-          <Link
-            to="/profile"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors"
-          >
-            <span className="text-src-6b72ff">
-              <ProfileIcon />
-            </span>
-            <span className="text-[#e2e2e8] font-medium tracking-wide">
-              PERFIL
-            </span>
-          </Link>
-
-          {canChangePassword && (
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                setIsChangePasswordModalOpen(true);
-              }}
-              className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors text-left w-full"
+          {!user.perfilCompleto ? (
+            <Link
+              to="/complete-profile"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors"
             >
               <span className="text-src-6b72ff">
-                <LockIcon />
+                <CompleteProfileIcon />
               </span>
               <span className="text-[#e2e2e8] font-medium tracking-wide">
-                CAMBIAR CONTRASEÑA
+                COMPLETA TU PERFIL
               </span>
-            </button>
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/profile"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors"
+              >
+                <span className="text-src-6b72ff">
+                  <ProfileIcon />
+                </span>
+                <span className="text-[#e2e2e8] font-medium tracking-wide">
+                  PERFIL
+                </span>
+              </Link>
+
+              {canChangePassword && (
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsChangePasswordModalOpen(true);
+                  }}
+                  className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors text-left w-full"
+                >
+                  <span className="text-src-6b72ff">
+                    <LockIcon />
+                  </span>
+                  <span className="text-[#e2e2e8] font-medium tracking-wide">
+                    CAMBIAR CONTRASEÑA
+                  </span>
+                </button>
+              )}
+            </>
           )}
 
           <button

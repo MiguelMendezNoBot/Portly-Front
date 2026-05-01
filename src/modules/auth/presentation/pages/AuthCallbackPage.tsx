@@ -39,12 +39,8 @@ export function AuthCallbackPage() {
     saveToken(token);
     if (payload.sub) saveUsuarioId(payload.sub);
     if (payload.email) saveEmail(payload.email);
-    // Si el perfil no está completo (usuario nuevo por OAuth), ir a completar perfil
-    if (payload.perfilCompleto === false) {
-      window.location.replace('/complete-profile');
-    } else {
-      window.location.replace('/');
-    }
+    sessionStorage.setItem('oauth_login_success', '1');
+    window.location.replace('/');
   }, []);
 
   if (error) {

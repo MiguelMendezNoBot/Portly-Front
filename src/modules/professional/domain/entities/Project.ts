@@ -8,10 +8,14 @@ export interface Project {
   esActual: boolean;
   tecnologias: string[];
   visibilidad: 'publico' | 'privado';
-  urlDemo: string;
-  repositorios: string[];
   iconoUrl: string | null;
   evidencias: ProjectEvidence[];
+  enlaces: ProjectLink[];
+}
+
+export interface ProjectLink {
+  titulo: string;
+  url: string;
 }
 
 export interface ProjectEvidence {

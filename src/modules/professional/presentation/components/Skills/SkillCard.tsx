@@ -1,81 +1,69 @@
-import { useState, useRef, useEffect } from 'react';
 import { Skill } from '../../../domain/entities/Skill';
 import { LevelIcon } from './icons/LevelIcon';
 import { TechIcon } from './icons/TechIcon';
 
-export default function SkillCard({
-  skill,
-  onEdit,
-  onDelete,
-}: {
+interface SkillCardProps {
   skill: Skill;
+  mode: 'edit' | 'delete' | null;
   onEdit: () => void;
   onDelete: () => void;
-}) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+}
 
-  useEffect(() => {
-    const close = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node))
-        setMenuOpen(false);
-    };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, []);
+export default function SkillCard({ skill, mode, onEdit, onDelete }: SkillCardProps) {
+  const isCardClickable = mode !== null;
+
+  // Clase del borde según el modo
+  const borderClass = !isCardClickable
+    ? 'border-white/5 hover:border-[#6b72ff]/40'
+    : mode === 'edit'
+    ? 'border-[#6b72ff]/40 hover:border-[#6b72ff]/70'
+    : 'border-red-500/40 hover:border-red-500/70'; // delete
+
+  const handleCardClick = () => {
+    if (!isCardClickable) return;
+    if (mode === 'edit') onEdit();
+    if (mode === 'delete') onDelete();
+  };
 
   return (
-    <div className="relative bg-[#1a1a2e] rounded-2xl border border-white/5 hover:border-[#6b72ff]/40 transition-all duration-300 shadow-md grid grid-cols-[36px_1fr_1px_130px] items-stretch">
-
-      {/* Menú de tres puntos — columna izquierda */}
-      <div className="relative flex items-center" ref={menuRef}>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="h-full px-2 flex items-center justify-center text-[#4b4f6b] hover:text-[#9ca3af] hover:bg-white/5 rounded-l-2xl transition-colors"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="5" r="2" />
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="12" cy="19" r="2" />
-          </svg>
-        </button>
-
-        {menuOpen && (
-          <div className="absolute left-0 top-full mt-1 w-40 bg-[#0f111a] rounded-2xl shadow-2xl border border-white/10 py-2 z-50 animate-in zoom-in-95 duration-150">
-            <button
-              onClick={() => { onEdit(); setMenuOpen(false); }}
-              className="w-full text-left px-4 py-3 text-white hover:bg-[#6b72ff] text-sm font-medium flex items-center gap-3 transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 20h9M16.5 3.5L20 7l-9 9-4 1 1-4 9-9z" />
-              </svg>
-              EDITAR
-            </button>
-            <button
-              onClick={() => { onDelete(); setMenuOpen(false); }}
-              className="w-full text-left px-4 py-3 text-red-400 hover:bg-red-500 hover:text-white text-sm font-medium flex items-center gap-3 border-t border-white/5 transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-              </svg>
-              ELIMINAR
-            </button>
+    <div
+      onClick={handleCardClick}
+      className={`relative bg-[#1a1a2e] rounded-2xl border transition-all duration-300 shadow-md grid grid-cols-[36px_1fr_1px_130px] items-stretch ${
+        isCardClickable ? 'cursor-pointer' : ''
+      } ${borderClass}`}
+    >
+      {/* Columna izquierda con icono de modo (con fondo) */}
+      <div className="flex items-center justify-center pl-1">
+        {mode === 'edit' && (
+          <div className="w-7 h-7 rounded-full bg-[#6b72ff]/20 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9BEFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+              <path d="m15 5 4 4" />
+            </svg>
           </div>
         )}
+        {mode === 'delete' && (
+          <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+          </div>
+        )}
+        {/* Si mode es null no se muestra nada */}
       </div>
 
-      {/* Ícono + Nombre — columna flexible (1fr) */}
-      <div className="flex items-center gap-2  py-3 min-w-0">
+      {/* Ícono + Nombre */}
+      <div className="flex items-center gap-2 py-3 min-w-0">
         <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-white/5 flex-shrink-0">
           <TechIcon name={skill.name} />
         </div>
         <h3 className="text-white font-bold text-xs truncate">{skill.name}</h3>
       </div>
 
-      {/* Separador vertical — columna de 1px */}
+      {/* Separador vertical */}
       <div className="bg-white/10 my-3" />
 
-      {/* Nivel de dominio — columna fija 130px */}
+      {/* Nivel de dominio */}
       <div className="flex flex-col items-center justify-center gap-1 px-3 py-3">
         <span className="text-[#a7aab9] text-[11px] font-semibold whitespace-nowrap">
           Nivel de dominio
@@ -87,7 +75,6 @@ export default function SkillCard({
           </span>
         </div>
       </div>
-
     </div>
   );
 }

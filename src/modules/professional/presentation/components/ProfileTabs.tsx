@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { cn } from '../../../../shared/utils/cn';
 import SkillsSection from './SkillsSection';
 import ProjectsSection from './ProjectsSection';
-import ExperienceSection from './ExperienceSection';
+import TrayectoriaProfesional from './trajectory/ProfessionalExperienceSection';
+import FormacionAcademicaSection from './trajectory/FormacionAcademicaSection';
 
-type TabType = 'habilidades' | 'trayectoria' | 'proyectos';
+type TabType = 'habilidades' | 'trayectoria' | 'formacion' | 'proyectos';
 
 export default function ProfileTabs() {
   const [activeTab, setActiveTab] = useState<TabType>('habilidades');
 
   const tabs = [
-    { id: 'habilidades', label: 'Habilidades' }, // [cite: 11]
-    { id: 'trayectoria', label: 'Trayectoria' }, // [cite: 12]
-    { id: 'proyectos', label: 'Proyectos' }, // [cite: 13]
+    { id: 'habilidades', label: 'Habilidades' },
+    { id: 'trayectoria', label: 'Trayectoria Profesional' },
+    { id: 'formacion', label: 'Formación Académica' },
+    { id: 'proyectos', label: 'Proyectos' },
   ] as const;
 
   return (
@@ -38,7 +40,8 @@ export default function ProfileTabs() {
       {/* Contenido Dinámico */}
       <div className="min-h-[400px]">
         {activeTab === 'habilidades' && <SkillsSection />}
-        {activeTab === 'trayectoria' && <ExperienceSection />}
+        {activeTab === 'trayectoria' && <TrayectoriaProfesional />}
+        {activeTab === 'formacion' && <FormacionAcademicaSection />}
         {activeTab === 'proyectos' && <ProjectsSection />}
       </div>
     </div>

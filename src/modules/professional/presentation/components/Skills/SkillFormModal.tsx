@@ -29,6 +29,8 @@ export default function SkillFormModal({
   const [showError, setShowError] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const isEditing = !!initialData;
+
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
@@ -45,7 +47,7 @@ export default function SkillFormModal({
       } else {
         setName('');
         setCustomName('');
-        setSelectedLevel('Básico'); // Criterio: Básico por defecto
+        setSelectedLevel('Básico');
         setIsCustom(false);
       }
       setShowError(false);
@@ -54,6 +56,7 @@ export default function SkillFormModal({
   }, [isOpen, initialData]);
 
   const handleNameChange = (val: string) => {
+    if (isEditing) return; // No permitir cambiar el nombre en edición
     setName(val);
     setIsCustom(val === 'Otro');
     if (val !== 'Otro') setShowError(false);
@@ -61,9 +64,8 @@ export default function SkillFormModal({
   };
 
   const handleAction = async () => {
-    const finalName = isCustom ? customName.trim() : name;
+    const finalName = isEditing ? initialData!.name : (isCustom ? customName.trim() : name);
 
-    // Validación de campo vacío (Criterio de la HU)
     if (!finalName || finalName === 'Otro' || finalName === '') {
       setShowError(true);
       return;
@@ -89,7 +91,7 @@ export default function SkillFormModal({
       <div className="bg-[#0f111a] w-full max-w-md rounded-[32px] border border-white/10 shadow-2xl overflow-hidden">
         <div className="p-8 pb-0">
           <h2 className="text-white text-2xl font-bold mb-6">
-            {initialData ? 'Editar Habilidad' : 'Agregar Habilidad'}
+            {isEditing ? 'Editar Habilidad' : 'Agregar Habilidad'}
           </h2>
 
           <div className="space-y-6">
@@ -101,7 +103,8 @@ export default function SkillFormModal({
               <select
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                className={`w-full bg-[#0d1117] border ${showError && !isCustom ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 transition-all appearance-none cursor-pointer`}
+                disabled={isEditing}
+                className={`w-full bg-[#0d1117] border ${showError && !isCustom && !isEditing ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 transition-all appearance-none cursor-pointer ${isEditing ? 'opacity-75 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <option value="" disabled>
                   Selecciona una habilidad
@@ -119,12 +122,14 @@ export default function SkillFormModal({
                   placeholder="Escribe tu habilidad..."
                   value={customName}
                   onChange={(e) => {
+                    if (isEditing) return;
                     setCustomName(e.target.value);
                     setShowError(false);
                     setServerError(null);
                   }}
-                  className={`w-full bg-[#0d1117] border ${showError ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 mt-3 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 animate-in slide-in-from-top-2`}
-                  autoFocus
+                  disabled={isEditing}
+                  className={`w-full bg-[#0d1117] border ${showError ? 'border-red-500' : 'border-white/10'} text-white rounded-2xl px-5 py-4 mt-3 focus:outline-none focus:ring-2 focus:ring-[#6b72ff]/40 animate-in slide-in-from-top-2 ${isEditing ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  autoFocus={!isEditing}
                 />
               )}
               {showError && (
@@ -166,7 +171,6 @@ export default function SkillFormModal({
               className="bg-[#22242a] rounded-[40px] p-5 shadow-inner transition-all duration-700 ease-in-out animate-text-change"
             >
               <div className="flex items-center gap-5 min-h-[80px]">
-                {/* Contenedor del Icono: Corregido el className */}
                 <div
                   className="flex-shrink-0 animate-text-change"
                   key={`icon-${selectedLevel}`}
@@ -178,7 +182,6 @@ export default function SkillFormModal({
                   />
                 </div>
 
-                {/* Texto informativo */}
                 <div className="flex-1 overflow-hidden">
                   <p
                     key={selectedLevel}

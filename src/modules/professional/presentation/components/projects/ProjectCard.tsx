@@ -1,16 +1,47 @@
 import { useState } from 'react';
 import { Project } from '../../../domain/entities/Project';
 
+const EditIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+
 interface ProjectCardProps {
   project: Project;
-  onEdit: () => void;
-  onDelete: () => void;
+  mode?: 'edit' | 'delete' | null;
+  onClick?: () => void;
 }
 
 export default function ProjectCard({
   project,
-  onEdit,
-  onDelete,
+  mode,
+  onClick,
 }: ProjectCardProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -27,8 +58,28 @@ export default function ProjectCard({
   };
 
   return (
-    <div className="bg-[#1a1c29] rounded-2xl border border-white/5 p-6 transition-all hover:border-white/10">
-      {/* Header: Icon + Name + Action Buttons */}
+    <div
+      onClick={onClick}
+      className={`relative rounded-2xl p-6 transition-all border ${
+        mode === 'edit'
+          ? 'bg-[#1a1c29] border-white/20 cursor-pointer hover:bg-[#2a3060] hover:border-white/30'
+          : mode === 'delete'
+          ? 'bg-[#1a1c29] border-red-500/20 cursor-pointer hover:bg-red-500/10 hover:border-red-500/40'
+          : 'bg-[#1a1c29] border-white/5 hover:border-white/10'
+      }`}
+    >
+      {mode === 'edit' && (
+        <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white z-10 pointer-events-none">
+          <EditIcon />
+        </div>
+      )}
+      {mode === 'delete' && (
+        <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400 z-10 pointer-events-none">
+          <TrashIcon />
+        </div>
+      )}
+
+      {/* Header: Icon + Name */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           {project.iconoUrl ? (
@@ -53,49 +104,7 @@ export default function ProjectCard({
               </svg>
             </div>
           )}
-          <h3 className="text-white text-xl font-bold">{project.nombre}</h3>
-        </div>
-
-        <div className="flex gap-2 shrink-0">
-          <button
-            onClick={onEdit}
-            className="p-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-white transition-colors flex flex-col items-center gap-1"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-            </svg>
-            <span className="text-[10px] text-gray-400">EDITAR</span>
-          </button>
-          <button
-            onClick={onDelete}
-            className="p-2.5 bg-white/5 hover:bg-red-500/20 rounded-lg text-red-400 transition-colors flex flex-col items-center gap-1"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg>
-            <span className="text-[10px] text-gray-400 hover:text-red-400">
-              ELIMINAR
-            </span>
-          </button>
+          <h3 className="text-white text-xl font-bold pr-12">{project.nombre}</h3>
         </div>
       </div>
 
@@ -205,79 +214,43 @@ export default function ProjectCard({
             </div>
           )}
 
-          {/* Visibility badge */}
-          <div className="flex items-center gap-1.5 text-[#9ca3af] text-xs mb-4">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              {project.visibilidad === 'publico' ? (
-                <>
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </>
-              ) : (
-                <>
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                </>
-              )}
-            </svg>
-            {project.visibilidad === 'publico' ? 'Público' : 'Privado'}
-          </div>
+
 
           {/* Action buttons */}
-          <div className="flex gap-3">
-            {project.urlDemo && (
-              <a
-                href={project.urlDemo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 bg-[#1a1c29] border border-white/10 rounded-xl py-3 text-white text-sm font-medium hover:border-[#6c63ff]/40 transition-colors"
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-                VER DEMO
-              </a>
-            )}
-            {project.repositorios && project.repositorios.length > 0 && (
-              <a
-                href={project.repositorios[0]}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 bg-[#1a1c29] border border-white/10 rounded-xl py-3 text-white text-sm font-medium hover:border-[#6c63ff]/40 transition-colors"
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                  <line x1="8" y1="21" x2="16" y2="21" />
-                  <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-                REPOSITORIO
-              </a>
-            )}
-          </div>
+          {project.enlaces && project.enlaces.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-white text-base font-semibold mb-2">
+                Enlaces:
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {project.enlaces.map((link, index) => (
+                  <a
+                    key={index}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center justify-center gap-2 bg-[#1a1c29] border border-white/10 rounded-xl py-3 px-4 text-white text-sm font-medium hover:border-[#6c63ff]/40 transition-colors whitespace-nowrap"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="shrink-0"
+                    >
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    <span className="truncate">{link.titulo}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
