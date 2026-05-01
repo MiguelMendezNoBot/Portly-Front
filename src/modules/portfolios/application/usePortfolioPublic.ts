@@ -11,9 +11,9 @@ export function usePortfolioPublic(portfolioId: string | undefined) {
     if (!portfolioId) return;
     setLoading(true);
     setError(null);
-    // GET público — sin autenticación requerida
+    // GET público — intentamos enviar el token si existe para que el dueño pueda verlo aunque sea privado
     httpClient
-      .get<PortfolioPublicData>(
+      .getAuth<PortfolioPublicData>(
         `/api/portafolios/${portfolioId}/publica`,
         'No se pudo cargar el portafolio'
       )

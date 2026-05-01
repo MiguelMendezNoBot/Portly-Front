@@ -36,8 +36,6 @@ export function usePortfolios() {
       try {
         const newPortfolio = await repository.create(dto);
         setPortfolios((prev) => [newPortfolio, ...prev]);
-        // Abrir en nueva pestaña usando el ID para que el router del front lo maneje
-        window.open(`/p/${newPortfolio.id}`, '_blank', 'noopener,noreferrer');
         return newPortfolio;
       } finally {
         setCreating(false);

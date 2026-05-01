@@ -3,7 +3,9 @@ import type { Portfolio } from '../../domain/entities/Portfolio';
 interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
+  mode?: 'delete' | null;
   onDelete?: (id: string) => void;
+  onClick?: (portfolio: Portfolio) => void;
 }
 
 const EmptyState = () => (
@@ -52,14 +54,14 @@ const VisibilityBadge = ({ value }: { value: 'PUBLICO' | 'PRIVADO' }) => (
   </span>
 );
 
-export default function PortfolioList({ portfolios, loading, onDelete }: PortfolioListProps) {
+export default function PortfolioList({ portfolios, loading, mode, onDelete, onClick }: PortfolioListProps) {
   if (loading) {
     return (
-      <div className="flex flex-col gap-3 px-2">
-        {[1, 2].map((i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2">
+        {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-16 rounded-xl bg-white/5 animate-pulse"
+            className="aspect-video rounded-2xl bg-white/5 animate-pulse"
           />
         ))}
       </div>
@@ -71,76 +73,78 @@ export default function PortfolioList({ portfolios, loading, onDelete }: Portfol
   }
 
   return (
-    <div className="flex flex-col gap-2.5 overflow-y-auto pr-1">
-      {portfolios.map((p) => (
-        <div
-          key={p.id}
-          className="group flex items-center gap-3 bg-white/5 hover:bg-white/8 border border-white/5 hover:border-[#7c6bec]/30 rounded-xl px-3 py-2.5 transition-all duration-150 cursor-pointer"
-        >
-          {/* Icono / miniatura */}
-          <div className="w-10 h-10 rounded-lg bg-[#7c6bec]/15 flex items-center justify-center shrink-0 overflow-hidden">
-            {p.previewImageUrl ? (
-              <img
-                src={p.previewImageUrl}
-                alt={p.nombre}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#7c6bec"
-                strokeWidth="1.6"
-              >
-                <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
-              </svg>
-            )}
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-sm font-medium truncate">{p.nombre}</p>
-            <VisibilityBadge value={p.visibilidad} />
-          </div>
-
-          {/* Acciones */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {p.publicUrl && (
-              <a
-                href={p.publicUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Ver portafolio"
-                className="w-7 h-7 rounded-lg bg-[#7c6bec]/15 flex items-center justify-center hover:bg-[#7c6bec]/25 transition-colors"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b0a8f5" strokeWidth="2.2">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                  <path d="M15 3h6v6" />
-                  <path d="M10 14L21 3" strokeLinecap="round" />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto pr-1">
+      {portfolios.map((p) => {
+        const isDeleteMode = mode === 'delete';
+        return (
+          <div
+            key={p.id}
+            onClick={() => {
+              if (isDeleteMode && onDelete) onDelete(p.id);
+              else if (onClick) onClick(p);
+            }}
+            className={`group relative rounded-2xl p-4 transition-all border flex flex-col gap-4 ${
+              isDeleteMode 
+                ? 'bg-[#1a1c29] border-red-500/20 cursor-pointer hover:bg-red-500/10 hover:border-red-500/40' 
+                : 'bg-[#1a1c29] border-white/5 hover:border-[#7c6bec]/30 cursor-pointer'
+            }`}
+          >
+            {isDeleteMode && (
+              <div className="absolute top-3 right-3 p-1.5 bg-red-500/20 rounded-lg text-red-400 z-10 pointer-events-none animate-pulse">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
                 </svg>
-              </a>
+              </div>
             )}
-            {onDelete && (
-              <button
-                type="button"
-                title="Eliminar"
-                onClick={() => onDelete(p.id)}
-                className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center hover:bg-red-500/25 transition-colors"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2.2">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14H6L5 6" />
-                  <path d="M10 11v6M14 11v6" />
-                  <path d="M9 6V4h6v2" />
-                </svg>
-              </button>
-            )}
+
+            {/* Preview Image */}
+            <div className="relative aspect-video rounded-xl bg-[#0f111a] border border-white/5 overflow-hidden shrink-0">
+              {p.previewImageUrl ? (
+                <img
+                  src={p.previewImageUrl}
+                  alt={p.nombre}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1d2e] to-[#0f111a]">
+                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#7c6bec30" strokeWidth="1">
+                     <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
+                   </svg>
+                </div>
+              )}
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                 {!isDeleteMode && p.publicUrl && (
+                    <a
+                      href={p.publicUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                 )}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-white text-base font-bold truncate pr-2">{p.nombre}</h3>
+                <VisibilityBadge value={p.visibilidad} />
+              </div>
+              <p className="text-[#6b7280] text-[11px] uppercase tracking-widest font-semibold">
+                ID: {p.id.slice(0, 8)}...
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

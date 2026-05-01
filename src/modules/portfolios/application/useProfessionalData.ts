@@ -5,6 +5,7 @@ import type { SoftSkill } from '../../professional/domain/entities/SoftSkill';
 import type { Experience } from '../../professional/domain/entities/Experience';
 import type { Project } from '../../professional/domain/entities/Project';
 import type { FormacionAcademica } from '../../professional/domain/entities/FormacionAcademica';
+import type { UserProfileEntity } from '../../profile/domain/userProfile.entity';
 
 export interface ProfessionalData {
   skills: Skill[];
@@ -12,6 +13,7 @@ export interface ProfessionalData {
   experiences: Experience[];
   projects: Project[];
   formacion: FormacionAcademica[];
+  user: UserProfileEntity | null;
 }
 
 const EMPTY: ProfessionalData = {
@@ -20,6 +22,7 @@ const EMPTY: ProfessionalData = {
   experiences: [],
   projects: [],
   formacion: [],
+  user: null,
 };
 
 export function useProfessionalData() {
@@ -31,13 +34,14 @@ export function useProfessionalData() {
     setLoading(true);
     setError(null);
     try {
-      const [skills, softSkills, experiences, projects, formacion] =
+      const [skills, softSkills, experiences, projects, formacion, user] =
         await Promise.allSettled([
           httpClient.getAuth<Skill[]>('/api/skills', ''),
           httpClient.getAuth<SoftSkill[]>('/api/soft-skills', ''),
           httpClient.getAuth<Experience[]>('/api/profile/experiencia', ''),
           httpClient.getAuth<Project[]>('/api/profile/proyectos', ''),
           httpClient.getAuth<FormacionAcademica[]>('/api/profile/formacion', ''),
+          httpClient.getAuth<UserProfileEntity>('/api/profile', ''),
         ]);
 
       setData({
@@ -46,6 +50,7 @@ export function useProfessionalData() {
         experiences: experiences.status === 'fulfilled' ? experiences.value : [],
         projects: projects.status === 'fulfilled' ? projects.value : [],
         formacion: formacion.status === 'fulfilled' ? formacion.value : [],
+        user: user.status === 'fulfilled' ? user.value : null,
       });
     } catch (err: any) {
       setError(err?.message || 'Error al cargar datos del perfil profesional');
