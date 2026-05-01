@@ -18,7 +18,7 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   },
   '/portfolios': {
     title: 'Mis portafolios',
-    subtitle: 'Gestiona tus proyectos',
+    subtitle: 'Puedes visualizar tus portafolios creados, editarlos y crear nuevos',
   },
   '/professional-profile': {
     title: 'Perfil profesional',
