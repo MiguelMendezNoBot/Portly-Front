@@ -3,6 +3,15 @@ import { decodeJwtEmail, emailToDisplayName } from '../../domain/sessionUser';
 interface AuthUser {
   displayName: string;
   email: string;
+  perfilCompleto: boolean;
+}
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
 }
 
 export function useAuth(): { user: AuthUser | null; logout: () => void } {
@@ -16,7 +25,10 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
     ? emailToDisplayName(email).toUpperCase()
     : 'USUARIO';
 
-  const user: AuthUser = { displayName, email };
+  const payload = decodeJwtPayload(token);
+  const perfilCompleto = payload?.perfilCompleto !== false;
+
+  const user: AuthUser = { displayName, email, perfilCompleto };
 
   const logout = () => {
     localStorage.removeItem('token');
