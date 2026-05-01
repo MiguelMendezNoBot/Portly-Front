@@ -11,10 +11,15 @@ export const HomePage = () => {
   const toastShown = useRef(false);
 
   useEffect(() => {
-    if (!toastShown.current && sessionStorage.getItem('logout_success') === '1') {
+    if (toastShown.current) return;
+    if (sessionStorage.getItem('logout_success') === '1') {
       sessionStorage.removeItem('logout_success');
       toastShown.current = true;
       showToast('Sesión cerrada con éxito', 'success');
+    } else if (sessionStorage.getItem('oauth_login_success') === '1') {
+      sessionStorage.removeItem('oauth_login_success');
+      toastShown.current = true;
+      showToast('Sesión iniciada con éxito', 'success');
     }
   }, []);
 
