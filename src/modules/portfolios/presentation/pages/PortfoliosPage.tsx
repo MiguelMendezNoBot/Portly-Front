@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useTemplates } from '../../application/useTemplates';
 import { usePortfolios } from '../../application/usePortfolios';
-import type { Template } from '../../domain/entities/Template';
 import PortfolioList from '../components/PortfolioList';
 import PortfolioFormModal from '../components/PortfolioFormModal';
 import DeletePortfolioModal from '../components/DeletePortfolioModal';
+import PublishSuccessModal from '../components/PublishSuccessModal';
+import { ConfirmModal } from '../../../../shared/components/ConfirmModal';
 import type { Portfolio } from '../../domain/entities/Portfolio';
 
 // Toast local simple
@@ -35,41 +36,60 @@ export default function PortfoliosPage() {
     creating,
     createPortfolio,
     deletePortfolio,
+    publishPortfolio,
   } = usePortfolios();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Delete flow
   const [mode, setMode] = useState<'delete' | null>(null);
-  const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(
-    null
-  );
+  const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Create flow
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [publishPhase, setPublishPhase] = useState<boolean>(false);
+  const [portfolioToPublish, setPortfolioToPublish] = useState<Portfolio | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishedPortfolio, setPublishedPortfolio] = useState<Portfolio | null>(null);
+
   const { toast, show: showToast } = useLocalToast();
 
-  // Removed selectedTemplate default effect, handled in modal
+  // Derived
+  const hasPrivatePortfolios = portfolios.some((p) => p.visibilidad === 'PRIVADO');
 
+  const portfoliosWithPreviews = portfolios.map((p) => {
+    const template = templates.find((t) => String(t.id) === String(p.templateId));
+    return {
+      ...p,
+      previewImageUrl:
+        p.previewImageUrl || template?.previewImageUrl || template?.previewUrl,
+    };
+  });
+
+  const privatePortfoliosWithPreviews = portfoliosWithPreviews.filter(
+    (p) => p.visibilidad === 'PRIVADO'
+  );
+
+  // --- Create handlers ---
   const handleCreate = useCallback(
     async (templateId: string, nombre: string) => {
       try {
-        await createPortfolio({
-          templateId,
-          nombre,
-          visibilidad: 'PRIVADO',
-        });
+        await createPortfolio({ templateId, nombre, visibilidad: 'PRIVADO' });
         showToast('¡Portafolio creado!', 'success');
         setIsModalOpen(false);
       } catch (err: any) {
         showToast(err?.message || 'Error al crear el portafolio', 'error');
-        throw err; // rethrow to keep modal open
+        throw err;
       }
     },
     [createPortfolio, showToast]
   );
 
+  // --- Delete handlers ---
   const handleDeleteClick = useCallback(
     (id: string) => {
       const portfolio = portfolios.find((p) => p.id === id);
-      if (portfolio) {
-        setPortfolioToDelete(portfolio);
-      }
+      if (portfolio) setPortfolioToDelete(portfolio);
     },
     [portfolios]
   );
@@ -88,6 +108,51 @@ export default function PortfoliosPage() {
       setIsDeleting(false);
     }
   }, [deletePortfolio, portfolioToDelete, showToast]);
+
+  // --- Publish handlers ---
+  const handleEnterPublishMode = useCallback(() => {
+    setMode(null);
+    setPublishPhase(true);
+  }, []);
+
+  const handleCancelPublishMode = useCallback(() => {
+    setPublishPhase(false);
+    setPortfolioToPublish(null);
+  }, []);
+
+  const handlePublishCardClick = useCallback((portfolio: Portfolio) => {
+    setPortfolioToPublish(portfolio);
+  }, []);
+
+  const handleCancelPublishConfirm = useCallback(() => {
+    setPortfolioToPublish(null);
+  }, []);
+
+  const handleConfirmPublish = useCallback(async () => {
+    if (!portfolioToPublish) return;
+    setIsPublishing(true);
+    try {
+      const updated = await publishPortfolio(portfolioToPublish.id);
+      setPublishedPortfolio(updated);
+      setPortfolioToPublish(null);
+      setPublishPhase(false);
+      showToast('¡Portafolio publicado!', 'success');
+    } catch (err: any) {
+      showToast(err?.message || 'Error al publicar el portafolio', 'error');
+    } finally {
+      setIsPublishing(false);
+    }
+  }, [portfolioToPublish, publishPortfolio, showToast]);
+
+  const getPublicUrl = (portfolio: Portfolio) => {
+    if (portfolio.publicUrl && portfolio.publicUrl.startsWith('http')) {
+      return portfolio.publicUrl;
+    }
+    return `${window.location.origin}/p/${portfolio.id}`;
+  };
+
+  // Active list mode for PortfolioList
+  const listMode = mode === 'delete' ? 'delete' : publishPhase ? 'publish' : null;
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -130,6 +195,35 @@ export default function PortfoliosPage() {
               AÑADIR PORTAFOLIO
             </button>
 
+            {/* Publicar — solo si hay portafolios privados */}
+            {hasPrivatePortfolios && (
+              <button
+                onClick={handleEnterPublishMode}
+                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                  publishPhase
+                    ? 'bg-[#7c6bec]/15 border-[#7c6bec]/40 text-[#C9BEFF]'
+                    : 'border-white/10 text-[#9ca3af] hover:text-[#C9BEFF] hover:border-[#7c6bec]/30'
+                }`}
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                Publicar
+              </button>
+            )}
+
+            {/* Eliminar */}
             {portfolios.length > 0 && (
               <button
                 onClick={() =>
@@ -160,7 +254,7 @@ export default function PortfoliosPage() {
           </div>
         </header>
 
-        {/* Indicador de modo activo */}
+        {/* Indicador de modo eliminar */}
         {mode === 'delete' && portfolios.length > 0 && (
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border bg-red-500/10 border-red-500/20 text-red-400">
             <svg
@@ -186,25 +280,67 @@ export default function PortfoliosPage() {
           </div>
         )}
 
+        {/* Indicador de modo publicar */}
+        {publishPhase && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm border bg-[#7c6bec]/10 border-[#7c6bec]/20 text-[#C9BEFF]">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="shrink-0"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span>Escoge un portafolio para publicarlo</span>
+            <button
+              onClick={handleCancelPublishMode}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
+
         {/* Lista */}
         <div className="flex-1 overflow-y-auto">
-          <PortfolioList
-            portfolios={portfolios.map((p) => {
-              const template = templates.find(
-                (t) => String(t.id) === String(p.templateId)
-              );
-              return {
-                ...p,
-                previewImageUrl:
-                  p.previewImageUrl ||
-                  template?.previewImageUrl ||
-                  template?.previewUrl,
-              };
-            })}
-            loading={loadingPortfolios}
-            mode={mode}
-            onDelete={handleDeleteClick}
-          />
+          {publishPhase ? (
+            privatePortfoliosWithPreviews.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
+                <div className="w-16 h-16 rounded-2xl bg-[#7c6bec]/10 flex items-center justify-center">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#7c6bec]">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </div>
+                <p className="text-white font-semibold">No hay portafolios privados</p>
+                <p className="text-[#5a6278] text-sm max-w-[220px]">
+                  Todos tus portafolios ya son públicos.
+                </p>
+              </div>
+            ) : (
+              <PortfolioList
+                portfolios={privatePortfoliosWithPreviews}
+                loading={loadingPortfolios}
+                mode={listMode}
+                onPublish={handlePublishCardClick}
+              />
+            )
+          ) : (
+            <PortfolioList
+              portfolios={portfoliosWithPreviews}
+              loading={loadingPortfolios}
+              mode={listMode}
+              onDelete={handleDeleteClick}
+            />
+          )}
         </div>
       </section>
 
@@ -220,12 +356,50 @@ export default function PortfoliosPage() {
         existingNames={portfolios.map((p) => p.nombre)}
       />
 
+      {/* Modal de Eliminación */}
       <DeletePortfolioModal
         isOpen={!!portfolioToDelete}
         onClose={() => setPortfolioToDelete(null)}
         onConfirm={confirmDelete}
         portfolioName={portfolioToDelete?.nombre || ''}
         isLoading={isDeleting}
+      />
+
+      {/* Modal de Confirmación de Publicación */}
+      <ConfirmModal
+        isOpen={!!portfolioToPublish}
+        onClose={handleCancelPublishConfirm}
+        onConfirm={handleConfirmPublish}
+        title="¿Quieres publicar este portafolio?"
+        description={`"${portfolioToPublish?.nombre || ''}" será visible para cualquier persona con el enlace.`}
+        confirmText="ACEPTAR"
+        cancelText="CANCELAR"
+        confirmColor="purple"
+        isLoading={isPublishing}
+        icon={
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        }
+      />
+
+      {/* Modal de éxito de publicación */}
+      <PublishSuccessModal
+        isOpen={!!publishedPortfolio}
+        onClose={() => setPublishedPortfolio(null)}
+        portfolioName={publishedPortfolio?.nombre || ''}
+        publicUrl={publishedPortfolio ? getPublicUrl(publishedPortfolio) : ''}
       />
 
       {/* Toast de notificación */}

@@ -27,7 +27,7 @@ const EMPTY: ProfessionalData = {
 
 export function useProfessionalData() {
   const [data, setData] = useState<ProfessionalData>(EMPTY);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetch = useCallback(async () => {
