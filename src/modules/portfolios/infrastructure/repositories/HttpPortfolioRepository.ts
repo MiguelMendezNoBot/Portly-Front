@@ -1,4 +1,4 @@
-import { Portfolio, CreatePortfolioDto } from '../../domain/entities/Portfolio';
+import { Portfolio, CreatePortfolioDto, UpdateVisibilidadDto } from '../../domain/entities/Portfolio';
 import { PortfolioRepository } from '../../domain/repositories/PortfolioRepository';
 import { httpClient } from '../../../../infrastructure/http/httpClient';
 
@@ -24,6 +24,22 @@ export class HttpPortfolioRepository implements PortfolioRepository {
     return httpClient.deleteAuth<void>(
       `${this.PATH}/${id}`,
       'Error al eliminar el portafolio'
+    );
+  }
+
+  async updateVisibilidad(id: string, dto: UpdateVisibilidadDto): Promise<Portfolio> {
+    return httpClient.putAuth<Portfolio>(
+      `${this.PATH}/${id}/visibilidad`,
+      dto,
+      'Error al guardar la visibilidad'
+    );
+  }
+
+  async publish(id: string): Promise<Portfolio> {
+    return httpClient.putAuth<Portfolio>(
+      `${this.PATH}/${id}/publicar`,
+      {},
+      'Error al publicar el portafolio'
     );
   }
 }

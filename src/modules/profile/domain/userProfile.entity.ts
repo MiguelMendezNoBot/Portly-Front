@@ -13,6 +13,10 @@ export interface UserProfileEntity {
     showEmail: boolean;
     showProfession: boolean;
     showBio: boolean;
+    showPhone?: boolean;
+    showNationality?: boolean;
+    showLinkedin?: boolean;
+    showGithub?: boolean;
     showInstagram: boolean;
     showFacebook: boolean;
     showYoutube: boolean;
