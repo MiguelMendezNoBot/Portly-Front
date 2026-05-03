@@ -41,24 +41,32 @@ export default function PortfoliosPage() {
 
   // Delete flow
   const [mode, setMode] = useState<'delete' | null>(null);
-  const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(null);
+  const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(
+    null
+  );
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Create flow
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [publishPhase, setPublishPhase] = useState<boolean>(false);
-  const [portfolioToPublish, setPortfolioToPublish] = useState<Portfolio | null>(null);
+  const [portfolioToPublish, setPortfolioToPublish] =
+    useState<Portfolio | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [publishedPortfolio, setPublishedPortfolio] = useState<Portfolio | null>(null);
+  const [publishedPortfolio, setPublishedPortfolio] =
+    useState<Portfolio | null>(null);
 
   const { toast, show: showToast } = useLocalToast();
 
   // Derived
-  const hasPrivatePortfolios = portfolios.some((p) => p.visibilidad === 'PRIVADO');
+  const hasPrivatePortfolios = portfolios.some(
+    (p) => p.visibilidad === 'PRIVADO'
+  );
 
   const portfoliosWithPreviews = portfolios.map((p) => {
-    const template = templates.find((t) => String(t.id) === String(p.templateId));
+    const template = templates.find(
+      (t) => String(t.id) === String(p.templateId)
+    );
     return {
       ...p,
       previewImageUrl:
@@ -152,7 +160,8 @@ export default function PortfoliosPage() {
   };
 
   // Active list mode for PortfolioList
-  const listMode = mode === 'delete' ? 'delete' : publishPhase ? 'publish' : null;
+  const listMode =
+    mode === 'delete' ? 'delete' : publishPhase ? 'publish' : null;
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -178,7 +187,7 @@ export default function PortfoliosPage() {
             {/* Agregar */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-bold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap uppercase tracking-wide"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-bold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap tracking-wide"
             >
               <svg
                 width="14"
@@ -192,7 +201,7 @@ export default function PortfoliosPage() {
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              AÑADIR PORTAFOLIO
+              Agregar
             </button>
 
             {/* Publicar — solo si hay portafolios privados */}
@@ -314,13 +323,23 @@ export default function PortfoliosPage() {
             privatePortfoliosWithPreviews.length === 0 ? (
               <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#7c6bec]/10 flex items-center justify-center">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#7c6bec]">
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    className="text-[#7c6bec]"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <line x1="2" y1="12" x2="22" y2="12" />
                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                   </svg>
                 </div>
-                <p className="text-white font-semibold">No hay portafolios privados</p>
+                <p className="text-white font-semibold">
+                  No hay portafolios privados
+                </p>
                 <p className="text-[#5a6278] text-sm max-w-[220px]">
                   Todos tus portafolios ya son públicos.
                 </p>
@@ -353,7 +372,7 @@ export default function PortfoliosPage() {
         templatesError={templatesError}
         creating={creating}
         onCreatePortfolio={handleCreate}
-        existingNames={portfolios.map((p) => p.nombre)}
+        existingPortfolios={portfolios.map((p) => ({ nombre: p.nombre, templateId: String(p.templateId) }))}
       />
 
       {/* Modal de Eliminación */}

@@ -39,7 +39,7 @@ export default function VisibilityToggles({
           <div key={key} className="flex items-center justify-between">
             <span className="text-src-e5e7f6 text-sm font-normal">{label}</span>
             <Toggle
-              checked={visibility[key]}
+              checked={visibility?.[key] ?? false}
               onChange={(val) => onChange(key, val)}
             />
           </div> 
