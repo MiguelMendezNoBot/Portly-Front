@@ -51,7 +51,7 @@ export default function PreviewBanner() {
           />
         </svg>
         <span className="text-sm font-bold tracking-wide text-primary uppercase">
-          Estás en modo vista previa
+          Vista previa
         </span>
       </div>
 
