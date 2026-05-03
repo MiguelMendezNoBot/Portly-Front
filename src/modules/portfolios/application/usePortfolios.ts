@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Portfolio, CreatePortfolioDto } from '../domain/entities/Portfolio';
+import { Portfolio, CreatePortfolioDto, UpdateVisibilidadDto } from '../domain/entities/Portfolio';
 import { PortfolioRepository } from '../domain/repositories/PortfolioRepository';
 import { HttpPortfolioRepository } from '../infrastructure/repositories/HttpPortfolioRepository';
 
@@ -49,6 +49,17 @@ export function usePortfolios() {
     setPortfolios((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
+  const updateVisibilidad = useCallback(
+    async (id: string, dto: UpdateVisibilidadDto): Promise<Portfolio> => {
+      const updated = await repository.updateVisibilidad(id, dto);
+      setPortfolios((prev) =>
+        prev.map((p) => (p.id === id ? updated : p))
+      );
+      return updated;
+    },
+    []
+  );
+
   return {
     portfolios,
     loading,
@@ -57,5 +68,6 @@ export function usePortfolios() {
     reload: fetchPortfolios,
     createPortfolio,
     deletePortfolio,
+    updateVisibilidad,
   };
 }

@@ -7,6 +7,13 @@ export interface PortfolioPublicUser {
   descripcion?: string;
   avatarUrl?: string;
   email?: string;
+  telefono?: string;
+  pais?: string;
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  linkedin?: string;
+  github?: string;
 }
 
 export interface PortfolioPublicSkill {
@@ -24,10 +31,16 @@ export interface PortfolioPublicExperience {
   id?: number;
   nombreEmpresa: string;
   cargo: string;
+  modalidadTrabajo?: string;
   fechaInicio: string;
   fechaFin: string | null;
   actualmenteTrabajando: boolean;
   descripcion: string;
+  funcionesPrincipales?: string[];
+  logros?: string[];
+  correoJefe?: string;
+  numeroJefe?: string;
+  cargoJefe?: string;
 }
 
 export interface PortfolioPublicProject {
@@ -48,6 +61,7 @@ export interface PortfolioPublicFormacion {
   fechaFinalizacion: string | null;
   actualmenteEstudiando: boolean;
   nivel: string;
+  descripcion?: string;
 }
 
 export interface PortfolioPublicData {
