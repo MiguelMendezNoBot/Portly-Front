@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
+import PreviewBanner from '../components/PreviewBanner';
 import type {
   PortfolioPublicData,
   PortfolioPublicSkill,
@@ -781,6 +782,7 @@ function ErrorState({ error }: { error: string }) {
 
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
+
   const { data, loading, error } = usePortfolioPublic(portfolioId);
 
   if (loading) return <LoadingState />;
@@ -796,15 +798,20 @@ export default function PortfolioPublicPage() {
     .filter((s) => s.visible)
     .sort((a, b) => a.order - b.order);
 
+  const isPrivate = data.visibilidad === 'PRIVADO';
+
   return (
     <div style={{ background: t.bg, minHeight: '100vh', fontFamily: `'${font}', system-ui, sans-serif`, color: t.text }}>
+      {/* Banner de previsualización (visible cuando el portafolio es privado) */}
+      {isPrivate && <PreviewBanner />}
+
       {/* Google Fonts */}
       <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${font.replace(/ /g, '+')}:wght@400;500;600;700;800;900&display=swap`} />
 
       {/* Barra de navegación fija */}
       <header style={{
         position: 'sticky',
-        top: 0,
+        top: isPrivate ? 46 : 0,
         zIndex: 100,
         backdropFilter: isBrutalist ? 'none' : 'blur(16px)',
         background: isBrutalist ? t.accent : t.navBg,
