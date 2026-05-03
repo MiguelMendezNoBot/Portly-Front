@@ -10,6 +10,7 @@ export function usePortfolios() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   const fetchPortfolios = useCallback(async () => {
     setLoading(true);
@@ -60,14 +61,27 @@ export function usePortfolios() {
     []
   );
 
+  const publishPortfolio = useCallback(async (id: string): Promise<Portfolio> => {
+    setPublishing(true);
+    try {
+      const updated = await repository.publish(id);
+      setPortfolios((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      return updated;
+    } finally {
+      setPublishing(false);
+    }
+  }, []);
+
   return {
     portfolios,
     loading,
     error,
     creating,
+    publishing,
     reload: fetchPortfolios,
     createPortfolio,
     deletePortfolio,
     updateVisibilidad,
+    publishPortfolio,
   };
 }

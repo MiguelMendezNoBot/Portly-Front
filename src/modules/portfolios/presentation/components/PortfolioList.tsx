@@ -3,8 +3,9 @@ import type { Portfolio } from '../../domain/entities/Portfolio';
 interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
-  mode?: 'delete' | null;
+  mode?: 'delete' | 'publish' | null;
   onDelete?: (id: string) => void;
+  onPublish?: (portfolio: Portfolio) => void;
   onClick?: (portfolio: Portfolio) => void;
 }
 
@@ -54,7 +55,7 @@ const VisibilityBadge = ({ value }: { value: 'PUBLICO' | 'PRIVADO' }) => (
   </span>
 );
 
-export default function PortfolioList({ portfolios, loading, mode, onDelete, onClick }: PortfolioListProps) {
+export default function PortfolioList({ portfolios, loading, mode, onDelete, onPublish, onClick }: Readonly<PortfolioListProps>) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2">
@@ -76,17 +77,21 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onC
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto pr-1">
       {portfolios.map((p) => {
         const isDeleteMode = mode === 'delete';
+        const isPublishMode = mode === 'publish';
         return (
           <div
             key={p.id}
             onClick={() => {
               if (isDeleteMode && onDelete) onDelete(p.id);
+              else if (isPublishMode && onPublish) onPublish(p);
               else if (onClick) onClick(p);
             }}
             className={`group relative rounded-2xl p-4 transition-all border flex flex-col gap-4 ${
-              isDeleteMode 
-                ? 'bg-[#1a1c29] border-red-500/20 cursor-pointer hover:bg-red-500/10 hover:border-red-500/40' 
-                : 'bg-[#1a1c29] border-white/5 hover:border-[#7c6bec]/30 cursor-pointer'
+              isDeleteMode
+                ? 'bg-[#1a1c29] border-red-500/20 cursor-pointer hover:bg-red-500/10 hover:border-red-500/40'
+                : isPublishMode
+                  ? 'bg-[#1a1c29] border-[#7c6bec]/20 cursor-pointer hover:bg-[#7c6bec]/10 hover:border-[#7c6bec]/40'
+                  : 'bg-[#1a1c29] border-white/5 hover:border-[#7c6bec]/30 cursor-pointer'
             }`}
           >
             {isDeleteMode && (
@@ -94,6 +99,19 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onC
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
                 </svg>
+              </div>
+            )}
+
+            {isPublishMode && (
+              <div className="absolute top-3 right-3 z-10 pointer-events-none">
+                <span className="flex items-center gap-1 px-2.5 py-1 bg-[#7c6bec]/20 border border-[#7c6bec]/30 rounded-full text-[#C9BEFF] text-[10px] font-bold uppercase tracking-wide animate-pulse">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                  Publicar
+                </span>
               </div>
             )}
 
@@ -107,28 +125,28 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onC
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1d2e] to-[#0f111a]">
-                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#7c6bec30" strokeWidth="1">
-                     <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
-                   </svg>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#7c6bec30" strokeWidth="1">
+                    <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
+                  </svg>
                 </div>
               )}
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                  {!isDeleteMode && (
-                    <a
-                      href={`/p/${p.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                        <polyline points="15 3 21 3 21 9" />
-                        <line x1="10" y1="14" x2="21" y2="3" />
-                      </svg>
-                    </a>
-                  )}
+                {!isDeleteMode && !isPublishMode && (
+                  <a
+                    href={`/p/${p.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
+                )}
               </div>
             </div>
 

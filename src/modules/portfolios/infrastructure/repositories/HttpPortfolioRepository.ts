@@ -34,4 +34,12 @@ export class HttpPortfolioRepository implements PortfolioRepository {
       'Error al guardar la visibilidad'
     );
   }
+
+  async publish(id: string): Promise<Portfolio> {
+    return httpClient.putAuth<Portfolio>(
+      `${this.PATH}/${id}/publicar`,
+      {},
+      'Error al publicar el portafolio'
+    );
+  }
 }

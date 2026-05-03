@@ -5,4 +5,5 @@ export interface PortfolioRepository {
   create(dto: CreatePortfolioDto): Promise<Portfolio>;
   delete(id: string): Promise<void>;
   updateVisibilidad(id: string, dto: UpdateVisibilidadDto): Promise<Portfolio>;
+  publish(id: string): Promise<Portfolio>;
 }
