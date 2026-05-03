@@ -232,15 +232,20 @@ export default function ProjectCard({
 
           {/* Tech tags */}
           {project.tecnologias && project.tecnologias.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {project.tecnologias.map((tech, i) => (
-                <span
-                  key={i}
-                  className="text-xs bg-[#6c63ff]/15 text-[#a3a6ff] px-2.5 py-1 rounded-full font-medium uppercase tracking-wide"
-                >
-                  #{tech}
-                </span>
-              ))}
+            <div className="mb-4">
+              <h4 className="text-white text-base font-semibold mb-2">
+                Herramientas:
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {project.tecnologias.map((tech, i) => (
+                  <span
+                    key={i}
+                    className="text-xs bg-[#6c63ff]/15 text-[#a3a6ff] px-2.5 py-1 rounded-full font-medium uppercase tracking-wide"
+                  >
+                    #{tech}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
