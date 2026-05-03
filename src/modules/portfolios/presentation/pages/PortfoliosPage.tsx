@@ -372,7 +372,7 @@ export default function PortfoliosPage() {
         templatesError={templatesError}
         creating={creating}
         onCreatePortfolio={handleCreate}
-        existingNames={portfolios.map((p) => p.nombre)}
+        existingPortfolios={portfolios.map((p) => ({ nombre: p.nombre, templateId: String(p.templateId) }))}
       />
 
       {/* Modal de Eliminación */}
