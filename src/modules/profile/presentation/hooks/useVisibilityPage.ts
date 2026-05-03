@@ -11,6 +11,10 @@ import type { FormacionAcademica } from '../../../professional/domain/entities/F
 import type { Project } from '../../../professional/domain/entities/Project';
 
 export interface VisibilityState {
+  showPhone: boolean;
+  showNationality: boolean;
+  showLinkedin: boolean;
+  showGithub: boolean;
   showInstagram: boolean;
   showFacebook: boolean;
   showYoutube: boolean;
@@ -72,6 +76,10 @@ function buildVisibility(
   const v = profile.visibility;
 
   return {
+    showPhone: v.showPhone ?? true,
+    showNationality: v.showNationality ?? true,
+    showLinkedin: v.showLinkedin ?? true,
+    showGithub: v.showGithub ?? true,
     showInstagram: v.showInstagram,
     showFacebook: v.showFacebook,
     showYoutube: v.showYoutube,
@@ -116,7 +124,6 @@ export function useVisibilityPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [vis, setVis] = useState<VisibilityState | null>(null);
   const [baselineVis, setBaselineVis] = useState<string>('{}');
-  const [pendingId, setPendingId] = useState<string | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -144,28 +151,19 @@ export function useVisibilityPage() {
 
   const dirty = vis !== null && JSON.stringify(vis) !== baselineVis;
 
-  const selectPortfolio = useCallback(
-    (id: string) => {
-      if (dirty && id !== selectedId) {
-        setPendingId(id);
-        return;
-      }
-      loadedPortfolioRef.current = null;
-      setSelectedId(id);
-      setExpandedSection(null);
-    },
-    [dirty, selectedId]
-  );
-
-  const confirmSwitch = useCallback(() => {
-    if (!pendingId) return;
+  const selectPortfolio = useCallback((id: string) => {
     loadedPortfolioRef.current = null;
-    setSelectedId(pendingId);
+    setSelectedId(id);
     setExpandedSection(null);
-    setPendingId(null);
-  }, [pendingId]);
+  }, []);
 
-  const cancelSwitch = useCallback(() => setPendingId(null), []);
+  const cancel = useCallback(() => {
+    loadedPortfolioRef.current = null;
+    setSelectedId(null);
+    setVis(null);
+    setBaselineVis('{}');
+    setExpandedSection(null);
+  }, []);
 
   const toggle = useCallback((key: BoolKey, value: boolean) => {
     setVis((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -178,11 +176,8 @@ export function useVisibilityPage() {
         const newItems = { ...prev[section], [itemId]: value };
         const allOff = Object.values(newItems).every((v) => !v);
         const sectionBool = ITEMS_TO_BOOL[section];
-        return {
-          ...prev,
-          [section]: newItems,
-          ...(allOff ? { [sectionBool]: false } : {}),
-        };
+        const sectionOn = value ? true : allOff ? false : (prev[sectionBool] as boolean);
+        return { ...prev, [section]: newItems, [sectionBool]: sectionOn };
       });
     },
     [] // eslint-disable-line react-hooks/exhaustive-deps
@@ -215,6 +210,10 @@ export function useVisibilityPage() {
         profession: profile.profession,
         bio: profile.bio,
         visibility: {
+          showPhone: vis.showPhone,
+          showNationality: vis.showNationality,
+          showLinkedin: vis.showLinkedin,
+          showGithub: vis.showGithub,
           showInstagram: vis.showInstagram,
           showFacebook: vis.showFacebook,
           showYoutube: vis.showYoutube,
@@ -256,9 +255,7 @@ export function useVisibilityPage() {
     dataLoading: loadingProfData || !profile,
     selectedId,
     selectPortfolio,
-    pendingId,
-    confirmSwitch,
-    cancelSwitch,
+    cancel,
     vis,
     toggle,
     toggleItem,

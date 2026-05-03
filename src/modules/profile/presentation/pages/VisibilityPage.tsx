@@ -206,44 +206,6 @@ function ExpandableSection({
   );
 }
 
-// ─── Warning Dialog ───────────────────────────────────────────────────────────
-
-function WarningDialog({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/60" onClick={onCancel} />
-      <div className="relative bg-[#171B28] border border-white/10 rounded-[16px] p-6 max-w-sm w-full mx-4 shadow-2xl">
-        <h3 className="text-white font-semibold text-base mb-2">
-          Cambios sin guardar
-        </h3>
-        <p className="text-[#a7aab9] text-sm mb-6">
-          Tienes cambios sin guardar, ¿deseas continuar?
-        </p>
-        <div className="flex gap-3 justify-end">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 rounded-[8px] text-sm text-[#a7aab9] border border-white/10 hover:bg-white/5 transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 rounded-[8px] text-sm text-white bg-[#7c6bec] hover:bg-[#6d5ed6] transition-colors font-medium"
-          >
-            Continuar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Toast ────────────────────────────────────────────────────────────────────
 
 function Toast({ message, isError }: { message: string; isError?: boolean }) {
@@ -263,12 +225,16 @@ function Toast({ message, isError }: { message: string; isError?: boolean }) {
 // ─── Section definitions ──────────────────────────────────────────────────────
 
 const GENERAL_TOGGLES: { key: BoolKey; label: string }[] = [
-  { key: 'showInstagram', label: 'Mostrar links de Instagram' },
-  { key: 'showFacebook', label: 'Mostrar links de Facebook' },
-  { key: 'showYoutube', label: 'Mostrar links de YouTube' },
-  { key: 'showEmail', label: 'Mostrar Correo electrónico' },
-  { key: 'showProfession', label: 'Mostrar Profesión' },
-  { key: 'showBio', label: 'Mostrar Descripción profesional' },
+  { key: 'showEmail', label: 'Mostrar correo electrónico' },
+  { key: 'showProfession', label: 'Mostrar profesión' },
+  { key: 'showBio', label: 'Mostrar descripción profesional' },
+  { key: 'showPhone', label: 'Mostrar número de teléfono' },
+  { key: 'showNationality', label: 'Mostrar país' },
+  { key: 'showLinkedin', label: 'Mostrar LinkedIn' },
+  { key: 'showGithub', label: 'Mostrar GitHub' },
+  { key: 'showInstagram', label: 'Mostrar Instagram' },
+  { key: 'showFacebook', label: 'Mostrar Facebook' },
+  { key: 'showYoutube', label: 'Mostrar YouTube' },
 ];
 
 interface SectionDef {
@@ -320,9 +286,7 @@ export function VisibilityPage() {
     dataLoading,
     selectedId,
     selectPortfolio,
-    pendingId,
-    confirmSwitch,
-    cancelSwitch,
+    cancel,
     vis,
     toggle,
     toggleItem,
@@ -371,13 +335,7 @@ export function VisibilityPage() {
 
   return (
     <div className="py-6 max-w-lg">
-      {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-white text-xl font-bold">Visibilidad</h2>
-        <p className="text-[#6b7280] text-sm mt-1">
-          Controla qué información es visible en tu portafolio público.
-        </p>
-      </div>
+      
 
       {/* Portfolio selector */}
       <div className="mb-6">
@@ -388,7 +346,7 @@ export function VisibilityPage() {
           portfolios={portfolios}
           selectedId={selectedId}
           onSelect={selectPortfolio}
-          disabled={loadingPortfolios}
+          disabled={loadingPortfolios || selectedId !== null}
         />
         {noPortfolios && (
           <p className="text-[#6b7280] text-xs mt-2 pl-1">
@@ -446,8 +404,16 @@ export function VisibilityPage() {
             />
           ))}
 
-          {/* Save button */}
-          <div className="flex justify-end pt-2">
+          {/* Action buttons */}
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={cancel}
+              className="px-6 py-2.5 rounded-[10px] text-sm font-semibold border border-white/10 text-[#a7aab9] hover:bg-white/5 hover:text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Cancelar
+            </button>
             <button
               type="button"
               disabled={!dirty || saving}
@@ -463,11 +429,6 @@ export function VisibilityPage() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* Warning dialog */}
-      {pendingId && (
-        <WarningDialog onConfirm={confirmSwitch} onCancel={cancelSwitch} />
       )}
 
       {/* Toast */}
