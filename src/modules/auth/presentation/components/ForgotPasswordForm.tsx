@@ -71,10 +71,10 @@ export const ForgotPasswordForm = () => {
         <h1 className="font-bold text-3xl leading-tight">
           Recuperar
           <br />
-          contraseña
+          cuenta
         </h1>
         <h2 className="text-gray-500 font-normal text-[13px] mt-4 px-2">
-          Ingresa tu correo para recibir un enlace de recuperación
+          Ingresa tu correo para recibir un código de recuperación de tu cuenta
         </h2>
       </div>
 
@@ -101,7 +101,6 @@ export const ForgotPasswordForm = () => {
           {isLoading ? 'ENVIANDO...' : 'ENVIAR CÓDIGO'}
         </button>
       </form>
-
     </div>
   );
 };
