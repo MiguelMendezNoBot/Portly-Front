@@ -135,14 +135,15 @@ export default function TemplateGallery({
   }
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-row lg:flex-col gap-3 lg:gap-2.5 w-max lg:w-full">
       {templates.map((t) => (
-        <TemplateThumbnail
-          key={t.id}
-          template={t}
-          selected={selectedId === t.id}
-          onClick={() => onSelect(t)}
-        />
+        <div key={t.id} className="w-48 lg:w-full shrink-0">
+          <TemplateThumbnail
+            template={t}
+            selected={selectedId === t.id}
+            onClick={() => onSelect(t)}
+          />
+        </div>
       ))}
     </div>
   );

@@ -147,9 +147,9 @@ export default function PortfolioFormModal({
           </div>
 
           {/* Galería y Preview */}
-          <div className="flex-1 min-h-0 flex gap-6 overflow-hidden">
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6 overflow-hidden">
             {/* Galería de plantillas */}
-            <div className="w-56 shrink-0 flex flex-col gap-3 overflow-hidden">
+            <div className="w-full lg:w-56 shrink-0 flex flex-col gap-3 overflow-hidden h-auto lg:h-full">
               <div className="flex items-center justify-between shrink-0">
                 <span className="text-white text-sm font-bold tracking-tight">
                   Plantillas
@@ -160,7 +160,7 @@ export default function PortfolioFormModal({
                   </span>
                 )}
               </div>
-              <div className="flex-1 overflow-y-auto scrollbar-thin pr-1">
+              <div className="overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto scrollbar-thin pr-1 pb-2 lg:pb-0 flex-none lg:flex-1">
                 {templatesError ? (
                   <div className="flex flex-col items-center justify-center py-8 gap-3 text-center px-2">
                     <p className="text-red-400 text-xs">{templatesError}</p>
@@ -177,7 +177,7 @@ export default function PortfolioFormModal({
             </div>
 
             {/* Vista previa */}
-            <div className="flex-1 min-w-0 overflow-hidden bg-[#0f111a] rounded-xl border border-white/5 p-4">
+            <div className="flex-1 min-h-[350px] lg:min-h-0 min-w-0 overflow-y-auto lg:overflow-hidden bg-[#0f111a] rounded-xl border border-white/5 p-4">
               {selectedTemplate ? (
                 <TemplatePreview
                   template={selectedTemplate}

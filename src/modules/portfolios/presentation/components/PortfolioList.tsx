@@ -95,10 +95,12 @@ export default function PortfolioList({ portfolios, loading, mode, onDelete, onP
             }`}
           >
             {isDeleteMode && (
-              <div className="absolute top-3 right-3 p-1.5 bg-red-500/20 rounded-lg text-red-400 z-10 pointer-events-none animate-pulse">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                </svg>
+              <div className="absolute inset-0 bg-red-900/40 rounded-2xl flex items-center justify-center z-10 pointer-events-none transition-all group-hover:bg-red-900/60 backdrop-blur-[1px]">
+                <div className="p-4 bg-red-500 rounded-full text-white shadow-2xl shadow-red-500/50 animate-pulse transform group-hover:scale-110 transition-transform">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" />
+                  </svg>
+                </div>
               </div>
             )}
 
