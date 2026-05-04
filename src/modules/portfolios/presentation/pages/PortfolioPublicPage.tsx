@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
+import { BASE_URL } from '../../../../infrastructure/http/httpClient';
 import type {
   PortfolioPublicData,
   PortfolioPublicSkill,
@@ -669,18 +670,20 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                       Demo
                     </a>
                   )}
-                  {p.documentos && p.documentos.length > 0 && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: t.textMuted, fontSize: 12, fontWeight: 600 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                      {p.documentos.length} doc{p.documentos.length > 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {p.enlaces && p.enlaces.length > 0 && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: t.textMuted, fontSize: 12, fontWeight: 600 }}>
+                  {p.enlaces && p.enlaces.map((en, li) => (
+                    <a key={li} href={en.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, color: isBrutalist ? '#000' : t.accent, fontSize: 12, fontWeight: 800, textDecoration: 'none', background: isBrutalist ? t.accent : t.accentBg, padding: '4px 10px', borderRadius: isBrutalist ? 0 : 6, border: isBrutalist ? '2px solid #000' : 'none' }}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
-                      {p.enlaces.length} link{p.enlaces.length > 1 ? 's' : ''}
-                    </span>
-                  )}
+                      {en.titulo || en.url}
+                    </a>
+                  ))}
+                  {p.documentos && p.documentos.map((doc) => (
+                    <a key={doc.id} href={doc.urlDescarga.startsWith('http') ? doc.urlDescarga : BASE_URL + doc.urlDescarga} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, color: isBrutalist ? '#000' : t.textMuted, fontSize: 12, fontWeight: 700, textDecoration: 'none', background: isBrutalist ? '#fff' : t.badge, padding: '4px 10px', borderRadius: isBrutalist ? 0 : 6, border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}` }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                      {doc.nombre}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
@@ -801,7 +804,7 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                   <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Documentos</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {selected.documentos.map((doc) => (
-                      <a key={doc.id} href={doc.urlDescarga} target="_blank" rel="noopener noreferrer"
+                      <a key={doc.id} href={doc.urlDescarga.startsWith('http') ? doc.urlDescarga : BASE_URL + doc.urlDescarga} target="_blank" rel="noopener noreferrer"
                         style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: t.bg, border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}`, borderRadius: isBrutalist ? 0 : 8, textDecoration: 'none', color: t.text }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isBrutalist ? '#000' : t.accent} strokeWidth="2" style={{ flexShrink: 0 }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
                         <div style={{ flex: 1, minWidth: 0 }}>
