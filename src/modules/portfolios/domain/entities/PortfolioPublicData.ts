@@ -43,6 +43,19 @@ export interface PortfolioPublicExperience {
   cargoJefe?: string;
 }
 
+export interface PortfolioPublicEnlace {
+  titulo: string;
+  url: string;
+}
+
+export interface PortfolioPublicDocumento {
+  id: number;
+  nombre: string;
+  urlDescarga: string;
+  formato: string;
+  pesoBytes: number;
+}
+
 export interface PortfolioPublicProject {
   id?: number;
   nombre: string;
@@ -51,6 +64,9 @@ export interface PortfolioPublicProject {
   tecnologias: string[];
   urlDemo: string;
   iconoUrl: string | null;
+  evidencias?: string[];
+  enlaces?: PortfolioPublicEnlace[];
+  documentos?: PortfolioPublicDocumento[];
 }
 
 export interface PortfolioPublicFormacion {

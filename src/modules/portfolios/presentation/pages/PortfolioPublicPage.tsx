@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
+import { BASE_URL } from '../../../../infrastructure/http/httpClient';
 import type {
   PortfolioPublicData,
   PortfolioPublicSkill,
@@ -359,7 +360,9 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
               maxWidth: 600,
               lineHeight: 1.6,
               marginTop: 24,
-              fontWeight: isBrutalist ? 600 : 400
+              fontWeight: isBrutalist ? 600 : 400,
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
             }}>
               {usuario.descripcion}
             </p>
@@ -385,7 +388,7 @@ function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }
         border: t.border === '#000000' ? '3px solid #000000' : `1px solid ${t.border}`,
         boxShadow: t.border === '#000000' ? '8px 8px 0px #000000' : 'none'
       }}>
-        <p style={{ color: t.textSub, fontSize: 16, lineHeight: 1.8, margin: 0, fontWeight: t.border === '#000000' ? 600 : 400 }}>
+        <p style={{ color: t.textSub, fontSize: 16, lineHeight: 1.8, margin: 0, fontWeight: t.border === '#000000' ? 600 : 400, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
           {usuario.descripcion || 'Sin descripción disponible.'}
         </p>
       </div>
@@ -645,14 +648,37 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
   );
 }
 
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]; t: Theme }) {
+  const [selected, setSelected] = useState<PortfolioPublicProject | null>(null);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+
   if (!proyectos.length) return null;
+  const isBrutalist = t.border === '#000000';
+
+  const hasDetail = (p: PortfolioPublicProject) =>
+    (p.descripcionDetallada && p.descripcionDetallada.trim().length > 0) ||
+    (p.evidencias && p.evidencias.length > 1) ||
+    (p.enlaces && p.enlaces.length > 0) ||
+    (p.documentos && p.documentos.length > 0);
+
+  const openProject = (p: PortfolioPublicProject) => {
+    setSelected(p);
+    setGalleryIndex(0);
+  };
+
   return (
     <section id="projects" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Proyectos" t={t} />
       <div className="portfolio-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 32 }}>
         {proyectos.map((p, i) => {
-          const isBrutalist = t.border === '#000000';
+          const coverUrl = p.iconoUrl || p.evidencias?.[0] || null;
+          const extraImages = (p.evidencias?.length ?? 0) > 1;
           return (
             <div className="portfolio-card" key={i} style={{ 
               background: t.surface, 
@@ -676,49 +702,207 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 )}
                 {isBrutalist && (
                   <div style={{ position: 'absolute', top: 12, right: 12, background: '#000', color: '#fff', padding: '2px 8px', fontSize: 10, fontWeight: 800 }}>
-                    PROJECT_{i+1}
+                    PROJECT_{i + 1}
+                  </div>
+                )}
+                {extraImages && (
+                  <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.65)', color: '#fff', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700 }}>
+                    +{(p.evidencias!.length) - 1} fotos
                   </div>
                 )}
               </div>
-              <div style={{ padding: 24 }}>
-                <p style={{ color: '#000', fontWeight: 900, fontSize: 18, margin: '0 0 12px', textTransform: isBrutalist ? 'uppercase' : 'none' }}>{p.nombre}</p>
-                <p style={{ color: '#000', fontSize: 14, margin: '0 0 16px', lineHeight: 1.6, fontWeight: isBrutalist ? 600 : 400 }}>{p.descripcionCorta}</p>
+
+              {/* Card body */}
+              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                  <p style={{ color: t.text, fontWeight: 900, fontSize: 18, margin: 0, textTransform: isBrutalist ? 'uppercase' : 'none', wordBreak: 'break-word' }}>{p.nombre}</p>
+                  {hasDetail(p) && (
+                    <span style={{ fontSize: 11, fontWeight: 700, color: isBrutalist ? '#000' : t.accentText, background: isBrutalist ? t.accent : t.accentBg, border: isBrutalist ? '1px solid #000' : 'none', padding: '2px 8px', borderRadius: isBrutalist ? 0 : 4, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      Ver más →
+                    </span>
+                  )}
+                </div>
+                <p style={{ color: t.textSub, fontSize: 14, margin: '0 0 16px', lineHeight: 1.6, fontWeight: isBrutalist ? 600 : 400, wordBreak: 'break-word' }}>{p.descripcionCorta}</p>
+
+                {/* Technologies */}
                 {p.tecnologias?.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
                     {p.tecnologias.map((tech) => (
-                      <span key={tech} style={{ 
-                        padding: '4px 10px', 
-                        borderRadius: isBrutalist ? 0 : 99, 
-                        background: isBrutalist ? '#000' : t.accentBg,
-                        color: isBrutalist ? t.accent : t.accentText, 
-                        fontSize: 11, 
-                        fontWeight: 800,
-                        border: isBrutalist ? '1px solid #000' : 'none'
-                      }}>{tech}</span>
+                      <span key={tech} style={{ padding: '4px 10px', borderRadius: isBrutalist ? 0 : 99, background: isBrutalist ? '#000' : t.accentBg, color: isBrutalist ? t.accent : t.accentText, fontSize: 11, fontWeight: 800, border: isBrutalist ? '1px solid #000' : 'none' }}>
+                        {tech}
+                      </span>
                     ))}
                   </div>
                 )}
-                {p.urlDemo && (
-                  <a href={p.urlDemo} target="_blank" rel="noopener noreferrer"
-                    style={{ 
-                      display: isBrutalist ? 'block' : 'inline',
-                      textAlign: isBrutalist ? 'center' : 'left',
-                      background: isBrutalist ? '#000' : 'transparent',
-                      padding: isBrutalist ? '10px' : 0,
-                      color: isBrutalist ? '#fff' : t.accent, 
-                      fontSize: 13, 
-                      fontWeight: 800, 
-                      textDecoration: 'none',
-                      textTransform: isBrutalist ? 'uppercase' : 'none'
-                    }}>
-                    {isBrutalist ? 'View Project' : 'Ver demo →'}
-                  </a>
-                )}
+
+                {/* Quick links row */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
+                  {p.urlDemo && (
+                    <a href={p.urlDemo} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, color: isBrutalist ? '#000' : t.accent, fontSize: 12, fontWeight: 800, textDecoration: 'none', background: isBrutalist ? t.accent : t.accentBg, padding: '4px 10px', borderRadius: isBrutalist ? 0 : 6, border: isBrutalist ? '2px solid #000' : 'none' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                      Demo
+                    </a>
+                  )}
+                  {p.enlaces && p.enlaces.map((en, li) => (
+                    <a key={li} href={en.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, color: isBrutalist ? '#000' : t.accent, fontSize: 12, fontWeight: 800, textDecoration: 'none', background: isBrutalist ? t.accent : t.accentBg, padding: '4px 10px', borderRadius: isBrutalist ? 0 : 6, border: isBrutalist ? '2px solid #000' : 'none' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                      {en.titulo || en.url}
+                    </a>
+                  ))}
+                  {p.documentos && p.documentos.map((doc) => (
+                    <a key={doc.id} href={doc.urlDescarga.startsWith('http') ? doc.urlDescarga : BASE_URL + doc.urlDescarga} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, color: isBrutalist ? '#000' : t.textMuted, fontSize: 12, fontWeight: 700, textDecoration: 'none', background: isBrutalist ? '#fff' : t.badge, padding: '4px 10px', borderRadius: isBrutalist ? 0 : 6, border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}` }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                      {doc.nombre}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Detail modal */}
+      {selected && (
+        <div
+          onClick={() => setSelected(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: isBrutalist ? '#fff' : t.surface,
+              borderRadius: isBrutalist ? 0 : 20,
+              border: isBrutalist ? '4px solid #000' : `1px solid ${t.border}`,
+              boxShadow: isBrutalist ? '12px 12px 0 #000' : '0 24px 64px rgba(0,0,0,0.4)',
+              width: '100%',
+              maxWidth: 680,
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Image gallery */}
+            {(selected.evidencias && selected.evidencias.length > 0) && (
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <img
+                  src={selected.evidencias[galleryIndex]}
+                  alt={`imagen ${galleryIndex + 1}`}
+                  style={{ width: '100%', height: 280, objectFit: 'cover', display: 'block', borderBottom: isBrutalist ? '4px solid #000' : 'none' }}
+                />
+                {selected.evidencias.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setGalleryIndex((g) => (g - 1 + selected.evidencias!.length) % selected.evidencias!.length)}
+                      style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', width: 36, height: 36, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                      ‹
+                    </button>
+                    <button
+                      onClick={() => setGalleryIndex((g) => (g + 1) % selected.evidencias!.length)}
+                      style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', width: 36, height: 36, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                      ›
+                    </button>
+                    <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
+                      {selected.evidencias.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setGalleryIndex(idx)}
+                          style={{ width: 8, height: 8, borderRadius: '50%', border: 'none', cursor: 'pointer', background: idx === galleryIndex ? '#fff' : 'rgba(255,255,255,0.4)', padding: 0 }}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Modal body */}
+            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ color: t.text, fontWeight: 900, fontSize: 22, margin: '0 0 6px', textTransform: isBrutalist ? 'uppercase' : 'none', wordBreak: 'break-word' }}>
+                    {selected.nombre}
+                  </p>
+                  {selected.tecnologias?.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {selected.tecnologias.map((tech) => (
+                        <span key={tech} style={{ padding: '3px 9px', borderRadius: isBrutalist ? 0 : 99, background: isBrutalist ? '#000' : t.accentBg, color: isBrutalist ? t.accent : t.accentText, fontSize: 11, fontWeight: 800 }}>{tech}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => setSelected(null)}
+                  style={{ background: 'none', border: isBrutalist ? '2px solid #000' : 'none', cursor: 'pointer', color: t.textMuted, padding: 4, flexShrink: 0, borderRadius: 6 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
+              </div>
+
+              {/* Description */}
+              {selected.descripcionCorta && (
+                <p style={{ color: t.textSub, fontSize: 15, lineHeight: 1.7, margin: 0, fontWeight: isBrutalist ? 600 : 400, wordBreak: 'break-word' }}>
+                  {selected.descripcionCorta}
+                </p>
+              )}
+              {selected.descripcionDetallada && selected.descripcionDetallada.trim() && (
+                <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20 }}>
+                  <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>Descripción detallada</p>
+                  <p style={{ color: t.textSub, fontSize: 14, lineHeight: 1.8, margin: 0, wordBreak: 'break-word' }}>{selected.descripcionDetallada}</p>
+                </div>
+              )}
+
+              {/* Links */}
+              {selected.enlaces && selected.enlaces.length > 0 && (
+                <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20 }}>
+                  <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Links</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {selected.enlaces.map((en, i) => (
+                      <a key={i} href={en.url} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, color: isBrutalist ? '#000' : t.accent, fontSize: 14, fontWeight: 700, textDecoration: 'none', wordBreak: 'break-all' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
+                        {en.titulo || en.url}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Documents */}
+              {selected.documentos && selected.documentos.length > 0 && (
+                <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20 }}>
+                  <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Documentos</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {selected.documentos.map((doc) => (
+                      <a key={doc.id} href={doc.urlDescarga.startsWith('http') ? doc.urlDescarga : BASE_URL + doc.urlDescarga} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: t.bg, border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}`, borderRadius: isBrutalist ? 0 : 8, textDecoration: 'none', color: t.text }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isBrutalist ? '#000' : t.accent} strokeWidth="2" style={{ flexShrink: 0 }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: t.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.nombre}</p>
+                          <p style={{ margin: 0, fontSize: 11, color: t.textMuted }}>{doc.formato.toUpperCase()} · {formatBytes(doc.pesoBytes)}</p>
+                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t.textMuted} strokeWidth="2" style={{ flexShrink: 0 }}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Demo button at bottom */}
+              {selected.urlDemo && (
+                <a href={selected.urlDemo} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'block', textAlign: 'center', background: isBrutalist ? '#000' : t.accent, color: isBrutalist ? t.accent : '#fff', padding: '12px 24px', borderRadius: isBrutalist ? 0 : 10, fontWeight: 800, fontSize: 14, textDecoration: 'none', border: isBrutalist ? '2px solid #000' : 'none', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
+                  Ver demo / repositorio →
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
