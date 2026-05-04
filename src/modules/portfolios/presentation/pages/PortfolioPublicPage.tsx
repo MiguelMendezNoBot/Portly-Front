@@ -93,15 +93,97 @@ const SKILL_LEVEL: Record<string, number> = {
   Básico: 20, Intermedio: 45, Avanzado: 70, Maestro: 85, Experto: 100,
 };
 
+const RESPONSIVE_CSS = `
+  .portfolio-wrapper {
+    box-sizing: border-box;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  .portfolio-nav {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+  /* Hide scrollbar for nav */
+  .portfolio-nav::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .portfolio-header-content {
+      flex-direction: column !important;
+      gap: 12px !important;
+      height: auto !important;
+      padding: 12px 24px !important;
+      align-items: flex-start !important;
+    }
+    .portfolio-hero-container {
+      flex-direction: column !important;
+      text-align: center !important;
+    }
+    .portfolio-hero-title {
+      font-size: 38px !important;
+    }
+    .portfolio-hero-title.brutalist {
+      font-size: 46px !important;
+    }
+    .portfolio-hero-prof {
+      font-size: 18px !important;
+    }
+    .portfolio-hero-info {
+      justify-content: center !important;
+    }
+    .portfolio-hero-desc {
+      font-size: 16px !important;
+    }
+    .portfolio-section-padding {
+      padding: 32px 0 !important;
+    }
+    .portfolio-grid-2 {
+      grid-template-columns: 1fr !important;
+    }
+    .portfolio-card {
+      padding: 20px !important;
+    }
+    .portfolio-modal {
+      padding: 24px 20px !important;
+      max-height: 90vh !important;
+      margin: 16px;
+    }
+    .portfolio-experience-item {
+      padding: 20px !important;
+    }
+    .portfolio-education-item {
+      padding: 20px 24px !important;
+    }
+    .portfolio-contact-box {
+      padding: 32px 20px !important;
+    }
+    .portfolio-contact-btn {
+      padding: 12px 32px !important;
+      font-size: 14px !important;
+    }
+    .portfolio-main {
+      padding: 0 16px 60px !important;
+    }
+    .portfolio-avatar {
+      width: 120px !important;
+      height: 120px !important;
+    }
+  }
+`;
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Avatar({ url, name, size = 80, accent }: { url?: string; name: string; size?: number; accent: string }) {
   const initials = name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   return url ? (
-    <img src={url} alt={name} referrerPolicy="no-referrer"
+    <img src={url} alt={name} referrerPolicy="no-referrer" className="portfolio-avatar"
       style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${accent}` }} />
   ) : (
-    <div style={{ width: size, height: size, borderRadius: '50%', background: `${accent}30`,
+    <div className="portfolio-avatar" style={{ width: size, height: size, borderRadius: '50%', background: `${accent}30`,
       border: `3px solid ${accent}`, display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size * 0.35, fontWeight: 700, color: accent }}>
       {initials}
@@ -113,7 +195,7 @@ function SectionTitle({ text, t }: { text: string; t: Theme }) {
   const isBrutalist = t.border === '#000000';
   return (
     <div style={{ marginBottom: 32 }}>
-      <h2 style={{ 
+      <h2 className="portfolio-section-title" style={{ 
         fontSize: isBrutalist ? 42 : 28, 
         fontWeight: 900, 
         color: t.text, 
@@ -209,8 +291,8 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
   const isBrutalist = t.border === '#000000';
   const align = isBrutalist ? 'flex-start' : 'center';
   return (
-    <section id="hero" style={{ padding: '100px 0 80px', textAlign: isBrutalist ? 'left' : 'center' }}>
-      <div style={{
+    <section id="hero" className="portfolio-section-padding" style={{ padding: '100px 0 80px', textAlign: isBrutalist ? 'left' : 'center' }}>
+      <div className="portfolio-hero-container" style={{
         display: 'flex',
         flexDirection: isBrutalist ? 'row-reverse' : 'column',
         alignItems: 'center',
@@ -227,7 +309,7 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
           <Avatar url={usuario.avatarUrl} name={fullName} size={isBrutalist ? 180 : 100} accent={t.accent} />
         </div>
         <div style={{ flex: 1, minWidth: 300 }}>
-          <h1 style={{
+          <h1 className={`portfolio-hero-title ${isBrutalist ? 'brutalist' : ''}`} style={{
             fontSize: isBrutalist ? 72 : 48,
             fontWeight: 900,
             color: t.text,
@@ -245,13 +327,13 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
               padding: isBrutalist ? '4px 12px' : 0,
               marginTop: 12
             }}>
-              <p style={{ fontSize: 24, color: isBrutalist ? t.accent : t.accentText, fontWeight: 800, margin: 0 }}>
+              <p className="portfolio-hero-prof" style={{ fontSize: 24, color: isBrutalist ? t.accent : t.accentText, fontWeight: 800, margin: 0 }}>
                 {usuario.profesion}
               </p>
             </div>
           )}
           {(usuario.pais || usuario.telefono) && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 16, justifyContent: align }}>
+            <div className="portfolio-hero-info" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 16, justifyContent: align }}>
               {usuario.pais && (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: isBrutalist ? '#000' : t.textMuted, fontSize: 14, fontWeight: isBrutalist ? 700 : 400 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -271,7 +353,7 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
             </div>
           )}
           {usuario.descripcion && (
-            <p style={{
+            <p className="portfolio-hero-desc" style={{
               fontSize: 18,
               color: t.textSub,
               maxWidth: 600,
@@ -293,9 +375,10 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
 
 function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
   return (
-    <section id="about" style={{ padding: '48px 0' }}>
+    <section id="about" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Sobre mí" t={t} />
-      <div style={{ 
+      <div className="portfolio-card" style={{ 
+
         background: t.surface, 
         borderRadius: t.border === '#000000' ? 0 : 16, 
         padding: 32, 
@@ -313,14 +396,14 @@ function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }
 function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme }) {
   if (!skills.length) return null;
   return (
-    <section id="skills" style={{ padding: '48px 0' }}>
+    <section id="skills" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Habilidades técnicas" t={t} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+      <div className="portfolio-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
         {skills.map((s) => {
           const pct = SKILL_LEVEL[s.level] ?? 50;
           const isBrutalist = t.border === '#000000';
           return (
-            <div key={s.id} style={{ 
+            <div className="portfolio-card" key={s.id} style={{ 
               background: isBrutalist ? t.accent : t.surface, 
               borderRadius: isBrutalist ? 0 : 12, 
               padding: '20px', 
@@ -346,7 +429,7 @@ function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme
 function SoftSkillsSection({ softSkills, t }: { softSkills: PortfolioPublicSoftSkill[]; t: Theme }) {
   if (!softSkills.length) return null;
   return (
-    <section id="softskills" style={{ padding: '48px 0' }}>
+    <section id="softskills" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Habilidades blandas" t={t} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
         {softSkills.map((s) => (
@@ -372,11 +455,11 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
     e.correoJefe || e.numeroJefe || e.cargoJefe;
 
   return (
-    <section id="experience" style={{ padding: '48px 0' }}>
+    <section id="experience" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Experiencia" t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {experiencias.map((e, i) => (
-          <div
+          <div className="portfolio-experience-item"
             key={i}
             onClick={() => hasDetail(e) && setSelected(e)}
             style={{
@@ -442,7 +525,7 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
             backdropFilter: 'blur(4px)',
           }}
         >
-          <div
+          <div className="portfolio-modal"
             onClick={(ev) => ev.stopPropagation()}
             style={{
               background: isBrutalist ? '#fff' : t.surface,
@@ -565,13 +648,13 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
 function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]; t: Theme }) {
   if (!proyectos.length) return null;
   return (
-    <section id="projects" style={{ padding: '48px 0' }}>
+    <section id="projects" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Proyectos" t={t} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 32 }}>
+      <div className="portfolio-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 32 }}>
         {proyectos.map((p, i) => {
           const isBrutalist = t.border === '#000000';
           return (
-            <div key={i} style={{ 
+            <div className="portfolio-card" key={i} style={{ 
               background: t.surface, 
               borderRadius: isBrutalist ? 0 : 16, 
               padding: 0,
@@ -644,11 +727,11 @@ function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicForm
   if (!formaciones.length) return null;
   const isBrutalist = t.border === '#000000';
   return (
-    <section id="education" style={{ padding: '48px 0' }}>
+    <section id="education" className="portfolio-section-padding" style={{ padding: '48px 0' }}>
       <SectionTitle text="Formación académica" t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {formaciones.map((f, i) => (
-          <div key={i} style={{
+          <div className="portfolio-education-item" key={i} style={{
             background: isBrutalist ? t.accentBg : t.surface,
             borderRadius: isBrutalist ? 0 : 14,
             padding: '24px 32px',
@@ -691,9 +774,9 @@ function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicForm
 function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
   const isBrutalist = t.border === '#000000';
   return (
-    <section id="contact" style={{ padding: '80px 0', textAlign: 'center' }}>
+    <section id="contact" className="portfolio-section-padding" style={{ padding: '80px 0', textAlign: 'center' }}>
       <SectionTitle text="Contacto" t={t} />
-      <div style={{
+      <div className="portfolio-contact-box" style={{
         background: isBrutalist ? t.accent : t.surface,
         borderRadius: isBrutalist ? 0 : 24,
         padding: '60px 40px',
@@ -706,7 +789,7 @@ function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme
           ¿Interesado en trabajar juntos? No dudes en contactarme.
         </p>
         {usuario.email && (
-          <a href={`mailto:${usuario.email}`}
+          <a className="portfolio-contact-btn" href={`mailto:${usuario.email}`}
             style={{
               display: 'inline-block',
               padding: '16px 48px',
@@ -801,7 +884,8 @@ export default function PortfolioPublicPage() {
   const isPrivate = data.visibilidad === 'PRIVADO';
 
   return (
-    <div style={{ background: t.bg, minHeight: '100vh', fontFamily: `'${font}', system-ui, sans-serif`, color: t.text }}>
+    <div className="portfolio-wrapper" style={{ background: t.bg, minHeight: '100vh', fontFamily: `'${font}', system-ui, sans-serif`, color: t.text }}>
+      <style>{RESPONSIVE_CSS}</style>
       {/* Banner de previsualización (visible cuando el portafolio es privado) */}
       {isPrivate && <PreviewBanner />}
 
@@ -817,12 +901,12 @@ export default function PortfolioPublicPage() {
         background: isBrutalist ? t.accent : t.navBg,
         borderBottom: isBrutalist ? '4px solid #000' : `1px solid ${t.border}`
       }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px', height: 70,
+        <div className="portfolio-header-content" style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px', height: 70,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontWeight: 900, fontSize: 18, color: '#000', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
             {data.nombre}
           </span>
-          <nav style={{ display: 'flex', gap: 24 }}>
+          <nav className="portfolio-nav" style={{ display: 'flex', gap: 24 }}>
             {visibleSections.filter(s => s.type !== 'hero').slice(0, 5).map((s) => (
               <a key={s.type} href={`#${s.type}`}
                 style={{ color: '#000', fontSize: 13, fontWeight: 800, textDecoration: 'none', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
@@ -834,7 +918,7 @@ export default function PortfolioPublicPage() {
       </header>
 
       {/* Contenido */}
-      <main style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px 80px' }}>
+      <main className="portfolio-main" style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px 80px' }}>
         {visibleSections.map((section) => renderSection(section, data, t))}
       </main>
 
