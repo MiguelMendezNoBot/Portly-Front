@@ -11,7 +11,7 @@ interface PortfolioFormModalProps {
   templatesError: string | null;
   creating: boolean;
   onCreatePortfolio: (templateId: string, nombre: string) => Promise<void>;
-  existingNames: string[];
+  existingPortfolios: { nombre: string; templateId: string }[];
 }
 
 export default function PortfolioFormModal({
@@ -22,7 +22,7 @@ export default function PortfolioFormModal({
   templatesError,
   creating,
   onCreatePortfolio,
-  existingNames,
+  existingPortfolios,
 }: PortfolioFormModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null
@@ -49,15 +49,34 @@ export default function PortfolioFormModal({
       setError('Debes ingresar un nombre para tu portafolio.');
       return;
     }
-    const nameExists = existingNames.some(
-      (name) => name.toLowerCase() === portfolioName.trim().toLowerCase()
-    );
-    if (nameExists) {
-      setError('Ya existe un portafolio con ese nombre.');
-      return;
-    }
     if (!selectedTemplate) {
       setError('Debes seleccionar una plantilla.');
+      return;
+    }
+
+    const exactMatch = existingPortfolios.some(
+      (p) =>
+        p.nombre.toLowerCase() === portfolioName.trim().toLowerCase() &&
+        p.templateId === String(selectedTemplate.id)
+    );
+    if (exactMatch) {
+      setError('Ya existe un portafolio con este nombre y esta misma plantilla.');
+      return;
+    }
+
+    const templateMatch = existingPortfolios.some(
+      (p) => p.templateId === String(selectedTemplate.id)
+    );
+    if (templateMatch) {
+      setError('Ya existe un portafolio con esta plantilla.');
+      return;
+    }
+
+    const nameMatch = existingPortfolios.some(
+      (p) => p.nombre.toLowerCase() === portfolioName.trim().toLowerCase()
+    );
+    if (nameMatch) {
+      setError('Ya existe un portafolio con ese nombre.');
       return;
     }
     setError(null);
