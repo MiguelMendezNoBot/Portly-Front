@@ -239,7 +239,7 @@ export default function PortfoliosPage() {
             )}
 
             {/* Previsualizar */}
-            {portfolios.length > 0 && (
+            {hasPrivatePortfolios && (
               <button
                 onClick={() => {
                   setMode((prev) => (prev === 'preview' ? null : 'preview'));
@@ -327,7 +327,7 @@ export default function PortfoliosPage() {
         )}
 
         {/* Indicador de modo previsualizar */}
-        {mode === 'preview' && portfolios.length > 0 && (
+        {mode === 'preview' && (
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border bg-blue-500/10 border-blue-500/20 text-blue-400">
             <svg
               width="16"
@@ -382,7 +382,7 @@ export default function PortfoliosPage() {
 
         {/* Lista */}
         <div className="flex-1 overflow-y-auto">
-          {publishPhase ? (
+          {publishPhase || mode === 'preview' ? (
             privatePortfoliosWithPreviews.length === 0 ? (
               <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#7c6bec]/10 flex items-center justify-center">
@@ -413,6 +413,14 @@ export default function PortfoliosPage() {
                 loading={loadingPortfolios}
                 mode={listMode}
                 onPublish={handlePublishCardClick}
+                onClick={(p) => {
+                  if (listMode === 'preview') {
+                    const previewUrl = p.visibilidad === 'PUBLICO' && p.publicUrl
+                      ? p.publicUrl
+                      : `/p/${p.id}`;
+                    window.open(previewUrl, '_blank');
+                  }
+                }}
               />
             )
           ) : (
@@ -421,14 +429,6 @@ export default function PortfoliosPage() {
               loading={loadingPortfolios}
               mode={listMode}
               onDelete={handleDeleteClick}
-              onClick={(p) => {
-                if (listMode === 'preview') {
-                  const previewUrl = p.visibilidad === 'PUBLICO' && p.publicUrl
-                    ? p.publicUrl
-                    : `/p/${p.id}`;
-                  window.open(previewUrl, '_blank');
-                }
-              }}
             />
           )}
         </div>
