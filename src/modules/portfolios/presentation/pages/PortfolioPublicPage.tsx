@@ -343,12 +343,12 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
   );
 }
 
-function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+function AboutSection({ usuario, t, title }: { usuario: PortfolioPublicUser; t: Theme; title?: string }) {
   const isMobile = useIsMobile();
   const isBrutalist = t.border === '#000000';
   return (
     <section id="about" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Sobre mí" t={t} />
+      <SectionTitle text={title || "Sobre mí"} t={t} />
       <div style={{
         background: t.surface,
         borderRadius: isBrutalist ? 0 : 16,
@@ -364,12 +364,12 @@ function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }
   );
 }
 
-function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme }) {
+function SkillsSection({ skills, t, title }: { skills: PortfolioPublicSkill[]; t: Theme; title?: string }) {
   const isMobile = useIsMobile();
   if (!skills.length) return null;
   return (
     <section id="skills" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Habilidades técnicas" t={t} />
+      <SectionTitle text={title || "Habilidades técnicas"} t={t} />
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(150px, 1fr))' : 'repeat(auto-fill, minmax(260px, 1fr))', gap: isMobile ? 12 : 20 }}>
         {skills.map((s) => {
           const pct = SKILL_LEVEL[s.level] ?? 50;
@@ -403,13 +403,13 @@ function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme
   );
 }
 
-function SoftSkillsSection({ softSkills, t }: { softSkills: PortfolioPublicSoftSkill[]; t: Theme }) {
+function SoftSkillsSection({ softSkills, t, title }: { softSkills: PortfolioPublicSoftSkill[]; t: Theme; title?: string }) {
   const isMobile = useIsMobile();
   if (!softSkills.length) return null;
   const isBrutalist = t.border === '#000000';
   return (
     <section id="softskills" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Habilidades blandas" t={t} />
+      <SectionTitle text={title || "Habilidades blandas"} t={t} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
         {softSkills.map((s) => {
           const icon = SOFT_SKILLS_CATALOG.find((c) => c.name === s.nombreHabilidad)?.icon;
@@ -440,7 +440,7 @@ function SoftSkillsSection({ softSkills, t }: { softSkills: PortfolioPublicSoftS
   );
 }
 
-function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicExperience[]; t: Theme }) {
+function ExperienceSection({ experiencias, t, title }: { experiencias: PortfolioPublicExperience[]; t: Theme; title?: string }) {
   const [selected, setSelected] = useState<PortfolioPublicExperience | null>(null);
   const isBrutalist = t.border === '#000000';
   const isMobile = useIsMobile();
@@ -454,7 +454,7 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
 
   return (
     <section id="experience" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Experiencia" t={t} />
+      <SectionTitle text={title || "Experiencia"} t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {experiencias.map((e, i) => (
           <div
@@ -641,7 +641,7 @@ function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]; t: Theme }) {
+function ProjectsSection({ proyectos, t, title }: { proyectos: PortfolioPublicProject[]; t: Theme; title?: string }) {
   const [selected, setSelected] = useState<PortfolioPublicProject | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const isMobile = useIsMobile();
@@ -662,7 +662,7 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
 
   return (
     <section id="projects" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Proyectos" t={t} />
+      <SectionTitle text={title || "Proyectos"} t={t} />
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 20 : 32 }}>
         {proyectos.map((p, i) => {
           const coverUrl = p.iconoUrl || p.evidencias?.[0] || null;
@@ -892,13 +892,13 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
   );
 }
 
-function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicFormacion[]; t: Theme }) {
+function EducationSection({ formaciones, t, title }: { formaciones: PortfolioPublicFormacion[]; t: Theme; title?: string }) {
   const isMobile = useIsMobile();
   if (!formaciones.length) return null;
   const isBrutalist = t.border === '#000000';
   return (
     <section id="education" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
-      <SectionTitle text="Formación académica" t={t} />
+      <SectionTitle text={title || "Formación académica"} t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {formaciones.map((f, i) => (
           <div key={i} style={{
@@ -941,12 +941,12 @@ function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicForm
   );
 }
 
-function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+function ContactSection({ usuario, t, title }: { usuario: PortfolioPublicUser; t: Theme; title?: string }) {
   const isMobile = useIsMobile();
   const isBrutalist = t.border === '#000000';
   return (
     <section id="contact" style={{ padding: isMobile ? '48px 0' : '80px 0', textAlign: 'center' }}>
-      <SectionTitle text="Contacto" t={t} />
+      <SectionTitle text={title || "Contacto"} t={t} />
       <div style={{
         background: isBrutalist ? t.accent : t.surface,
         borderRadius: isBrutalist ? 0 : 24,
@@ -993,15 +993,16 @@ function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme
 // ─── Section router ───────────────────────────────────────────────────────────
 
 function renderSection(section: TemplateSection, data: PortfolioPublicData, t: Theme) {
+  const title = section.title;
   switch (section.type) {
     case 'hero':       return <HeroSection key="hero" usuario={data.usuario} t={t} />;
-    case 'about':      return <AboutSection key="about" usuario={data.usuario} t={t} />;
-    case 'skills':     return <SkillsSection key="skills" skills={data.skills} t={t} />;
-    case 'softskills': return <SoftSkillsSection key="softskills" softSkills={data.softSkills} t={t} />;
-    case 'experience': return <ExperienceSection key="experience" experiencias={data.experiencias} t={t} />;
-    case 'projects':   return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} />;
-    case 'education':  return <EducationSection key="education" formaciones={data.formaciones} t={t} />;
-    case 'contact':    return <ContactSection key="contact" usuario={data.usuario} t={t} />;
+    case 'about':      return <AboutSection key="about" usuario={data.usuario} t={t} title={title} />;
+    case 'skills':     return <SkillsSection key="skills" skills={data.skills} t={t} title={title} />;
+    case 'softskills': return <SoftSkillsSection key="softskills" softSkills={data.softSkills} t={t} title={title} />;
+    case 'experience': return <ExperienceSection key="experience" experiencias={data.experiencias} t={t} title={title} />;
+    case 'projects':   return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} title={title} />;
+    case 'education':  return <EducationSection key="education" formaciones={data.formaciones} t={t} title={title} />;
+    case 'contact':    return <ContactSection key="contact" usuario={data.usuario} t={t} title={title} />;
     default:           return null;
   }
 }
