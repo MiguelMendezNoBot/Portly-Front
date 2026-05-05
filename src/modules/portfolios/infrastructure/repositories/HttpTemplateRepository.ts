@@ -34,7 +34,7 @@ function normalizeTemplate(raw: any): Template {
     nombre: raw?.nombre ?? 'Sin nombre',
     descripcion: raw?.descripcion ?? '',
     tags: parsedTags,
-    previewImageUrl: raw?.previewImageUrl ?? raw?.urlVistaPrevia ?? raw?.url_vista_previa ?? '',
+    previewImageUrl: raw?.previewImageUrl ?? raw?.imagenVistaPrevia ?? raw?.urlVistaPrevia ?? raw?.url_vista_previa ?? '',
     previewUrl: raw?.previewUrl ?? raw?.urlVistaPrevia ?? '',
     stats: {
       // Buscar en raw.stats o directamente en raw (soporte para estructura plana)
