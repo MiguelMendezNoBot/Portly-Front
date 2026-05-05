@@ -60,7 +60,9 @@ export default function PortfolioFormModal({
         p.templateId === String(selectedTemplate.id)
     );
     if (exactMatch) {
-      setError('Ya existe un portafolio con este nombre y esta misma plantilla.');
+      setError(
+        'Ya existe un portafolio con este nombre y esta misma plantilla.'
+      );
       return;
     }
 
@@ -91,9 +93,7 @@ export default function PortfolioFormModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-fade-in">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-[#0a0c14]/80 backdrop-blur-sm transition-opacity"
-      />
+      <div className="absolute inset-0 bg-[#0a0c14]/80 backdrop-blur-sm transition-opacity" />
 
       {/* Modal Container */}
       <div className="relative w-full max-w-5xl bg-[#171b28] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-white/10 animate-slide-up h-[90vh]">
@@ -152,7 +152,7 @@ export default function PortfolioFormModal({
             <div className="w-full lg:w-56 shrink-0 flex flex-col gap-3 overflow-hidden h-auto lg:h-full">
               <div className="flex items-center justify-between shrink-0">
                 <span className="text-white text-sm font-bold tracking-tight">
-                  Plantillas
+                  Galería de Plantillas
                 </span>
                 {!loadingTemplates && (
                   <span className="text-[#C9BEFF] text-[10px] font-bold uppercase tracking-wider bg-[#C9BEFF]/10 px-2 py-0.5 rounded-full">
