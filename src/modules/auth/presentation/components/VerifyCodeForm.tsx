@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyCode, forgotPassword } from '../../infrastructure/authService';
+import {
+  saveToken,
+  saveUsuarioId,
+  saveEmail,
+} from '../../../../infrastructure/storage/storage';
 
 const CodeIcon = () => (
   <div className="w-16 h-16 bg-src-eef2ff rounded-full flex items-center justify-center mb-6 shadow-sm">
@@ -109,11 +114,16 @@ export const VerifyCodeForm = () => {
     setError(null);
 
     try {
-      await verifyCode(email, fullCode);
+      const response = (await verifyCode(email, fullCode)) as any;
 
-      navigate('/reset-password', {
-        state: { email: email, codigo: fullCode },
-      });
+      // Si el backend devuelve un token, lo guardamos para que el Home funcione
+      if (response && response.token) {
+        saveToken(response.token);
+        if (response.idUsuario) saveUsuarioId(response.idUsuario);
+        if (response.email) saveEmail(response.email);
+      }
+
+      navigate('/', { replace: true });
     } catch (err: unknown) {
       const msg = (err instanceof Error ? err.message : '').toLowerCase();
       if (

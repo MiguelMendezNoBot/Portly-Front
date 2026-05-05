@@ -215,9 +215,9 @@ export default function TemplatePreview({
   const { data: profData, loading } = useProfessionalData();
 
   return (
-    <div className="flex flex-col md:flex-row h-full gap-6">
+    <div className="flex flex-col lg:flex-row h-auto lg:h-full gap-6">
       {/* Columna Izquierda: Preview visual (Scrollable) */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col h-[300px] lg:h-auto shrink-0">
         <div className="relative rounded-xl overflow-hidden flex-1 bg-[#0f111a] border border-white/5 shadow-inner">
           <div className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20">
             {template.previewImageUrl || template.previewUrl ? (
@@ -227,7 +227,7 @@ export default function TemplatePreview({
                 className="w-full h-auto block"
               />
             ) : (
-              <div className="h-full">
+              <div className="h-full min-h-[300px] lg:min-h-0">
                 <LargePreview template={template} data={profData} />
               </div>
             )}
@@ -242,7 +242,7 @@ export default function TemplatePreview({
       </div>
 
       {/* Columna Derecha: Información y Detalles */}
-      <div className="w-full md:w-72 shrink-0 flex flex-col gap-5 overflow-y-auto pr-1">
+      <div className="w-full lg:w-72 shrink-0 flex flex-col gap-5 overflow-y-visible lg:overflow-y-auto pr-1 pb-4 lg:pb-0">
         {/* Nombre y descripción */}
         <div className="flex flex-col gap-2">
           <h3 className="text-white font-black text-2xl tracking-tight leading-tight">

@@ -37,7 +37,7 @@ const handleFiles = async (files: FileList | null) => {
   const newEvidences: LocalEvidence[] = [];
   for (const file of Array.from(files)) {
     if (!ALLOWED_TYPES.includes(file.type)) {
-      onToast(`El archivo tiene un tipo no permitido`, 'error');
+      onToast(`El archivo tiene un formato no permitido`, 'error');
       continue;
     }
     if (file.size > MAX_FILE_SIZE) {
