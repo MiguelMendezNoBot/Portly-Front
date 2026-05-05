@@ -3,7 +3,7 @@ import type { Portfolio } from '../../domain/entities/Portfolio';
 interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
-  mode?: 'delete' | 'publish' | null;
+  mode?: 'delete' | 'publish' | 'preview' | null;
   onDelete?: (id: string) => void;
   onPublish?: (portfolio: Portfolio) => void;
   onClick?: (portfolio: Portfolio) => void;
@@ -92,7 +92,9 @@ export default function PortfolioList({
                 ? 'bg-[#1a1c29] border-red-500/40 cursor-pointer hover:bg-red-500/5 hover:border-red-500/60'
                 : isPublishMode
                   ? 'bg-[#1a1c29] border-[#7c6bec]/20 cursor-pointer hover:bg-[#7c6bec]/10 hover:border-[#7c6bec]/40'
-                  : 'bg-[#1a1c29] border-white/5 hover:border-[#7c6bec]/30 cursor-pointer'
+                  : mode === 'preview'
+                    ? 'bg-[#1a1c29] border-blue-500/20 cursor-pointer hover:bg-blue-500/10 hover:border-blue-500/40'
+                    : 'bg-[#1a1c29] border-white/5 hover:border-[#7c6bec]/30 cursor-pointer'
             }`}
           >
             {isDeleteMode && (
@@ -138,6 +140,27 @@ export default function PortfolioList({
               </div>
             )}
 
+            {mode === 'preview' && (
+              <div className="absolute top-3 right-3 z-10 pointer-events-none">
+                <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-blue-300 text-[10px] font-bold uppercase tracking-wide animate-pulse">
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Previsualizar
+                </span>
+              </div>
+            )}
+
             {/* Preview Image */}
             <div className="relative aspect-video rounded-xl bg-[#0f111a] border border-white/5 overflow-hidden shrink-0">
               {p.previewImageUrl ? (
@@ -160,65 +183,7 @@ export default function PortfolioList({
                   </svg>
                 </div>
               )}
-              {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                {!isDeleteMode && !isPublishMode && (
-                  <a
-                    href={
-                      p.visibilidad === 'PUBLICO' && p.publicUrl
-                        ? p.publicUrl
-                        : `/p/${p.id}`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider hover:scale-105 transition-transform shadow-xl"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {p.visibilidad === 'PUBLICO' ? (
-                      <>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                        Ver portafolio
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                        Previsualizar
-                      </>
-                    )}
-                  </a>
-                )}
-              </div>
+              {/* Removed hover overlay logic as per user request to move the button out */}
             </div>
 
             {/* Content */}

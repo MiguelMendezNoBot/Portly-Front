@@ -39,8 +39,8 @@ export default function PortfoliosPage() {
     publishPortfolio,
   } = usePortfolios();
 
-  // Delete flow
-  const [mode, setMode] = useState<'delete' | null>(null);
+  // Mode flow
+  const [mode, setMode] = useState<'delete' | 'preview' | null>(null);
   const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(
     null
   );
@@ -161,7 +161,7 @@ export default function PortfoliosPage() {
 
   // Active list mode for PortfolioList
   const listMode =
-    mode === 'delete' ? 'delete' : publishPhase ? 'publish' : null;
+    mode === 'delete' ? 'delete' : mode === 'preview' ? 'preview' : publishPhase ? 'publish' : null;
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -207,7 +207,13 @@ export default function PortfoliosPage() {
             {/* Publicar — solo si hay portafolios privados */}
             {hasPrivatePortfolios && (
               <button
-                onClick={handleEnterPublishMode}
+                onClick={() => {
+                  if (publishPhase) {
+                    handleCancelPublishMode();
+                  } else {
+                    handleEnterPublishMode();
+                  }
+                }}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
                   publishPhase
                     ? 'bg-[#7c6bec]/15 border-[#7c6bec]/40 text-[#C9BEFF]'
@@ -232,12 +238,43 @@ export default function PortfoliosPage() {
               </button>
             )}
 
+            {/* Previsualizar */}
+            {portfolios.length > 0 && (
+              <button
+                onClick={() => {
+                  setMode((prev) => (prev === 'preview' ? null : 'preview'));
+                  setPublishPhase(false);
+                }}
+                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                  mode === 'preview'
+                    ? 'bg-blue-500/15 border-blue-500/40 text-blue-400'
+                    : 'border-white/10 text-[#9ca3af] hover:text-blue-400 hover:border-blue-500/20'
+                }`}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Previsualizar
+              </button>
+            )}
+
             {/* Eliminar */}
             {portfolios.length > 0 && (
               <button
-                onClick={() =>
-                  setMode((prev) => (prev === 'delete' ? null : 'delete'))
-                }
+                onClick={() => {
+                  setMode((prev) => (prev === 'delete' ? null : 'delete'));
+                  setPublishPhase(false);
+                }}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
                   mode === 'delete'
                     ? 'bg-red-500/15 border-red-500/40 text-red-400'
@@ -280,6 +317,32 @@ export default function PortfoliosPage() {
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
             </svg>
             <span>Da click a un portafolio para eliminarlo</span>
+            <button
+              onClick={() => setMode(null)}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
+
+        {/* Indicador de modo previsualizar */}
+        {mode === 'preview' && portfolios.length > 0 && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border bg-blue-500/10 border-blue-500/20 text-blue-400">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span>Da click a un portafolio para previsualizarlo</span>
             <button
               onClick={() => setMode(null)}
               className="ml-auto text-xs underline opacity-60 hover:opacity-100"
@@ -358,6 +421,14 @@ export default function PortfoliosPage() {
               loading={loadingPortfolios}
               mode={listMode}
               onDelete={handleDeleteClick}
+              onClick={(p) => {
+                if (listMode === 'preview') {
+                  const previewUrl = p.visibilidad === 'PUBLICO' && p.publicUrl
+                    ? p.publicUrl
+                    : `/p/${p.id}`;
+                  window.open(previewUrl, '_blank');
+                }
+              }}
             />
           )}
         </div>
