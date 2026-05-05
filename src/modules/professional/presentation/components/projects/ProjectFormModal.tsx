@@ -74,10 +74,7 @@ export default function ProjectFormModal({
     if (initialData) {
       setFormData({
         ...initialData,
-        enlaces:
-          initialData.enlaces?.length > 0
-            ? initialData.enlaces
-            : [{ titulo: '', url: '' }],
+        enlaces: initialData.enlaces || [],
       });
       setIconPreview(initialData.iconoUrl || null);
     } else {
@@ -134,7 +131,6 @@ export default function ProjectFormModal({
   };
 
   const removeLink = (index: number) => {
-    if (formData.enlaces.length <= 1) return;
     setFormData({
       ...formData,
       enlaces: formData.enlaces.filter((_, i) => i !== index),
@@ -502,27 +498,25 @@ export default function ProjectFormModal({
                         )}
                       </div>
                     </div>
-                    {formData.enlaces.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeLink(index)}
-                        className="p-3 mt-0.5 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors shrink-0"
+                    <button
+                      type="button"
+                      onClick={() => removeLink(index)}
+                      className="p-3 mt-0.5 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors shrink-0"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="3 6 5 6 21 6" />
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        </svg>
-                      </button>
-                    )}
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                    </button>
                   </div>
                 ))}
                 
@@ -531,7 +525,7 @@ export default function ProjectFormModal({
                   onClick={addLink}
                   className="text-[#bdbefe] text-sm mt-3 hover:text-white transition-colors flex items-center gap-1"
                 >
-                  <span>+</span> Añadir otro enlace
+                  <span>+</span> {formData.enlaces.length > 0 ? 'Añadir otro enlace' : 'Añadir enlace'}
                 </button>
               </div>
           </section>
