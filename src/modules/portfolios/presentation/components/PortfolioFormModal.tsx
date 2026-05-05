@@ -54,26 +54,6 @@ export default function PortfolioFormModal({
       return;
     }
 
-    const exactMatch = existingPortfolios.some(
-      (p) =>
-        p.nombre.toLowerCase() === portfolioName.trim().toLowerCase() &&
-        p.templateId === String(selectedTemplate.id)
-    );
-    if (exactMatch) {
-      setError(
-        'Ya existe un portafolio con este nombre y esta misma plantilla.'
-      );
-      return;
-    }
-
-    const templateMatch = existingPortfolios.some(
-      (p) => p.templateId === String(selectedTemplate.id)
-    );
-    if (templateMatch) {
-      setError('Ya existe un portafolio con esta plantilla.');
-      return;
-    }
-
     const nameMatch = existingPortfolios.some(
       (p) => p.nombre.toLowerCase() === portfolioName.trim().toLowerCase()
     );

@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Portfolio, CreatePortfolioDto, UpdateVisibilidadDto } from '../domain/entities/Portfolio';
+import {
+  Portfolio,
+  CreatePortfolioDto,
+  UpdateVisibilidadDto,
+} from '../domain/entities/Portfolio';
 import { PortfolioRepository } from '../domain/repositories/PortfolioRepository';
 import { HttpPortfolioRepository } from '../infrastructure/repositories/HttpPortfolioRepository';
 
@@ -53,24 +57,25 @@ export function usePortfolios() {
   const updateVisibilidad = useCallback(
     async (id: string, dto: UpdateVisibilidadDto): Promise<Portfolio> => {
       const updated = await repository.updateVisibilidad(id, dto);
-      setPortfolios((prev) =>
-        prev.map((p) => (p.id === id ? updated : p))
-      );
+      setPortfolios((prev) => prev.map((p) => (p.id === id ? updated : p)));
       return updated;
     },
     []
   );
 
-  const publishPortfolio = useCallback(async (id: string): Promise<Portfolio> => {
-    setPublishing(true);
-    try {
-      const updated = await repository.publish(id);
-      setPortfolios((prev) => prev.map((p) => (p.id === id ? updated : p)));
-      return updated;
-    } finally {
-      setPublishing(false);
-    }
-  }, []);
+  const publishPortfolio = useCallback(
+    async (id: string): Promise<Portfolio> => {
+      setPublishing(true);
+      try {
+        const updated = await repository.publish(id);
+        setPortfolios((prev) => prev.map((p) => (p.id === id ? updated : p)));
+        return updated;
+      } finally {
+        setPublishing(false);
+      }
+    },
+    []
+  );
 
   return {
     portfolios,
