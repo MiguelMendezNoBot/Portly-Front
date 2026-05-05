@@ -14,8 +14,9 @@ export function useTemplates() {
     setLoading(true);
     setError(null);
     try {
+      const ALLOWED_IDS = new Set(['template-tercera-brutalist', 'template-corporate-blue']);
       const data = await repository.getAll();
-      setTemplates(data);
+      setTemplates(data.filter(t => ALLOWED_IDS.has(t.id)));
     } catch (err: any) {
       setError(err?.message || 'Error al cargar las plantillas');
     } finally {

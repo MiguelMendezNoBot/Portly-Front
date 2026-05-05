@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
@@ -13,6 +13,12 @@ import type {
   PortfolioPublicUser,
 } from '../../domain/entities/PortfolioPublicData';
 import type { TemplateSection } from '../../domain/entities/Template';
+import { SOFT_SKILLS_CATALOG } from '../../../professional/presentation/components/Skills/SoftSkillsModal';
+import { TechIcon } from '../../../professional/presentation/components/Skills/icons/TechIcon';
+
+// ─── Mobile context ───────────────────────────────────────────────────────────
+const MobileCtx = createContext(false);
+const useIsMobile = () => useContext(MobileCtx);
 
 // ─── Themes ──────────────────────────────────────────────────────────────────
 
@@ -81,12 +87,26 @@ const THEMES: Record<string, Theme> = {
     text: '#000000',
     textSub: '#000000',
     textMuted: '#000000',
-    accent: '#ffde00', // Amarillo brutalista
+    accent: '#ffde00',
     accentText: '#000000',
-    accentBg: '#ff4d4d', // Rojo brutalista
+    accentBg: '#ff4d4d',
     badge: '#ffffff',
     badgeText: '#000000',
     navBg: 'rgba(255,255,255,0.95)',
+  },
+  corporate: {
+    bg: '#f0f5ff',
+    surface: '#ffffff',
+    border: 'rgba(37,99,235,0.14)',
+    text: '#0f172a',
+    textSub: '#1e293b',
+    textMuted: '#64748b',
+    accent: '#2563eb',
+    accentText: '#1d4ed8',
+    accentBg: 'rgba(37,99,235,0.08)',
+    badge: '#eff6ff',
+    badgeText: '#1e40af',
+    navBg: 'rgba(240,245,255,0.95)',
   },
 };
 
@@ -112,16 +132,17 @@ function Avatar({ url, name, size = 80, accent }: { url?: string; name: string; 
 
 function SectionTitle({ text, t }: { text: string; t: Theme }) {
   const isBrutalist = t.border === '#000000';
+  const isMobile = useIsMobile();
   return (
-    <div style={{ marginBottom: 32 }}>
-      <h2 style={{ 
-        fontSize: isBrutalist ? 42 : 28, 
-        fontWeight: 900, 
-        color: t.text, 
-        margin: 0, 
+    <div style={{ marginBottom: isMobile ? 20 : 32 }}>
+      <h2 style={{
+        fontSize: isBrutalist ? (isMobile ? 28 : 42) : (isMobile ? 20 : 28),
+        fontWeight: 900,
+        color: t.text,
+        margin: 0,
         letterSpacing: isBrutalist ? '-0.04em' : '-0.02em',
         textTransform: isBrutalist ? 'uppercase' : 'none',
-        WebkitTextStroke: isBrutalist ? '1px black' : 'none'
+        WebkitTextStroke: isBrutalist ? '1px black' : 'none',
       }}>
         {text}
       </h2>
@@ -164,6 +185,12 @@ const SOCIAL_DEFS = [
     color: '#ff0000',
     path: 'M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z',
   },
+  {
+    key: 'email' as const,
+    label: 'Email',
+    color: '#4f46e5',
+    path: 'M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z',
+  },
 ];
 
 function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPublicUser; t: Theme; justify?: string }) {
@@ -175,9 +202,9 @@ function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPub
       {links.map((s) => (
         <a
           key={s.key}
-          href={usuario[s.key] as string}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={s.key === 'email' ? `mailto:${usuario[s.key]}` : usuario[s.key] as string}
+          target={s.key === 'email' ? undefined : '_blank'}
+          rel={s.key === 'email' ? undefined : 'noopener noreferrer'}
           title={s.label}
           style={{
             display: 'flex',
@@ -206,49 +233,71 @@ function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPub
 // ─── Section renderers ────────────────────────────────────────────────────────
 
 function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+  const isMobile = useIsMobile();
   const fullName = `${usuario.nombre} ${usuario.apellido}`.trim();
   const isBrutalist = t.border === '#000000';
-  const align = isBrutalist ? 'flex-start' : 'center';
+  const isCorporate = t.accent === '#2563eb';
+  const isRowLayout = !isMobile && (isBrutalist || isCorporate);
+  const align = isRowLayout ? 'flex-start' : 'center';
+  const avatarSize = isMobile ? 80 : (isBrutalist ? 180 : isCorporate ? 120 : 100);
+
   return (
-    <section id="hero" style={{ padding: '100px 0 80px', textAlign: isBrutalist ? 'left' : 'center' }}>
+    <section id="hero" style={{ padding: isMobile ? '70px 0 40px' : '100px 0 80px', textAlign: isRowLayout ? 'left' : 'center' }}>
       <div style={{
         display: 'flex',
-        flexDirection: isBrutalist ? 'row-reverse' : 'column',
+        flexDirection: isMobile ? 'column' : (isBrutalist ? 'row-reverse' : isCorporate ? 'row' : 'column'),
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 40,
-        flexWrap: 'wrap'
+        gap: isMobile ? 24 : 40,
+        flexWrap: 'wrap',
       }}>
         <div style={{
           border: isBrutalist ? '4px solid #000' : 'none',
           padding: isBrutalist ? 8 : 0,
           background: isBrutalist ? t.accent : 'transparent',
-          boxShadow: isBrutalist ? '12px 12px 0px #000' : 'none'
+          boxShadow: isBrutalist
+            ? (isMobile ? '6px 6px 0px #000' : '12px 12px 0px #000')
+            : (isCorporate ? '0 8px 32px rgba(37,99,235,0.15)' : 'none'),
+          borderRadius: isBrutalist ? 0 : '50%',
         }}>
-          <Avatar url={usuario.avatarUrl} name={fullName} size={isBrutalist ? 180 : 100} accent={t.accent} />
+          <Avatar url={usuario.avatarUrl} name={fullName} size={avatarSize} accent={t.accent} />
         </div>
-        <div style={{ flex: 1, minWidth: 300 }}>
+        <div style={{ flex: 1, minWidth: isMobile ? 0 : 280 }}>
+          {isCorporate && (
+            <div style={{ width: 48, height: 4, background: t.accent, borderRadius: 4, marginBottom: 16 }} />
+          )}
           <h1 style={{
-            fontSize: isBrutalist ? 72 : 48,
+            fontSize: isBrutalist ? (isMobile ? 40 : 72) : (isMobile ? 28 : 48),
             fontWeight: 900,
             color: t.text,
             margin: 0,
             letterSpacing: '-0.04em',
             lineHeight: 0.9,
-            textTransform: isBrutalist ? 'uppercase' : 'none'
+            textTransform: isBrutalist ? 'uppercase' : 'none',
           }}>
             {fullName}
           </h1>
           {usuario.profesion && (
             <div style={{
-              display: isBrutalist ? 'inline-block' : 'block',
-              background: isBrutalist ? '#000' : 'transparent',
-              padding: isBrutalist ? '4px 12px' : 0,
-              marginTop: 12
+              display: isBrutalist ? 'inline-block' : (isCorporate ? 'inline-flex' : 'block'),
+              alignItems: 'center',
+              background: isBrutalist ? '#000' : (isCorporate ? t.accentBg : 'transparent'),
+              padding: isBrutalist ? '4px 12px' : (isCorporate ? '6px 14px' : 0),
+              borderRadius: isCorporate ? 6 : 0,
+              marginTop: isCorporate ? 16 : 12,
+              border: isCorporate ? `1px solid ${t.border}` : 'none',
             }}>
-              <p style={{ fontSize: 24, color: isBrutalist ? t.accent : t.accentText, fontWeight: 800, margin: 0 }}>
+              <p style={{ fontSize: isCorporate ? 15 : (isMobile ? 18 : 24), color: isBrutalist ? t.accent : t.accentText, fontWeight: isCorporate ? 700 : 800, margin: 0 }}>
                 {usuario.profesion}
               </p>
+            </div>
+          )}
+          {usuario.email && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: isBrutalist ? '#000' : t.textMuted, fontSize: 14, fontWeight: isBrutalist ? 700 : 400, marginTop: 16, justifyContent: align }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.99l-8 5-8-5V6l8 5 8-5v2.99z" />
+              </svg>
+              {usuario.email}
             </div>
           )}
           {(usuario.pais || usuario.telefono) && (
@@ -273,7 +322,7 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
           )}
           {usuario.descripcion && (
             <p style={{
-              fontSize: 18,
+              fontSize: isMobile ? 15 : 18,
               color: t.textSub,
               maxWidth: 600,
               lineHeight: 1.6,
@@ -295,17 +344,19 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
 }
 
 function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+  const isMobile = useIsMobile();
+  const isBrutalist = t.border === '#000000';
   return (
-    <section id="about" style={{ padding: '48px 0' }}>
+    <section id="about" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Sobre mí" t={t} />
-      <div style={{ 
-        background: t.surface, 
-        borderRadius: t.border === '#000000' ? 0 : 16, 
-        padding: 32, 
-        border: t.border === '#000000' ? '3px solid #000000' : `1px solid ${t.border}`,
-        boxShadow: t.border === '#000000' ? '8px 8px 0px #000000' : 'none'
+      <div style={{
+        background: t.surface,
+        borderRadius: isBrutalist ? 0 : 16,
+        padding: isMobile ? '20px 16px' : 32,
+        border: isBrutalist ? '3px solid #000000' : `1px solid ${t.border}`,
+        boxShadow: isBrutalist ? '8px 8px 0px #000000' : 'none',
       }}>
-        <p style={{ color: t.textSub, fontSize: 16, lineHeight: 1.8, margin: 0, fontWeight: t.border === '#000000' ? 600 : 400, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+        <p style={{ color: t.textSub, fontSize: 16, lineHeight: 1.8, margin: 0, fontWeight: isBrutalist ? 600 : 400, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
           {usuario.descripcion || 'Sin descripción disponible.'}
         </p>
       </div>
@@ -314,29 +365,35 @@ function AboutSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }
 }
 
 function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme }) {
+  const isMobile = useIsMobile();
   if (!skills.length) return null;
   return (
-    <section id="skills" style={{ padding: '48px 0' }}>
+    <section id="skills" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Habilidades técnicas" t={t} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(150px, 1fr))' : 'repeat(auto-fill, minmax(260px, 1fr))', gap: isMobile ? 12 : 20 }}>
         {skills.map((s) => {
           const pct = SKILL_LEVEL[s.level] ?? 50;
           const isBrutalist = t.border === '#000000';
           return (
-            <div key={s.id} style={{ 
-              background: isBrutalist ? t.accent : t.surface, 
-              borderRadius: isBrutalist ? 0 : 12, 
-              padding: '20px', 
+            <div key={s.id} style={{
+              background: isBrutalist ? t.accent : t.surface,
+              borderRadius: isBrutalist ? 0 : 12,
+              padding: isMobile ? '14px' : '20px',
               border: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`,
-              boxShadow: isBrutalist ? '6px 6px 0px #000' : 'none'
+              boxShadow: isBrutalist ? '6px 6px 0px #000' : 'none',
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                <span style={{ color: '#000', fontWeight: 800, fontSize: 14, textTransform: isBrutalist ? 'uppercase' : 'none' }}>{s.name}</span>
-                <span style={{ color: isBrutalist ? '#000' : t.accentText, fontSize: 12, fontWeight: 700 }}>{s.level}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                  <div className="w-6 h-6 overflow-hidden flex items-center justify-center flex-shrink-0 rounded"
+                    style={{ border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}`, background: '#fff' }}>
+                    <TechIcon name={s.name} />
+                  </div>
+                  <span style={{ color: isBrutalist ? '#000' : t.text, fontWeight: 800, fontSize: isMobile ? 12 : 14, textTransform: isBrutalist ? 'uppercase' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                </div>
+                <span style={{ color: isBrutalist ? '#000' : t.accentText, fontSize: 11, fontWeight: 700, flexShrink: 0, marginLeft: 8 }}>{s.level}</span>
               </div>
               <div style={{ height: isBrutalist ? 12 : 6, background: isBrutalist ? '#fff' : t.accentBg, borderRadius: isBrutalist ? 0 : 99, border: isBrutalist ? '2px solid #000' : 'none', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${pct}%`, background: isBrutalist ? t.accentBg : t.accent, borderRadius: 0,
-                  transition: 'width 0.8s ease' }} />
+                <div style={{ height: '100%', width: `${pct}%`, background: isBrutalist ? t.accentBg : t.accent, borderRadius: 0, transition: 'width 0.8s ease' }} />
               </div>
             </div>
           );
@@ -347,17 +404,37 @@ function SkillsSection({ skills, t }: { skills: PortfolioPublicSkill[]; t: Theme
 }
 
 function SoftSkillsSection({ softSkills, t }: { softSkills: PortfolioPublicSoftSkill[]; t: Theme }) {
+  const isMobile = useIsMobile();
   if (!softSkills.length) return null;
+  const isBrutalist = t.border === '#000000';
   return (
-    <section id="softskills" style={{ padding: '48px 0' }}>
+    <section id="softskills" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Habilidades blandas" t={t} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {softSkills.map((s) => (
-          <span key={s.id} style={{ padding: '8px 18px', borderRadius: 999, background: t.badge,
-            color: t.badgeText, fontSize: 14, fontWeight: 600, border: `1px solid ${t.border}` }}>
-            {s.nombreHabilidad}
-          </span>
-        ))}
+        {softSkills.map((s) => {
+          const icon = SOFT_SKILLS_CATALOG.find((c) => c.name === s.nombreHabilidad)?.icon;
+          return (
+            <div key={s.id} style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '8px 16px',
+              borderRadius: isBrutalist ? 0 : 999,
+              background: isBrutalist ? t.badge : '#ffffff',
+              color: isBrutalist ? t.badgeText : '#374151',
+              fontSize: 14, fontWeight: 600,
+              border: isBrutalist ? '2px solid #000' : `1px solid ${t.border}`,
+              boxShadow: isBrutalist ? '3px 3px 0 #000' : '0 1px 3px rgba(0,0,0,0.06)',
+            }}>
+              <span style={{ color: isBrutalist ? '#000' : '#6b72ff', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                {icon ?? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                  </svg>
+                )}
+              </span>
+              {s.nombreHabilidad}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -366,6 +443,7 @@ function SoftSkillsSection({ softSkills, t }: { softSkills: PortfolioPublicSoftS
 function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicExperience[]; t: Theme }) {
   const [selected, setSelected] = useState<PortfolioPublicExperience | null>(null);
   const isBrutalist = t.border === '#000000';
+  const isMobile = useIsMobile();
 
   if (!experiencias.length) return null;
 
@@ -375,7 +453,7 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
     e.correoJefe || e.numeroJefe || e.cargoJefe;
 
   return (
-    <section id="experience" style={{ padding: '48px 0' }}>
+    <section id="experience" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Experiencia" t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {experiencias.map((e, i) => (
@@ -385,7 +463,7 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
             style={{
               background: isBrutalist ? (i % 2 === 0 ? '#fff' : t.accent) : t.surface,
               borderRadius: isBrutalist ? 0 : 16,
-              padding: '28px',
+              padding: isMobile ? '20px 16px' : '28px',
               border: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`,
               borderLeft: isBrutalist ? '3px solid #000' : `4px solid ${t.accent}`,
               boxShadow: isBrutalist ? '8px 8px 0px #000' : 'none',
@@ -441,7 +519,7 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
             position: 'fixed', inset: 0, zIndex: 1000,
             background: 'rgba(0,0,0,0.6)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: 24,
+            padding: isMobile ? 12 : 24,
             backdropFilter: 'blur(4px)',
           }}
         >
@@ -456,13 +534,12 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
               width: '100%',
               maxHeight: '85vh',
               overflowY: 'auto',
-              padding: '36px 40px',
+              padding: isMobile ? '24px 20px' : '36px 40px',
             }}
           >
-            {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
               <div>
-                <h2 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: isBrutalist ? '#000' : t.text, textTransform: isBrutalist ? 'uppercase' : 'none' }}>
+                <h2 style={{ margin: 0, fontSize: isMobile ? 20 : 24, fontWeight: 900, color: isBrutalist ? '#000' : t.text, textTransform: isBrutalist ? 'uppercase' : 'none' }}>
                   {selected.cargo}
                 </h2>
                 <p style={{ margin: '6px 0 0', fontSize: 16, fontWeight: 700, color: isBrutalist ? '#000' : t.accentText }}>
@@ -495,14 +572,12 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
               </button>
             </div>
 
-            {/* Descripción */}
             {selected.descripcion && (
               <p style={{ fontSize: 15, color: isBrutalist ? '#000' : t.textSub, lineHeight: 1.7, marginBottom: 24 }}>
                 {selected.descripcion}
               </p>
             )}
 
-            {/* Funciones principales */}
             {(selected.funcionesPrincipales?.length ?? 0) > 0 && (
               <div style={{ marginBottom: 24 }}>
                 <h3 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 900, color: isBrutalist ? '#000' : t.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -516,7 +591,6 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
               </div>
             )}
 
-            {/* Logros */}
             {(selected.logros?.length ?? 0) > 0 && (
               <div style={{ marginBottom: 24 }}>
                 <h3 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 900, color: isBrutalist ? '#000' : t.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -530,12 +604,8 @@ function ExperienceSection({ experiencias, t }: { experiencias: PortfolioPublicE
               </div>
             )}
 
-            {/* Referencia profesional */}
             {(selected.cargoJefe || selected.correoJefe || selected.numeroJefe) && (
-              <div style={{
-                borderTop: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`,
-                paddingTop: 20, marginTop: 8,
-              }}>
+              <div style={{ borderTop: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`, paddingTop: 20, marginTop: 8 }}>
                 <h3 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 900, color: isBrutalist ? '#000' : t.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   Referencia profesional
                 </h3>
@@ -574,6 +644,7 @@ function formatBytes(bytes: number) {
 function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]; t: Theme }) {
   const [selected, setSelected] = useState<PortfolioPublicProject | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   if (!proyectos.length) return null;
   const isBrutalist = t.border === '#000000';
@@ -590,9 +661,9 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
   };
 
   return (
-    <section id="projects" style={{ padding: '48px 0' }}>
+    <section id="projects" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Proyectos" t={t} />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 20 : 32 }}>
         {proyectos.map((p, i) => {
           const coverUrl = p.iconoUrl || p.evidencias?.[0] || null;
           const extraImages = (p.evidencias?.length ?? 0) > 1;
@@ -615,8 +686,7 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
               onMouseEnter={(ev) => { if (hasDetail(p)) (ev.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; }}
               onMouseLeave={(ev) => { (ev.currentTarget as HTMLDivElement).style.transform = 'none'; }}
             >
-              {/* Cover image */}
-              <div style={{ height: 200, background: isBrutalist ? t.accentBg : t.accent, borderBottom: isBrutalist ? '3px solid #000' : 'none', position: 'relative', flexShrink: 0 }}>
+              <div style={{ height: isMobile ? 160 : 200, background: isBrutalist ? t.accentBg : t.accent, borderBottom: isBrutalist ? '3px solid #000' : 'none', position: 'relative', flexShrink: 0 }}>
                 {coverUrl ? (
                   <img src={coverUrl} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -638,8 +708,7 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 )}
               </div>
 
-              {/* Card body */}
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+              <div style={{ padding: isMobile ? 16 : 24, display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
                   <p style={{ color: t.text, fontWeight: 900, fontSize: 18, margin: 0, textTransform: isBrutalist ? 'uppercase' : 'none', wordBreak: 'break-word' }}>{p.nombre}</p>
                   {hasDetail(p) && (
@@ -650,7 +719,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 </div>
                 <p style={{ color: t.textSub, fontSize: 14, margin: '0 0 16px', lineHeight: 1.6, fontWeight: isBrutalist ? 600 : 400, wordBreak: 'break-word' }}>{p.descripcionCorta}</p>
 
-                {/* Technologies */}
                 {p.tecnologias?.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
                     {p.tecnologias.map((tech) => (
@@ -661,7 +729,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                   </div>
                 )}
 
-                {/* Quick links row */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
                   {p.urlDemo && (
                     <a href={p.urlDemo} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
@@ -691,11 +758,10 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
         })}
       </div>
 
-      {/* Detail modal */}
       {selected && (
         <div
           onClick={() => setSelected(null)}
-          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, backdropFilter: 'blur(4px)' }}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? 12 : 24, backdropFilter: 'blur(4px)' }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
@@ -712,13 +778,12 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
               flexDirection: 'column',
             }}
           >
-            {/* Image gallery */}
             {(selected.evidencias && selected.evidencias.length > 0) && (
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <img
                   src={selected.evidencias[galleryIndex]}
                   alt={`imagen ${galleryIndex + 1}`}
-                  style={{ width: '100%', height: 280, objectFit: 'cover', display: 'block', borderBottom: isBrutalist ? '4px solid #000' : 'none' }}
+                  style={{ width: '100%', height: isMobile ? 200 : 280, objectFit: 'cover', display: 'block', borderBottom: isBrutalist ? '4px solid #000' : 'none' }}
                 />
                 {selected.evidencias.length > 1 && (
                   <>
@@ -746,12 +811,10 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
               </div>
             )}
 
-            {/* Modal body */}
-            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* Header */}
+            <div style={{ padding: isMobile ? '20px 16px' : 32, display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
                 <div style={{ flex: 1 }}>
-                  <p style={{ color: t.text, fontWeight: 900, fontSize: 22, margin: '0 0 6px', textTransform: isBrutalist ? 'uppercase' : 'none', wordBreak: 'break-word' }}>
+                  <p style={{ color: t.text, fontWeight: 900, fontSize: isMobile ? 18 : 22, margin: '0 0 6px', textTransform: isBrutalist ? 'uppercase' : 'none', wordBreak: 'break-word' }}>
                     {selected.nombre}
                   </p>
                   {selected.tecnologias?.length > 0 && (
@@ -769,7 +832,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 </button>
               </div>
 
-              {/* Description */}
               {selected.descripcionCorta && (
                 <p style={{ color: t.textSub, fontSize: 15, lineHeight: 1.7, margin: 0, fontWeight: isBrutalist ? 600 : 400, wordBreak: 'break-word' }}>
                   {selected.descripcionCorta}
@@ -782,7 +844,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 </div>
               )}
 
-              {/* Links */}
               {selected.enlaces && selected.enlaces.length > 0 && (
                 <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20 }}>
                   <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Links</p>
@@ -798,7 +859,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 </div>
               )}
 
-              {/* Documents */}
               {selected.documentos && selected.documentos.length > 0 && (
                 <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 20 }}>
                   <p style={{ color: t.textMuted, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Documentos</p>
@@ -818,7 +878,6 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
                 </div>
               )}
 
-              {/* Demo button at bottom */}
               {selected.urlDemo && (
                 <a href={selected.urlDemo} target="_blank" rel="noopener noreferrer"
                   style={{ display: 'block', textAlign: 'center', background: isBrutalist ? '#000' : t.accent, color: isBrutalist ? t.accent : '#fff', padding: '12px 24px', borderRadius: isBrutalist ? 0 : 10, fontWeight: 800, fontSize: 14, textDecoration: 'none', border: isBrutalist ? '2px solid #000' : 'none', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
@@ -834,17 +893,18 @@ function ProjectsSection({ proyectos, t }: { proyectos: PortfolioPublicProject[]
 }
 
 function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicFormacion[]; t: Theme }) {
+  const isMobile = useIsMobile();
   if (!formaciones.length) return null;
   const isBrutalist = t.border === '#000000';
   return (
-    <section id="education" style={{ padding: '48px 0' }}>
+    <section id="education" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
       <SectionTitle text="Formación académica" t={t} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {formaciones.map((f, i) => (
           <div key={i} style={{
             background: isBrutalist ? t.accentBg : t.surface,
             borderRadius: isBrutalist ? 0 : 14,
-            padding: '24px 32px',
+            padding: isMobile ? '20px 16px' : '24px 32px',
             border: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`,
             boxShadow: isBrutalist ? '6px 6px 0px #000' : 'none',
           }}>
@@ -882,35 +942,37 @@ function EducationSection({ formaciones, t }: { formaciones: PortfolioPublicForm
 }
 
 function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+  const isMobile = useIsMobile();
   const isBrutalist = t.border === '#000000';
   return (
-    <section id="contact" style={{ padding: '80px 0', textAlign: 'center' }}>
+    <section id="contact" style={{ padding: isMobile ? '48px 0' : '80px 0', textAlign: 'center' }}>
       <SectionTitle text="Contacto" t={t} />
       <div style={{
         background: isBrutalist ? t.accent : t.surface,
         borderRadius: isBrutalist ? 0 : 24,
-        padding: '60px 40px',
+        padding: isMobile ? '36px 20px' : '60px 40px',
         border: isBrutalist ? '4px solid #000' : `1px solid ${t.border}`,
         maxWidth: 540,
         margin: '0 auto',
-        boxShadow: isBrutalist ? '15px 15px 0px #000' : 'none'
+        boxShadow: isBrutalist ? '15px 15px 0px #000' : 'none',
       }}>
-        <p style={{ color: '#000', fontSize: 18, marginBottom: 32, lineHeight: 1.7, fontWeight: 700 }}>
+        <p style={{ color: '#000', fontSize: isMobile ? 16 : 18, marginBottom: 32, lineHeight: 1.7, fontWeight: 700 }}>
           ¿Interesado en trabajar juntos? No dudes en contactarme.
         </p>
         {usuario.email && (
           <a href={`mailto:${usuario.email}`}
             style={{
               display: 'inline-block',
-              padding: '16px 48px',
+              padding: isMobile ? '14px 28px' : '16px 48px',
               borderRadius: isBrutalist ? 0 : 999,
-              background: '#000',
-              color: isBrutalist ? t.accent : '#fff',
+              background: isBrutalist ? '#000' : t.accent,
+              color: '#fff',
               fontWeight: 900,
               textDecoration: 'none',
-              fontSize: 16,
+              fontSize: isMobile ? 14 : 16,
               textTransform: isBrutalist ? 'uppercase' : 'none',
-              border: isBrutalist ? '2px solid #000' : 'none'
+              border: isBrutalist ? '2px solid #000' : 'none',
+              wordBreak: 'break-all',
             }}>
             {usuario.email}
           </a>
@@ -932,15 +994,15 @@ function ContactSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme
 
 function renderSection(section: TemplateSection, data: PortfolioPublicData, t: Theme) {
   switch (section.type) {
-    case 'hero':     return <HeroSection key="hero" usuario={data.usuario} t={t} />;
-    case 'about':    return <AboutSection key="about" usuario={data.usuario} t={t} />;
-    case 'skills':   return <SkillsSection key="skills" skills={data.skills} t={t} />;
+    case 'hero':       return <HeroSection key="hero" usuario={data.usuario} t={t} />;
+    case 'about':      return <AboutSection key="about" usuario={data.usuario} t={t} />;
+    case 'skills':     return <SkillsSection key="skills" skills={data.skills} t={t} />;
     case 'softskills': return <SoftSkillsSection key="softskills" softSkills={data.softSkills} t={t} />;
     case 'experience': return <ExperienceSection key="experience" experiencias={data.experiencias} t={t} />;
-    case 'projects': return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} />;
-    case 'education': return <EducationSection key="education" formaciones={data.formaciones} t={t} />;
-    case 'contact':  return <ContactSection key="contact" usuario={data.usuario} t={t} />;
-    default:         return null;
+    case 'projects':   return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} />;
+    case 'education':  return <EducationSection key="education" formaciones={data.formaciones} t={t} />;
+    case 'contact':    return <ContactSection key="contact" usuario={data.usuario} t={t} />;
+    default:           return null;
   }
 }
 
@@ -975,8 +1037,14 @@ function ErrorState({ error }: { error: string }) {
 
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
-
   const { data, loading, error } = usePortfolioPublic(portfolioId);
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
 
   if (loading) return <LoadingState />;
   if (error || !data) return <ErrorState error={error ?? 'Portafolio no encontrado'} />;
@@ -986,6 +1054,7 @@ export default function PortfolioPublicPage() {
   const t = THEMES[schemeKey] ?? THEMES.dark;
   const font = data.templateSchema?.fontFamily ?? 'Inter';
   const isBrutalist = t.border === '#000000';
+  const isCorporate = t.accent === '#2563eb';
 
   const visibleSections = (data.templateSchema?.sections ?? [])
     .filter((s) => s.visible)
@@ -994,49 +1063,50 @@ export default function PortfolioPublicPage() {
   const isPrivate = data.visibilidad === 'PRIVADO';
 
   return (
-    <div style={{ background: t.bg, minHeight: '100vh', fontFamily: `'${font}', system-ui, sans-serif`, color: t.text }}>
-      {/* Banner de previsualización (visible cuando el portafolio es privado) */}
-      {isPrivate && <PreviewBanner />}
+    <MobileCtx.Provider value={isMobile}>
+      <div style={{ background: t.bg, minHeight: '100vh', fontFamily: `'${font}', system-ui, sans-serif`, color: t.text }}>
+        {isPrivate && <PreviewBanner />}
 
-      {/* Google Fonts */}
-      <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${font.replace(/ /g, '+')}:wght@400;500;600;700;800;900&display=swap`} />
+        <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${font.replace(/ /g, '+')}:wght@400;500;600;700;800;900&display=swap`} />
 
-      {/* Barra de navegación fija */}
-      <header style={{
-        position: 'sticky',
-        top: isPrivate ? 46 : 0,
-        zIndex: 100,
-        backdropFilter: isBrutalist ? 'none' : 'blur(16px)',
-        background: isBrutalist ? t.accent : t.navBg,
-        borderBottom: isBrutalist ? '4px solid #000' : `1px solid ${t.border}`
-      }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px', height: 70,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontWeight: 900, fontSize: 18, color: '#000', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
-            {data.nombre}
-          </span>
-          <nav style={{ display: 'flex', gap: 24 }}>
-            {visibleSections.filter(s => s.type !== 'hero').slice(0, 5).map((s) => (
-              <a key={s.type} href={`#${s.type}`}
-                style={{ color: '#000', fontSize: 13, fontWeight: 800, textDecoration: 'none', textTransform: isBrutalist ? 'uppercase' : 'none' }}>
-                {s.title || s.type}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </header>
+        <header style={{
+          position: 'sticky',
+          top: isPrivate ? 46 : 0,
+          zIndex: 100,
+          backdropFilter: isBrutalist ? 'none' : 'blur(16px)',
+          background: isBrutalist ? t.accent : t.navBg,
+          borderBottom: isBrutalist ? '4px solid #000' : `1px solid ${t.border}`,
+        }}>
+          <div style={{
+            maxWidth: 960,
+            margin: '0 auto',
+            padding: '0 16px',
+            height: isMobile ? 52 : 70,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: isBrutalist || isCorporate ? 'center' : 'space-between',
+          }}>
+            <nav style={{ display: 'flex', gap: isMobile ? 14 : (isBrutalist ? 32 : 28), overflowX: 'auto' }}>
+              {visibleSections.filter(s => s.type !== 'hero').slice(0, isMobile ? 4 : 5).map((s) => (
+                <a key={s.type} href={`#${s.type}`}
+                  style={{ color: '#000', fontSize: isMobile ? 11 : 13, fontWeight: 800, textDecoration: 'none', textTransform: isBrutalist ? 'uppercase' : 'none', whiteSpace: 'nowrap' }}>
+                  {s.title || s.type}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </header>
 
-      {/* Contenido */}
-      <main style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px 80px' }}>
-        {visibleSections.map((section) => renderSection(section, data, t))}
-      </main>
+        <main style={{ maxWidth: 960, margin: '0 auto', padding: isMobile ? '0 16px 60px' : '0 24px 80px' }}>
+          {visibleSections.map((section) => renderSection(section, data, t))}
+        </main>
 
-      {/* Footer */}
-      <footer style={{ borderTop: `1px solid ${t.border}`, padding: '20px 24px', textAlign: 'center' }}>
-        <p style={{ color: t.textMuted, fontSize: 12, margin: 0 }}>
-          Portafolio creado con <span style={{ color: t.accent, fontWeight: 600 }}>Portly</span>
-        </p>
-      </footer>
-    </div>
+        <footer style={{ borderTop: `1px solid ${t.border}`, padding: '20px 24px', textAlign: 'center' }}>
+          <p style={{ color: t.textMuted, fontSize: 12, margin: 0 }}>
+            Portafolio creado con <span style={{ color: t.accent, fontWeight: 600 }}>Portly</span>
+          </p>
+        </footer>
+      </div>
+    </MobileCtx.Provider>
   );
 }
