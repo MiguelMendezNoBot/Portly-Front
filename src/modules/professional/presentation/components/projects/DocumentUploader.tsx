@@ -130,7 +130,7 @@ export default function DocumentUploader({
             </svg>
           </div>
           <p className="text-white text-sm font-medium">
-            Haz clic para subir o arrastra documentos
+            Haz clic para subir o arrastra un documento
           </p>
           <p className="text-[#6b7280] text-xs">PDF, DOC o DOCX hasta 10MB</p>
         </div>
