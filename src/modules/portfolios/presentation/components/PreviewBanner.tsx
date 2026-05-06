@@ -24,7 +24,11 @@ export default function PreviewBanner() {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
         </svg>
         Volver a Portly
       </button>
@@ -51,7 +55,7 @@ export default function PreviewBanner() {
           />
         </svg>
         <span className="text-sm font-bold tracking-wide text-primary uppercase">
-          Vista previa
+          Previsualización
         </span>
       </div>
 

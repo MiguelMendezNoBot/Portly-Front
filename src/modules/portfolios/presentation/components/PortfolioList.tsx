@@ -1,6 +1,5 @@
-import type { Portfolio } from '../../domain/entities/Portfolio';
-
-interface PortfolioListProps {
+import { useState } from 'react';
+import type { Portfolio } from '../../domain/entities/Portfolio';interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
   mode?: 'delete' | 'publish' | 'preview' | null;
@@ -57,6 +56,17 @@ export default function PortfolioList({
   onPublish,
   onClick,
 }: Readonly<PortfolioListProps>) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyLink = (e: React.MouseEvent, p: Portfolio) => {
+    e.stopPropagation();
+    const link = `${window.location.origin}/p/${p.id}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedId(p.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2">
@@ -183,7 +193,32 @@ export default function PortfolioList({
                   </svg>
                 </div>
               )}
-              {/* Removed hover overlay logic as per user request to move the button out */}
+              
+              {p.visibilidad === 'PUBLICO' && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <button
+                    onClick={(e) => handleCopyLink(e, p)}
+                    className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/80 border border-white/20 rounded-full backdrop-blur-sm text-white text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+                    title="Copiar enlace público"
+                  >
+                    {copiedId === p.id ? (
+                      <>
+                        <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-emerald-400 font-bold">Enlace copiado</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        Copiar enlace
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Content */}
