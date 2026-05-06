@@ -125,13 +125,23 @@ export const CompleteProfilePage = () => {
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 rounded-lg text-sm text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? 'PROCESANDO...' : 'COMPLETAR PERFIL'}
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => window.location.replace('/')}
+                disabled={loading}
+                className="w-full py-2 rounded-lg text-sm font-light border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                CANCELAR
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2 rounded-lg text-sm text-white font-light bg-[#8781fa] hover:bg-[#6960ec] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? 'PROCESANDO...' : 'COMPLETAR PERFIL'}
+              </button>
+            </div>
           </form>
         </div>
       </div>
