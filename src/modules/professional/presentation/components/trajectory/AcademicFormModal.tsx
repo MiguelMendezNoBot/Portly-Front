@@ -113,10 +113,18 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
 
     if (!formData.fechaInicio) {
       newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';
+    } else if (formData.fechaInicio > today) {
+      newErrors.fechaInicio = 'No se puede elegir una fecha mayor a la fecha actual.';
     }
 
-    if (!formData.actualmenteEstudiando && !formData.fechaFinalizacion) {
-      newErrors.fechaFinalizacion = 'Indica la fecha de finalización o marca "Aún no lo finalicé".';
+    if (!formData.actualmenteEstudiando) {
+      if (!formData.fechaFinalizacion) {
+        newErrors.fechaFinalizacion = 'Indica la fecha de finalización o marca "Aún no lo finalicé".';
+      } else if (formData.fechaFinalizacion > today) {
+        newErrors.fechaFinalizacion = 'No se puede elegir una fecha mayor a la fecha actual.';
+      } else if (formData.fechaInicio && formData.fechaFinalizacion < formData.fechaInicio) {
+        newErrors.fechaFinalizacion = 'No se puede elegir una fecha de finalización menor que la fecha de inicio.';
+      }
     }
 
     setErrors(newErrors);
