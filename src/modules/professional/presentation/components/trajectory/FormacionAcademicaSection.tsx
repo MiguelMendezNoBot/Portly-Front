@@ -192,31 +192,34 @@ export default function FormacionAcademicaSection() {
               Agregar
             </button>
 
-            {/* Editar */}
-            <button
-              onClick={() => toggleMode('edit')}
-              className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                mode === 'edit'
-                  ? 'bg-white/10 border-white/30 text-white'
-                  : 'border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
-              }`}
-            >
-              <EditIcon />
-              Editar
-            </button>
+            {/* Editar / Eliminar — solo cuando hay registros */}
+            {records.length > 0 && (
+              <>
+                <button
+                  onClick={() => toggleMode('edit')}
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    mode === 'edit'
+                      ? 'bg-white/10 border-white/30 text-white'
+                      : 'border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  <EditIcon />
+                  Editar
+                </button>
 
-            {/* Eliminar */}
-            <button
-              onClick={() => toggleMode('delete')}
-              className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                mode === 'delete'
-                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
-                  : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
-              }`}
-            >
-              <TrashIcon />
-              Eliminar
-            </button>
+                <button
+                  onClick={() => toggleMode('delete')}
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    mode === 'delete'
+                      ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                      : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
+                  }`}
+                >
+                  <TrashIcon />
+                  Eliminar
+                </button>
+              </>
+            )}
           </div>
         </header>
 
