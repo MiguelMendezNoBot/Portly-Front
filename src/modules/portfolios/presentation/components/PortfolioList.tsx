@@ -130,10 +130,10 @@ export default function PortfolioList({
 
             {isPublishMode && (
               <div className="absolute top-3 right-3 z-10 pointer-events-none">
-                <span className="flex items-center gap-1 px-2.5 py-1 bg-[#7c6bec]/20 border border-[#7c6bec]/30 rounded-full text-[#C9BEFF] text-[10px] font-bold uppercase tracking-wide animate-pulse">
+                <span className="flex items-center gap-1 px-3 py-1.5 bg-[#7c6bec]/90 border border-[#7c6bec] rounded-full text-white text-[10px] font-bold uppercase tracking-wide shadow-lg backdrop-blur-sm">
                   <svg
-                    width="10"
-                    height="10"
+                    width="12"
+                    height="12"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -152,10 +152,10 @@ export default function PortfolioList({
 
             {mode === 'preview' && (
               <div className="absolute top-3 right-3 z-10 pointer-events-none">
-                <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-blue-300 text-[10px] font-bold uppercase tracking-wide animate-pulse">
+                <span className="flex items-center gap-1 px-3 py-1.5 bg-blue-600/90 border border-blue-500 rounded-full text-white text-[10px] font-bold uppercase tracking-wide shadow-lg backdrop-blur-sm">
                   <svg
-                    width="10"
-                    height="10"
+                    width="12"
+                    height="12"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
