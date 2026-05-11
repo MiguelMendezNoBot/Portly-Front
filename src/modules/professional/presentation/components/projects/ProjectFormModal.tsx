@@ -355,14 +355,30 @@ export default function ProjectFormModal({
                   <label className="text-[#9ca3af] text-sm block mb-2">
                     Nombre del proyecto *
                   </label>
-                  <input
-                    className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm"
-                    placeholder="Ej. Aether Chat App"
-                    value={formData.nombre}
-                    onChange={(e) =>
-                      setFormData({ ...formData, nombre: e.target.value })
-                    }
-                  />
+                  <div className="relative">
+                    <input
+                      className={`w-full border rounded-xl p-3.5 text-sm transition-colors ${
+                        initialData
+                          ? 'bg-[#1a1c29]/60 border-white/5 text-[#6b7280] cursor-not-allowed select-none'
+                          : 'bg-[#1a1c29] border-white/10 text-white outline-none focus:border-[#6c63ff]'
+                      }`}
+                      placeholder="Ej. Aether Chat App"
+                      value={formData.nombre}
+                      disabled={!!initialData}
+                      readOnly={!!initialData}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nombre: e.target.value })
+                      }
+                    />
+                    {initialData && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-[#6b7280]">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="text-[#9ca3af] text-sm block mb-2">
