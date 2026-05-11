@@ -5,6 +5,7 @@ import ProjectCard from './projects/ProjectCard';
 import ProjectFormModal from './projects/ProjectFormModal';
 import DeleteProjectModal from './projects/DeleteProjectModal';
 import ProjectSkeleton from './projects/ProjectSkeleton';
+import ViewProjectsModal from './projects/ViewProjectsModal';
 
 const repository = new HttpProjectRepository();
 
@@ -53,6 +54,7 @@ export default function ProjectsSection() {
     name: '',
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -135,14 +137,25 @@ export default function ProjectsSection() {
 
             {projects.length > 0 && (
               <>
+                {/* Visualizar */}
+                <button
+                  onClick={() => setShowViewModal(true)}
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Visualizar
+                </button>
+
                 {/* Editar */}
                 <button
                   onClick={() => toggleMode('edit')}
-                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                    mode === 'edit'
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${mode === 'edit'
                       ? 'bg-white/10 border-white/30 text-white'
                       : 'border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
-                  }`}
+                    }`}
                 >
                   <EditIcon />
                   Editar
@@ -151,11 +164,10 @@ export default function ProjectsSection() {
                 {/* Eliminar */}
                 <button
                   onClick={() => toggleMode('delete')}
-                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                    mode === 'delete'
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${mode === 'delete'
                       ? 'bg-red-500/15 border-red-500/40 text-red-400'
                       : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
-                  }`}
+                    }`}
                 >
                   <TrashIcon />
                   Eliminar
@@ -167,11 +179,10 @@ export default function ProjectsSection() {
 
         {/* Indicador de modo activo */}
         {mode && (
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm border ${
-            mode === 'edit'
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm border ${mode === 'edit'
               ? 'bg-white/5 border-white/10 text-[#9ca3af]'
               : 'bg-red-500/10 border-red-500/20 text-red-400'
-          }`}>
+            }`}>
             {mode === 'edit' ? <EditIcon /> : <TrashIcon />}
             <span>
               {mode === 'edit'
@@ -253,6 +264,13 @@ export default function ProjectsSection() {
         }}
         onConfirm={confirmDelete}
         isLoading={isDeleting}
+      />
+
+      {/* View Modal */}
+      <ViewProjectsModal
+        isOpen={showViewModal}
+        onClose={() => setShowViewModal(false)}
+        projects={projects}
       />
     </>
   );
