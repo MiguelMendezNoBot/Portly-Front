@@ -5,6 +5,7 @@ import SkillCard from '../Skills/SkillCard';
 import SkillFormModal from '../Skills/SkillFormModal';
 import DeleteSkillConfirmModal from '../Skills/DeleteSkillConfirmModal';
 import SkillCardSkeleton from './SkillCardSkeleton';
+import ViewSkillsModal from './ViewSkillsModal'; // nuevo modal
 
 type ActionMode = 'edit' | 'delete' | null;
 
@@ -44,11 +45,14 @@ const TrashIcon = () => (
 export const TechnicalSkills = () => {
   const { skills, loading, addSkill, updateSkill, deleteSkill } = useSkills();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<Skill | undefined>(undefined);
+  const [editingSkill, setEditingSkill] = useState<Skill | undefined>(
+    undefined
+  );
   const [deletingSkill, setDeletingSkill] = useState<Skill | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [mode, setMode] = useState<ActionMode>(null);
+  const [showViewModal, setShowViewModal] = useState(false); // para visualizar
 
   const handleOpenAdd = () => {
     setMode(null);
@@ -57,7 +61,7 @@ export const TechnicalSkills = () => {
   };
 
   const toggleMode = (newMode: 'edit' | 'delete') => {
-    setMode(prev => (prev === newMode ? null : newMode));
+    setMode((prev) => (prev === newMode ? null : newMode));
     if (newMode === 'delete' || newMode !== 'edit') {
       setEditingSkill(undefined);
     }
@@ -124,7 +128,15 @@ export const TechnicalSkills = () => {
             onClick={handleOpenAdd}
             className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -133,6 +145,27 @@ export const TechnicalSkills = () => {
 
           {skills.length > 0 && (
             <>
+              {/* Visualizar */}
+              <button
+                onClick={() => setShowViewModal(true)}
+                className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Visualizar
+              </button>
+
               <button
                 onClick={() => toggleMode('edit')}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
@@ -216,6 +249,7 @@ export const TechnicalSkills = () => {
         )}
       </section>
 
+      {/* Modales */}
       <SkillFormModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -233,6 +267,12 @@ export const TechnicalSkills = () => {
         onConfirm={handleConfirmDelete}
         skillName={deletingSkill?.name || ''}
         isLoading={isDeleting}
+      />
+
+      <ViewSkillsModal
+        isOpen={showViewModal}
+        onClose={() => setShowViewModal(false)}
+        skills={skills}
       />
     </>
   );

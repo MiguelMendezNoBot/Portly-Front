@@ -5,13 +5,11 @@ import { DateRangeInput } from '../../../../../shared/components/DateRangeInput'
 
 const repo = new HttpExperienceRepository();
 
-// ── Tipos ──────────────────────────────────────────────
 interface ExperienceFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialData?: Experience | null;
   onSuccess: () => void;
-  /** Lista de experiencias ya existentes para verificar duplicidad */
   existingExperiences: Experience[];
 }
 
@@ -42,7 +40,6 @@ export default function ExperienceFormModal({
   const [isLoading, setIsLoading] = useState(false);
   const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
 
-  // ── Fecha actual Bolivia ─────────────────────────────
   const getBoliviaDate = () => {
     const formatter = new Intl.DateTimeFormat('es-BO', {
       timeZone: 'America/La_Paz',
@@ -50,12 +47,10 @@ export default function ExperienceFormModal({
       month: '2-digit',
       day: '2-digit',
     });
-
     const parts = formatter.formatToParts(new Date());
     const year = parts.find((p) => p.type === 'year')!.value;
     const month = parts.find((p) => p.type === 'month')!.value;
     const day = parts.find((p) => p.type === 'day')!.value;
-
     return `${year}-${month}-${day}`;
   };
 
@@ -64,18 +59,91 @@ export default function ExperienceFormModal({
   // ── Carga de datos iniciales ─────────────────────────
   useEffect(() => {
     if (initialData) {
+      // Asegurar que funcionesPrincipales y logros sean arrays
+      const funcionesArray = Array.isArray(initialData.funcionesPrincipales)
+        ? initialData.funcionesPrincipales
+        : typeof initialData.funcionesPrincipales === 'string'
+          ? (initialData.funcionesPrincipales as string)
+              .split('\n')
+              .filter((line) => line.trim() !== '')
+          : [];
+      const logrosArray = Array.isArray(initialData.logros)
+        ? initialData.logros
+        : typeof initialData.logros === 'string'
+          ? (initialData.logros as string)
+              .split('\n')
+              .filter((line) => line.trim() !== '')
+          : [];
+
       setFormData({
         ...initialData,
+        funcionesPrincipales: funcionesArray,
+        logros: logrosArray,
         referenciaProfesional: initialData.referenciaProfesional || {
           correoJefe: '',
           numeroJefe: '+591 ',
           cargoJefe: '',
         },
       });
+    } else {
+      setFormData({
+        nombreEmpresa: '',
+        cargo: '',
+        fechaInicio: '',
+        fechaFin: '',
+        actualmenteTrabajando: false,
+        descripcion: '',
+        funcionesPrincipales: [],
+        logros: [],
+        referenciaProfesional: {
+          correoJefe: '',
+          numeroJefe: '+591 ',
+          cargoJefe: '',
+        },
+      });
     }
-  }, [initialData]);
+  }, [initialData, isOpen]);
 
-  // ── Manejadores de campos ────────────────────────────
+  // ── Manejadores de campos dinámicos ─────────────────
+  const handleFuncionChange = (index: number, value: string) => {
+    const updated = [...(formData.funcionesPrincipales || [])];
+    updated[index] = value;
+    setFormData({ ...formData, funcionesPrincipales: updated });
+  };
+
+  const addFuncion = () => {
+    setFormData({
+      ...formData,
+      funcionesPrincipales: [...(formData.funcionesPrincipales || []), ''],
+    });
+  };
+
+  const removeFuncion = (index: number) => {
+    const updated = (formData.funcionesPrincipales || []).filter(
+      (_, i) => i !== index
+    );
+    setFormData({ ...formData, funcionesPrincipales: updated });
+  };
+
+  const handleLogroChange = (index: number, value: string) => {
+    const updated = [...(formData.logros || [])];
+    updated[index] = value;
+    setFormData({ ...formData, logros: updated });
+  };
+
+  const addLogro = () => {
+    setFormData({
+      ...formData,
+      logros: [...(formData.logros || []), ''],
+    });
+  };
+
+  const removeLogro = (index: number) => {
+    const updated = (formData.logros || []).filter((_, i) => i !== index);
+    setFormData({ ...formData, logros: updated });
+  };
+
+  // ── Manejo de teléfono ──────────────────────────────
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     value = value.replace(/[^\d\s+]/g, '');
@@ -116,42 +184,7 @@ export default function ExperienceFormModal({
     setErrors((prev) => ({ ...prev, [field]: error }));
   };
 
-  const arrayToBullets = (arr: string[]) =>
-    arr.length > 0 ? arr.map((a) => `• ${a}`).join('\n') : '• ';
-
-  const handleListTextareaChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    field: 'funcionesPrincipales' | 'logros'
-  ) => {
-    const newValue = e.target.value;
-    const lines = newValue.split('\n');
-    const cleanLines = lines.map((line) => line.replace(/^•\s*/, ''));
-    const filteredLines = cleanLines.filter((l) => l !== '');
-
-    const bulletedText = arrayToBullets(filteredLines);
-    if (bulletedText.length > 1002) {
-      return;
-    }
-
-    setFormData({ ...formData, [field]: filteredLines });
-  };
-
-  const handleListKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const target = e.target as HTMLTextAreaElement;
-      const start = target.selectionStart;
-      const val = target.value;
-      const newValue =
-        val.substring(0, start) + '\n• ' + val.substring(target.selectionEnd);
-      target.value = newValue;
-      target.selectionStart = target.selectionEnd = start + 3;
-      const event = new Event('input', { bubbles: true });
-      target.dispatchEvent(event);
-    }
-  };
-
-  // ── Validación del formulario ────────────────────────
+  // ── Validación (Funciones y Logros NO obligatorios) ─
   const isFormValid = () => {
     if (
       !formData.nombreEmpresa.trim() ||
@@ -173,18 +206,14 @@ export default function ExperienceFormModal({
         return false;
     }
     if (!formData.descripcion.trim()) return false;
-    if (!formData.funcionesPrincipales || formData.funcionesPrincipales.length === 0)
-      return false;
-    if (!formData.logros || formData.logros.length === 0) return false;
     return true;
   };
 
   // ── Verificación de duplicidad ───────────────────────
-   const isDuplicate = (data: Experience): boolean => {
+  const isDuplicate = (data: Experience): boolean => {
     const currentId = initialData?.id;
     const trimmedNombre = data.nombreEmpresa.trim().toLowerCase();
     const trimmedCargo = data.cargo.trim().toLowerCase();
-
     return existingExperiences.some(
       (exp) =>
         exp.id !== currentId &&
@@ -193,11 +222,11 @@ export default function ExperienceFormModal({
     );
   };
 
-
   // ── Persistencia real ────────────────────────────────
   const performSave = async () => {
     setIsLoading(true);
     try {
+      // No convertimos a string, enviamos los arrays tal cual los espera el backend
       if (initialData?.id) {
         await repo.update(formData);
       } else {
@@ -207,6 +236,7 @@ export default function ExperienceFormModal({
       onClose();
     } catch (error) {
       console.error(error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -222,10 +252,10 @@ export default function ExperienceFormModal({
 
   if (!isOpen) return null;
 
-  // ── Renderizado principal ────────────────────────────
+  const isEditing = !!initialData?.id;
+
   return (
     <>
-      {/* ─── Modal del formulario (existente, sin cambios visuales) ─── */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <style
           dangerouslySetInnerHTML={{
@@ -234,7 +264,7 @@ export default function ExperienceFormModal({
         />
         <div className="bg-[#0f111a] w-full max-w-[1200px] max-h-[90vh] overflow-y-auto rounded-[24px] border border-white/10 p-8 shadow-2xl scrollbar-thin scrollbar-thumb-[#2c2f48]">
           <h2 className="text-white text-2xl font-bold mb-8">
-            {initialData
+            {isEditing
               ? 'Edición de experiencia laboral'
               : 'Registro de experiencia laboral'}
           </h2>
@@ -251,17 +281,35 @@ export default function ExperienceFormModal({
                       Nombre de la empresa *
                     </label>
                     <input
-                      className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm"
+                      className={`w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white outline-none focus:border-[#6c63ff] text-sm ${
+                        isEditing ? 'opacity-75 cursor-not-allowed' : ''
+                      }`}
                       placeholder="Ej. Microsoft, Freelance..."
                       value={formData.nombreEmpresa}
+                      readOnly={isEditing}
                       onChange={(e) =>
-                        setFormData({ ...formData, nombreEmpresa: e.target.value })
+                        setFormData({
+                          ...formData,
+                          nombreEmpresa: e.target.value,
+                        })
                       }
-                      onBlur={(e) => handleBlur('nombreEmpresa', e.target.value)}
+                      onBlur={(e) =>
+                        handleBlur('nombreEmpresa', e.target.value)
+                      }
+                      title={
+                        isEditing
+                          ? 'El nombre de la empresa no se puede modificar para preservar la integridad del historial.'
+                          : ''
+                      }
                     />
                     {errors.nombreEmpresa && (
                       <p className="text-red-400 text-xs mt-1">
                         {errors.nombreEmpresa}
+                      </p>
+                    )}
+                    {isEditing && (
+                      <p className="text-[#9ca3af] text-[10px] mt-1 italic">
+                        El nombre de la empresa no se puede editar.
                       </p>
                     )}
                   </div>
@@ -279,7 +327,9 @@ export default function ExperienceFormModal({
                       onBlur={(e) => handleBlur('cargo', e.target.value)}
                     />
                     {errors.cargo && (
-                      <p className="text-red-400 text-xs mt-1">{errors.cargo}</p>
+                      <p className="text-red-400 text-xs mt-1">
+                        {errors.cargo}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -302,7 +352,9 @@ export default function ExperienceFormModal({
                 </h3>
                 <div className="mb-4">
                   <div className="flex justify-between mb-2">
-                    <label className="text-[#9ca3af] text-sm">Descripción *</label>
+                    <label className="text-[#9ca3af] text-sm">
+                      Descripción *
+                    </label>
                     <span className="text-[#6b7280] text-xs">
                       {formData.descripcion.length}/1000
                     </span>
@@ -317,38 +369,126 @@ export default function ExperienceFormModal({
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <label className="text-[#9ca3af] text-sm">
-                        Funciones Principales *
-                      </label>
-                      <span className="text-[#6b7280] text-xs">
-                        {arrayToBullets(formData.funcionesPrincipales).length - 2}
-                        /1000
-                      </span>
-                    </div>
-                    <textarea
-                      className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white text-sm focus:border-[#6c63ff] outline-none resize-none leading-relaxed min-h-[90px] max-h-[120px] overflow-y-auto"
-                      value={arrayToBullets(formData.funcionesPrincipales)}
-                      onChange={(e) => handleListTextareaChange(e, 'funcionesPrincipales')}
-                      onKeyDown={handleListKeyDown}
-                    />
+                {/* ── Funciones Principales (dinámico) ──────── */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-[#9ca3af] text-sm">
+                      Funciones Principales
+                    </label>
+                    <span className="text-[#6b7280] text-xs">Opcional</span>
                   </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <label className="text-[#9ca3af] text-sm">Logros *</label>
-                      <span className="text-[#6b7280] text-xs">
-                        {arrayToBullets(formData.logros).length - 2}/1000
-                      </span>
+                  {formData.funcionesPrincipales?.map((func, idx) => (
+                    <div key={idx} className="flex gap-2 items-center mb-2">
+                      <input
+                        className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#6c63ff] outline-none"
+                        placeholder={`Función ${idx + 1}`}
+                        value={func}
+                        onChange={(e) =>
+                          handleFuncionChange(idx, e.target.value)
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeFuncion(idx)}
+                        className="p-2 text-[#9ca3af] hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                        aria-label="Eliminar función"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
                     </div>
-                    <textarea
-                      className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3.5 text-white text-sm focus:border-[#6c63ff] outline-none resize-none leading-relaxed min-h-[90px] max-h-[120px] overflow-y-auto"
-                      value={arrayToBullets(formData.logros)}
-                      onChange={(e) => handleListTextareaChange(e, 'logros')}
-                      onKeyDown={handleListKeyDown}
-                    />
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addFuncion}
+                    className="flex items-center gap-1.5 text-[#9ca3af] hover:text-white text-xs font-medium mt-1 group transition-colors"
+                  >
+                    <span className="w-5 h-5 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                    </span>
+                    Agregar función
+                  </button>
+                </div>
+
+                {/* ── Logros (dinámico) ──────────────────────── */}
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-[#9ca3af] text-sm">Logros</label>
+                    <span className="text-[#6b7280] text-xs">Opcional</span>
                   </div>
+                  {formData.logros?.map((logro, idx) => (
+                    <div key={idx} className="flex gap-2 items-center mb-2">
+                      <input
+                        className="w-full bg-[#1a1c29] border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#6c63ff] outline-none"
+                        placeholder={`Logro ${idx + 1}`}
+                        value={logro}
+                        onChange={(e) => handleLogroChange(idx, e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeLogro(idx)}
+                        className="p-2 text-[#9ca3af] hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                        aria-label="Eliminar logro"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addLogro}
+                    className="flex items-center gap-1.5 text-[#9ca3af] hover:text-white text-xs font-medium mt-1 group transition-colors"
+                  >
+                    <span className="w-5 h-5 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                    </span>
+                    Agregar logro
+                  </button>
                 </div>
               </section>
             </div>
@@ -378,7 +518,9 @@ export default function ExperienceFormModal({
                     onBlur={(e) => handleBlur('correoJefe', e.target.value)}
                   />
                   {errors.correoJefe && (
-                    <p className="text-red-400 text-xs mt-1">{errors.correoJefe}</p>
+                    <p className="text-red-400 text-xs mt-1">
+                      {errors.correoJefe}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -392,7 +534,9 @@ export default function ExperienceFormModal({
                     className="w-full bg-[#0f111a] border border-white/10 rounded-xl p-3.5 text-white text-sm focus:border-[#6c63ff] outline-none"
                   />
                   {errors.numeroJefe && (
-                    <p className="text-red-400 text-xs mt-1">{errors.numeroJefe}</p>
+                    <p className="text-red-400 text-xs mt-1">
+                      {errors.numeroJefe}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -414,7 +558,9 @@ export default function ExperienceFormModal({
                     onBlur={(e) => handleBlur('cargoJefe', e.target.value)}
                   />
                   {errors.cargoJefe && (
-                    <p className="text-red-400 text-xs mt-1">{errors.cargoJefe}</p>
+                    <p className="text-red-400 text-xs mt-1">
+                      {errors.cargoJefe}
+                    </p>
                   )}
                 </div>
               </div>
@@ -446,7 +592,7 @@ export default function ExperienceFormModal({
         </div>
       </div>
 
-      {/* ─── Modal de advertencia por duplicidad ─────────── */}
+      {/* Modal de advertencia por duplicidad */}
       {showDuplicateWarning && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-[#1a1c29] border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">

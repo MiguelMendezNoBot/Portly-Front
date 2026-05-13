@@ -9,15 +9,19 @@ interface SkillCardProps {
   onDelete: () => void;
 }
 
-export default function SkillCard({ skill, mode, onEdit, onDelete }: SkillCardProps) {
+export default function SkillCard({
+  skill,
+  mode,
+  onEdit,
+  onDelete,
+}: SkillCardProps) {
   const isCardClickable = mode !== null;
 
-  // Clase del borde según el modo
   const borderClass = !isCardClickable
     ? 'border-white/5 hover:border-[#6b72ff]/40'
     : mode === 'edit'
-    ? 'border-[#6b72ff]/40 hover:border-[#6b72ff]/70'
-    : 'border-red-500/40 hover:border-red-500/70'; // delete
+      ? 'border-[#6b72ff]/40 hover:border-[#6b72ff]/70'
+      : 'border-red-500/40 hover:border-red-500/70';
 
   const handleCardClick = () => {
     if (!isCardClickable) return;
@@ -28,28 +32,48 @@ export default function SkillCard({ skill, mode, onEdit, onDelete }: SkillCardPr
   return (
     <div
       onClick={handleCardClick}
-      className={`relative bg-[#1a1a2e] rounded-2xl border transition-all duration-300 shadow-md grid grid-cols-[36px_1fr_1px_130px] items-stretch ${
+      className={`relative group bg-[#1a1a2e] rounded-2xl border transition-all duration-300 shadow-md grid grid-cols-[36px_1fr_1px_130px] items-stretch ${
         isCardClickable ? 'cursor-pointer' : ''
       } ${borderClass}`}
     >
-      {/* Columna izquierda con icono de modo (con fondo) */}
+      {/* Columna izquierda con icono de modo (aparece solo al hover) */}
       <div className="flex items-center justify-center pl-1">
-        {mode === 'edit' && (
-          <div className="w-7 h-7 rounded-full bg-[#6b72ff]/20 flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9BEFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-              <path d="m15 5 4 4" />
-            </svg>
+        {mode && (
+          <div
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-opacity duration-200 opacity-0 group-hover:opacity-100 ${
+              mode === 'edit' ? 'bg-[#6b72ff]/20' : 'bg-red-500/20'
+            }`}
+          >
+            {mode === 'edit' ? (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#C9BEFF"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            ) : (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#f87171"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+              </svg>
+            )}
           </div>
         )}
-        {mode === 'delete' && (
-          <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-            </svg>
-          </div>
-        )}
-        {/* Si mode es null no se muestra nada */}
       </div>
 
       {/* Ícono + Nombre */}
