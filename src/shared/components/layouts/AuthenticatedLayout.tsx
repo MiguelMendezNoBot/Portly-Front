@@ -20,6 +20,10 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     title: 'Mis portafolios',
     subtitle: 'Puedes visualizar tus portafolios creados, editarlos y crear nuevos',
   },
+  '/explorar': {
+    title: 'Explorar',
+    subtitle: 'Descubre portafolios públicos de profesionales',
+  },
   '/professional-profile': {
     title: 'Perfil profesional',
     subtitle:
