@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { UserTab } from '../components/UserTab';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
+import ExplorePage from '../../../explore/presentation/pages/ExplorePage';
 import PestanaEsquina from '../../../../shared/components/CornerTab';
 import { Toast } from '../../../../shared/components/Toast';
 import { useToast } from '../../../../shared/hooks/useToast';
@@ -9,6 +11,9 @@ import { useToast } from '../../../../shared/hooks/useToast';
 export const HomePage = () => {
   const { toast, showToast } = useToast();
   const toastShown = useRef(false);
+  const location = useLocation();
+
+  const isExplore = location.pathname.startsWith('/explorar');
 
   useEffect(() => {
     if (toastShown.current) return;
@@ -48,9 +53,13 @@ export const HomePage = () => {
           <UserTab />
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden pt-20 sm:pt-0 scrollbar-thin">
-          <Navbar />
-          <HeroSection />
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pt-20 sm:pt-0 scrollbar-thin [scrollbar-gutter:stable]">
+          <div className="max-w-7xl mx-auto w-full">
+            <Navbar />
+            <div className="px-8 pb-10">
+              {isExplore ? <ExplorePage /> : <HeroSection />}
+            </div>
+          </div>
         </div>
       </div>
     </div>

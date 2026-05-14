@@ -18,6 +18,7 @@ import ProfessionalsPage from '../modules/professionals/presentation/pages/Profe
 import PublicProfessionalDetailPage from '../modules/professionals/presentation/pages/PublicProfessionalDetailPage';
 import PortfoliosPage from '../modules/portfolios/presentation/pages/PortfoliosPage';
 import PortfolioPublicPage from '../modules/portfolios/presentation/pages/PortfolioPublicPage';
+import ExplorePage from '../modules/explore/presentation/pages/ExplorePage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -68,6 +69,10 @@ export const AppRouter = () => {
 
         {/* Portafolio renderizado (Público) */}
         <Route path="/p/:portfolioId" element={<PortfolioPublicPage />} />
+
+        {/* Explorar portafolios (Público, integrado en HomePage) */}
+        <Route path="/explorar" element={<HomePage />} />
+        <Route path="/explorar/:portfolioId" element={<HomePage />} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

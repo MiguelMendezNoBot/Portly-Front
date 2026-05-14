@@ -80,6 +80,19 @@ const icons = {
       <path d="M7 16l4-4 4 4 4-6" />
     </svg>
   ),
+  compass: (
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+    </svg>
+  ),
   badge: (
     <svg
       width="18"
