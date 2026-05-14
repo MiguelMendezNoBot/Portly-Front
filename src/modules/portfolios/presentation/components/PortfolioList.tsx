@@ -85,7 +85,7 @@ export default function PortfolioList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto pr-1">
+    <div className="space-y-6 overflow-y-auto pr-1">
       {portfolios.map((p) => {
         const isDeleteMode = mode === 'delete';
         const isPublishMode = mode === 'publish';
@@ -97,7 +97,7 @@ export default function PortfolioList({
               else if (isPublishMode && onPublish) onPublish(p);
               else if (onClick) onClick(p);
             }}
-            className={`group relative rounded-2xl p-4 transition-all border flex flex-col gap-4 ${
+            className={`group relative rounded-2xl p-6 transition-all border flex flex-col gap-6 ${
               isDeleteMode
                 ? 'bg-[#1a1c29] border-red-500/40 cursor-pointer hover:bg-red-500/5 hover:border-red-500/60'
                 : isPublishMode
@@ -109,20 +109,19 @@ export default function PortfolioList({
           >
             {isDeleteMode && (
               <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                <div className="p-2 bg-red-500 rounded-lg text-white shadow-lg shadow-red-500/30 transform group-hover:scale-110 transition-transform flex items-center justify-center">
+                <div className="p-2 bg-red-500/20 rounded-lg text-red-400 transform group-hover:scale-110 transition-transform flex items-center justify-center">
                   <svg
-                    width="18"
-                    height="18"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.5"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
                     <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    <line x1="10" y1="11" x2="10" y2="17" />
-                    <line x1="14" y1="11" x2="14" y2="17" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
                 </div>
               </div>
@@ -171,67 +170,79 @@ export default function PortfolioList({
               </div>
             )}
 
-            {/* Preview Image */}
-            <div className="relative aspect-video rounded-xl bg-[#0f111a] border border-white/5 overflow-hidden shrink-0">
-              {p.previewImageUrl ? (
-                <img
-                  src={p.previewImageUrl}
-                  alt={p.nombre}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1d2e] to-[#0f111a]">
-                  <svg
-                    width="40"
-                    height="40"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#7c6bec30"
-                    strokeWidth="1"
-                  >
-                    <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
-                  </svg>
-                </div>
-              )}
-              
-              {p.visibilidad === 'PUBLICO' && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                  <button
-                    onClick={(e) => handleCopyLink(e, p)}
-                    className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/80 border border-white/20 rounded-full backdrop-blur-sm text-white text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
-                    title="Copiar enlace público"
-                  >
-                    {copiedId === p.id ? (
-                      <>
-                        <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-emerald-400 font-bold">Enlace copiado</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
-                        Copiar enlace
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-white text-base font-bold truncate pr-2">
-                  {p.nombre}
-                </h3>
-                <VisibilityBadge value={p.visibilidad} />
+            {/* Body */}
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-stretch">
+              {/* Contenido previo (Preview Image) */}
+              <div className="relative aspect-video w-full md:w-[280px] rounded-xl bg-[#0f111a] border border-white/5 overflow-hidden shrink-0">
+                {p.previewImageUrl ? (
+                  <img
+                    src={p.previewImageUrl}
+                    alt={p.nombre}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1d2e] to-[#0f111a]">
+                    <svg
+                      width="40"
+                      height="40"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#7c6bec30"
+                      strokeWidth="1"
+                    >
+                      <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
+                    </svg>
+                  </div>
+                )}
+                
+                {p.visibilidad === 'PUBLICO' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <button
+                      onClick={(e) => handleCopyLink(e, p)}
+                      className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/80 border border-white/20 rounded-full backdrop-blur-sm text-white text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+                      title="Copiar enlace público"
+                    >
+                      {copiedId === p.id ? (
+                        <>
+                          <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-emerald-400 font-bold">Enlace copiado</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          Copiar enlace
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
-              <p className="text-[#6b7280] text-[11px] uppercase tracking-widest font-semibold">
-                ID: {p.id.slice(0, 8)}...
-              </p>
+
+              {/* Info & Content */}
+              <div className="flex-1 min-w-0 py-2 flex flex-col justify-center">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#7c6bec]/15 flex items-center justify-center text-[#8e80f5] shrink-0 border border-white/5">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white text-xl font-bold pr-2 truncate">
+                      {p.nombre}
+                    </h3>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <VisibilityBadge value={p.visibilidad} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Copiar enlace si es público se movió de vuelta a la imagen o se quita de aquí para no estar duplicado. Como está en la imagen, podemos ocultarlo aquí, o lo dejamos como respaldo. Como lo pusimos en la imagen, lo quitamos de aquí. */}
+              </div>
             </div>
           </div>
         );
