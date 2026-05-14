@@ -7,6 +7,7 @@ import DeletePortfolioModal from '../components/DeletePortfolioModal';
 import PublishSuccessModal from '../components/PublishSuccessModal';
 import { ConfirmModal } from '../../../../shared/components/ConfirmModal';
 import type { Portfolio } from '../../domain/entities/Portfolio';
+import ViewPortfolioListModal from '../components/ViewPortfolioListModal';
 
 // Toast local simple
 function useLocalToast() {
@@ -55,6 +56,9 @@ export default function PortfoliosPage() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishedPortfolio, setPublishedPortfolio] =
     useState<Portfolio | null>(null);
+
+  // List Modal flow
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
 
   const { toast, show: showToast } = useLocalToast();
 
@@ -235,6 +239,37 @@ export default function PortfoliosPage() {
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                 </svg>
                 Publicar
+              </button>
+            )}
+
+            {/* Visualizar Listado */}
+            {portfolios.length > 0 && (
+              <button
+                onClick={() => {
+                  setIsListModalOpen(true);
+                  setMode(null);
+                  setPublishPhase(false);
+                }}
+                className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                Visualizar Listado
               </button>
             )}
 
@@ -507,6 +542,13 @@ export default function PortfoliosPage() {
           {toast.msg}
         </div>
       )}
+
+      {/* Modal de Vista de Lista */}
+      <ViewPortfolioListModal
+        isOpen={isListModalOpen}
+        onClose={() => setIsListModalOpen(false)}
+        portfolios={portfoliosWithPreviews}
+      />
     </div>
   );
 }
