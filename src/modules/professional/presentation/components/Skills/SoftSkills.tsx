@@ -2,6 +2,7 @@ import { useState } from 'react';
 import SoftSkillsModal, { SOFT_SKILLS_CATALOG } from './SoftSkillsModal';
 import { useSoftSkills } from '../../../application/useSoftSkills';
 import DeleteSkillConfirmModal from './DeleteSkillConfirmModal';
+import ViewSoftSkillsModal from './ViewSoftSkillsModal';
 
 type ActionMode = 'delete' | null;
 
@@ -25,8 +26,9 @@ const TrashIcon = () => (
 export const SoftSkills = () => {
   const { skills, loading, addSkill, deleteSkill } = useSoftSkills();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [mode, setMode] = useState<ActionMode>(null);
-  
+
   // For deletion modal
   const [deletingSkill, setDeletingSkill] = useState<{ id: number, name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -96,17 +98,39 @@ export const SoftSkills = () => {
           </button>
 
           {skills.length > 0 && (
-            <button
-              onClick={() => setMode(prev => (prev === 'delete' ? null : 'delete'))}
-              className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                mode === 'delete'
-                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
-                  : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
-              }`}
-            >
-              <TrashIcon />
-              Eliminar
-            </button>
+            <>
+              {/* Visualizar */}
+              <button
+                onClick={() => setIsViewModalOpen(true)}
+                className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Visualizar
+              </button>
+
+              <button
+                onClick={() => setMode(prev => (prev === 'delete' ? null : 'delete'))}
+                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${mode === 'delete'
+                    ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                    : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
+                  }`}
+              >
+                <TrashIcon />
+                Eliminar
+              </button>
+            </>
           )}
         </div>
 
@@ -141,7 +165,7 @@ export const SoftSkills = () => {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col divide-y divide-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {skills.map((skill) => {
               const icon = getIcon(skill.nombreHabilidad);
               const isDeleteMode = mode === 'delete';
@@ -153,31 +177,31 @@ export const SoftSkills = () => {
                       setDeletingSkill({ id: skill.id, name: skill.nombreHabilidad });
                     }
                   }}
-                  className={`group flex items-center justify-between py-3 px-2 first:pt-2 last:pb-2 transition-all duration-200 ${
-                    isDeleteMode 
-                      ? 'cursor-pointer hover:bg-red-500/10 rounded-lg'
-                      : ''
+                  className={`relative group bg-[#1a1a2e] rounded-2xl border transition-all duration-300 shadow-md flex items-center p-3 gap-3 ${
+                    isDeleteMode
+                      ? 'cursor-pointer border-red-500/40 hover:border-red-500/70'
+                      : 'border-white/5 hover:border-[#6b72ff]/40'
                   }`}
                 >
-                  {/* Ícono del catálogo + nombre */}
-                  <div className="flex items-center gap-3">
-                    <span className={`flex-shrink-0 transition-colors duration-200 ${
-                      isDeleteMode ? 'text-[#6b72ff] group-hover:text-red-400' : 'text-[#6b72ff] group-hover:text-[#a092ec]'
-                    }`}>
-                      {icon}
-                    </span>
-                    <span className={`text-sm font-medium transition-colors duration-200 ${
-                      isDeleteMode ? 'text-[#d1d5db] group-hover:text-red-300' : 'text-[#d1d5db] group-hover:text-white'
-                    }`}>
-                      {skill.nombreHabilidad}
-                    </span>
+                  {/* Ícono del catálogo */}
+                  <div className={`w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-white/5 flex-shrink-0 transition-colors duration-200 ${
+                    isDeleteMode ? 'text-[#6b72ff] group-hover:text-red-400' : 'text-[#6b72ff] group-hover:text-[#a092ec]'
+                  }`}>
+                    {icon}
                   </div>
 
-                  {/* Icono de papelera en la derecha en modo eliminar (siempre visible) */}
+                  {/* Nombre */}
+                  <h3 className={`text-sm font-bold truncate transition-colors duration-200 ${
+                    isDeleteMode ? 'text-[#d1d5db] group-hover:text-red-300' : 'text-white'
+                  }`}>
+                    {skill.nombreHabilidad}
+                  </h3>
+
+                  {/* Icono de modo (solo en hover si es delete mode) */}
                   {isDeleteMode && (
-                    <span className="text-red-400 mr-2">
+                    <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0 ml-auto">
                       <TrashIcon />
-                    </span>
+                    </div>
                   )}
                 </div>
               );
@@ -199,6 +223,12 @@ export const SoftSkills = () => {
         onConfirm={handleConfirmDelete}
         skillName={deletingSkill?.name || ''}
         isLoading={isDeleting}
+      />
+
+      <ViewSoftSkillsModal
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+        skills={skills as any}
       />
     </>
   );
