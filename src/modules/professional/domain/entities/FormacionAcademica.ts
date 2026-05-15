@@ -4,8 +4,7 @@ export interface FormacionAcademica {
   idFormacionAcademica?: number;
   institucion: string;
   carrera: string;
-  fechaInicio: string;       // LocalDate → "YYYY-MM-DD"
-  fechaFinalizacion: string | null;
+  fechaEgreso: string | null;
   actualmenteEstudiando: boolean;
   descripcion: string;
   nivel: string;
@@ -15,8 +14,7 @@ export interface FormacionAcademica {
 export interface FormacionAcademicaRequest {
   institucion: string;
   carrera: string;
-  fechaInicio: string;
-  fechaFinalizacion: string | null;
+  fechaEgreso: string | null;
   actualmenteEstudiando: boolean;
   descripcion: string;
   nivel: string;
