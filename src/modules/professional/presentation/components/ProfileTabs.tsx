@@ -4,6 +4,7 @@ import SkillsSection from './SkillsSection';
 import ProjectsSection from './ProjectsSection';
 import TrayectoriaProfesional from './trajectory/ProfessionalExperienceSection';
 import FormacionAcademicaSection from './trajectory/FormacionAcademicaSection';
+import ActualizacionAcademicaSection from './trajectory/ActualizacionAcademicaSection';
 import { TechnicalSkills } from './Skills/TechnicalSkills';
 import { SoftSkills } from './Skills/SoftSkills';
 
@@ -12,6 +13,7 @@ type TabType =
   | 'habilidadesBlandas'
   | 'trayectoria'
   | 'formacion'
+  | 'actualizacion'
   | 'proyectos';
 
 export default function ProfileTabs() {
@@ -22,6 +24,7 @@ export default function ProfileTabs() {
     { id: 'habilidadesBlandas', label: 'Habilidades Blandas' },
     { id: 'trayectoria', label: 'Trayectoria Profesional' },
     { id: 'formacion', label: 'Formación Académica' },
+    { id: 'actualizacion', label: 'Actualización Académica' },
     { id: 'proyectos', label: 'Proyectos' },
   ] as const;
 
@@ -51,6 +54,7 @@ export default function ProfileTabs() {
         {activeTab === 'habilidadesBlandas' && <SoftSkills />}
         {activeTab === 'trayectoria' && <TrayectoriaProfesional />}
         {activeTab === 'formacion' && <FormacionAcademicaSection />}
+        {activeTab === 'actualizacion' && <ActualizacionAcademicaSection />}
         {activeTab === 'proyectos' && <ProjectsSection />}
       </div>
     </div>
