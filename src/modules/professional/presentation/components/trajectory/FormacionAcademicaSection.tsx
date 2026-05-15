@@ -337,10 +337,7 @@ export default function FormacionAcademicaSection() {
                   {rec.institucion}
                 </p>
                 <p className="text-[#A8E8FF] text-sm font-medium">
-                  • {formatDate(rec.fechaInicio)} –{' '}
-                  {rec.actualmenteEstudiando
-                    ? 'Presente'
-                    : formatDate(rec.fechaFinalizacion)}
+                  • {rec.actualmenteEstudiando ? 'En curso' : formatDate(rec.fechaEgreso)}
                 </p>
                 {rec.descripcion && (
                   <p className="text-[#9ca3af] text-sm mt-3 leading-relaxed">

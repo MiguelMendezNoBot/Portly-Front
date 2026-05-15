@@ -19,7 +19,9 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
 
   const sorted = useMemo(() => {
     return [...records].sort((a, b) => {
-      const diff = a.fechaInicio.localeCompare(b.fechaInicio);
+      const dateA = a.fechaEgreso ?? '';
+      const dateB = b.fechaEgreso ?? '';
+      const diff = dateA.localeCompare(dateB);
       return sortOrder === 'asc' ? diff : -diff;
     });
   }, [records, sortOrder]);
@@ -90,8 +92,7 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
               )}
               <p className="text-[#A8E8FF] text-xs font-medium mt-1">{rec.institucion}</p>
               <p className="text-[#A8E8FF] text-xs font-medium">
-                • {formatDate(rec.fechaInicio)} –{' '}
-                {rec.actualmenteEstudiando ? 'Presente' : formatDate(rec.fechaFinalizacion)}
+                • {rec.actualmenteEstudiando ? 'En curso' : formatDate(rec.fechaEgreso)}
               </p>
               {rec.descripcion && (
                 <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed">{rec.descripcion}</p>

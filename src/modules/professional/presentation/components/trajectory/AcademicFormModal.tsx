@@ -4,17 +4,14 @@ import { FormacionAcademica, FormacionAcademicaRequest } from '../../../domain/e
 export type { FormacionAcademica };
 
 export const NIVELES = [
-  'Bachillerato',
-  'Técnico',
-  'Tecnólogo',
+  'Técnico superior',
+  'Técnico medio',
   'Licenciatura',
-  'Ingeniería',
-  'Maestría',
+  'Maestria',
   'Doctorado',
   'Postdoctorado',
-  'Certificación',
-  'Curso',
-  'Otro',
+  'Especialidad',
+  
 ];
 
 interface Props {
@@ -28,8 +25,7 @@ interface Props {
 interface FormState {
   institucion: string;
   carrera: string;
-  fechaInicio: string;
-  fechaFinalizacion: string;
+  fechaEgreso: string;
   actualmenteEstudiando: boolean;
   descripcion: string;
   nivel: string;
@@ -38,8 +34,7 @@ interface FormState {
 const EMPTY_FORM: FormState = {
   institucion: '',
   carrera: '',
-  fechaInicio: '',
-  fechaFinalizacion: '',
+  fechaEgreso: '',
   actualmenteEstudiando: false,
   descripcion: '',
   nivel: '',
@@ -75,8 +70,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
       setFormData({
         institucion: initialData.institucion,
         carrera: initialData.carrera,
-        fechaInicio: initialData.fechaInicio ?? '',
-        fechaFinalizacion: initialData.fechaFinalizacion ?? '',
+        fechaEgreso: initialData.fechaEgreso ?? '',
         actualmenteEstudiando: initialData.actualmenteEstudiando,
         descripcion: initialData.descripcion ?? '',
         nivel: initialData.nivel ?? '',
@@ -111,19 +105,11 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
       newErrors.carrera = 'El texto no puede superar los 100 caracteres.';
     }
 
-    if (!formData.fechaInicio) {
-      newErrors.fechaInicio = 'La fecha de inicio es obligatoria.';
-    } else if (formData.fechaInicio > today) {
-      newErrors.fechaInicio = 'No se puede elegir una fecha mayor a la fecha actual.';
-    }
-
     if (!formData.actualmenteEstudiando) {
-      if (!formData.fechaFinalizacion) {
-        newErrors.fechaFinalizacion = 'Indica la fecha de finalización o marca "Aún no lo finalicé".';
-      } else if (formData.fechaFinalizacion > today) {
-        newErrors.fechaFinalizacion = 'No se puede elegir una fecha mayor a la fecha actual.';
-      } else if (formData.fechaInicio && formData.fechaFinalizacion < formData.fechaInicio) {
-        newErrors.fechaFinalizacion = 'No se puede elegir una fecha de finalización menor que la fecha de inicio.';
+      if (!formData.fechaEgreso) {
+        newErrors.fechaEgreso = 'Indica la fecha de egreso o marca "Aún no lo finalicé".';
+      } else if (formData.fechaEgreso > today) {
+        newErrors.fechaEgreso = 'No se puede elegir una fecha mayor a la fecha actual.';
       }
     }
 
@@ -145,8 +131,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
   const buildRequest = (): FormacionAcademicaRequest => ({
     institucion: formData.institucion.trim(),
     carrera: formData.carrera.trim(),
-    fechaInicio: formData.fechaInicio,
-    fechaFinalizacion: formData.actualmenteEstudiando ? null : formData.fechaFinalizacion || null,
+    fechaEgreso: formData.actualmenteEstudiando ? null : formData.fechaEgreso || null,
     actualmenteEstudiando: formData.actualmenteEstudiando,
     descripcion: formData.descripcion.trim(),
     nivel: formData.nivel,
@@ -235,6 +220,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
               </span>
               <input
                 id="ac-institucion"
+                disabled={isEditing}
                 className={`w-full bg-[#1a1c29] border ${errors.institucion ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
                 placeholder="Ej. Universidad Complutense"
                 value={formData.institucion}
@@ -258,6 +244,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
             <div className="relative">
               <select
                 id="ac-nivel"
+                disabled={isEditing}
                 className={`w-full bg-[#1a1c29] border ${errors.nivel ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-white text-sm outline-none focus:border-[#6c63ff] transition-colors appearance-none cursor-pointer`}
                 value={formData.nivel}
                 onChange={(e) => {
@@ -299,6 +286,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
               </span>
               <input
                 id="ac-carrera"
+                disabled={isEditing}
                 className={`w-full bg-[#1a1c29] border ${errors.carrera ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
                 placeholder="Ej. Ingeniería en Sistemas"
                 value={formData.carrera}
@@ -315,55 +303,27 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
           </div>
 
           {/* ── Fechas ── */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Fecha inicio */}
-            <div>
-              <label className="text-[#9ca3af] text-sm block mb-2">
-                Fecha de inicio *
-              </label>
-              <input
-                id="ac-fecha-inicio"
-                type="date"
-                max={today}
-                className={`date-input-ac w-full bg-[#1a1c29] border ${errors.fechaInicio ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-[#9ca3af] text-sm cursor-pointer outline-none focus:border-[#6c63ff] transition-colors`}
-                value={formData.fechaInicio}
-                onChange={(e) => {
-                  setFormData({ ...formData, fechaInicio: e.target.value, fechaFinalizacion: '' });
-                  if (e.target.value) setErrors((prev) => ({ ...prev, fechaInicio: '' }));
-                }}
-              />
-              {errors.fechaInicio && (
-                <p className="text-red-400 text-xs mt-1">{errors.fechaInicio}</p>
-              )}
-            </div>
-
-            {/* Fecha finalización */}
-            <div>
-              <label className="text-[#9ca3af] text-sm block mb-2">
-                Fecha de finalización {!formData.actualmenteEstudiando && '*'}
-              </label>
-              <input
-                id="ac-fecha-fin"
-                type="date"
-                disabled={formData.actualmenteEstudiando || !formData.fechaInicio}
-                min={formData.fechaInicio || undefined}
-                max={today}
-                className={`date-input-ac w-full bg-[#1a1c29] border ${errors.fechaFinalizacion ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-[#9ca3af] text-sm disabled:opacity-30 cursor-pointer outline-none focus:border-[#6c63ff] transition-colors`}
-                value={formData.fechaFinalizacion}
-                onChange={(e) => {
-                  setFormData({ ...formData, fechaFinalizacion: e.target.value });
-                  if (e.target.value) setErrors((prev) => ({ ...prev, fechaFinalizacion: '' }));
-                }}
-              />
-              {!formData.fechaInicio && !formData.actualmenteEstudiando && (
-                <p className="text-[#6c63ff] text-[10px] mt-1">
-                  Seleccione fecha de inicio
-                </p>
-              )}
-              {errors.fechaFinalizacion && formData.fechaInicio && !formData.actualmenteEstudiando && (
-                <p className="text-red-400 text-xs mt-1">{errors.fechaFinalizacion}</p>
-              )}
-            </div>
+          <div>
+            <label className="text-[#9ca3af] text-sm block mb-2">
+              Fecha de egreso {!formData.actualmenteEstudiando && '*'}
+            </label>
+            <input
+              id="ac-fecha-egreso"
+              type="date"
+              max={today}
+              disabled={formData.actualmenteEstudiando}
+              className={`date-input-ac w-full bg-[#1a1c29] border ${
+                errors.fechaEgreso ? 'border-red-500' : 'border-white/10'
+              } rounded-xl p-3.5 text-[#9ca3af] text-sm disabled:opacity-30 cursor-pointer outline-none focus:border-[#6c63ff] transition-colors`}
+              value={formData.fechaEgreso}
+              onChange={(e) => {
+                setFormData({ ...formData, fechaEgreso: e.target.value });
+                if (e.target.value) setErrors((prev) => ({ ...prev, fechaEgreso: '' }));
+              }}
+            />
+            {errors.fechaEgreso && !formData.actualmenteEstudiando && (
+              <p className="text-red-400 text-xs mt-1">{errors.fechaEgreso}</p>
+            )}
           </div>
 
           {/* ── Checkbox aún estudiando ── */}
@@ -376,10 +336,10 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
                 setFormData({
                   ...formData,
                   actualmenteEstudiando: e.target.checked,
-                  fechaFinalizacion: e.target.checked ? '' : formData.fechaFinalizacion,
+                  fechaEgreso: e.target.checked ? '' : formData.fechaEgreso,
                 });
                 if (e.target.checked) {
-                  setErrors((prev) => ({ ...prev, fechaFinalizacion: '' }));
+                  setErrors((prev) => ({ ...prev, fechaEgreso: '' }));
                 }
               }}
               className="w-4 h-4 rounded border-white/10 bg-[#1a1c29] accent-[#6c63ff] shrink-0"
