@@ -25,6 +25,216 @@ function useLocalToast() {
   return { toast, show };
 }
 
+// Componente Modal de Compartición (Rediseñado con la identidad de la marca)
+interface SharePortfolioModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  portfolio: Portfolio | null;
+  publicUrl: string;
+}
+
+function SharePortfolioModal({
+  isOpen,
+  onClose,
+  portfolio,
+  publicUrl,
+}: SharePortfolioModalProps) {
+  const [copied, setCopied] = useState(false);
+
+  if (!isOpen || !portfolio) return null;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error('Error al copiar al portapapeles', err);
+    }
+  };
+
+  const shareText = `Te comparto mi portafolio profesional: ${portfolio.nombre}`;
+  const encodedUrl = encodeURIComponent(publicUrl);
+  const encodedText = encodeURIComponent(shareText);
+
+  // Definición de links (Se eliminó X y se prepararon los nuevos)
+  const shareLinks = {
+    whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    email: `mailto:?subject=Portafolio%20Profesional&body=${encodedText}%20${encodedUrl}`,
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/80 backdrop-blur-md animate-fade-in px-4">
+      <div className="bg-[#11111b] border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(124,107,236,0.15)] w-full max-w-md overflow-hidden animate-slide-up relative">
+        {/* Decoración de fondo */}
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#7c6bec]/10 to-transparent pointer-events-none"></div>
+
+        {/* Cabecera */}
+        <div className="flex items-center justify-between p-5 border-b border-white/5 relative z-10">
+          <div className="flex items-center gap-3 text-white">
+            <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+            <h3 className="font-bold text-xl tracking-tight">
+              Compartir portafolio
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-[#9ca3af] hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-xl"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        {/* Contenido */}
+        <div className="p-6 flex flex-col gap-6 relative z-10">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-[#9ca3af]">
+              Enlace público
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-[#0a0a0f] border border-white/10 text-[#C9BEFF] text-sm rounded-xl px-4 py-3 focus:outline-none overflow-hidden text-ellipsis whitespace-nowrap">
+                {publicUrl}
+              </div>
+              <button
+                onClick={handleCopy}
+                className="bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(108,99,255,0.2)] active:scale-95 flex items-center gap-2 shrink-0"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copiar
+              </button>
+            </div>
+            {copied && (
+              <span className="text-emerald-400 text-sm flex items-center gap-1.5 mt-1 font-medium animate-fade-in">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                ¡Enlace copiado al portapapeles!
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <label className="text-sm font-medium text-[#9ca3af] text-center">
+              O comparte directamente en
+            </label>
+            <div className="flex justify-center gap-3 flex-wrap mt-1">
+              {/* WhatsApp */}
+              <a
+                href={shareLinks.whatsapp}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-white/10 transition-all w-[75px]"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#25D366]/20 text-[#25D366] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="font-bold text-lg">W</span>
+                </div>
+                <span className="text-[10px] text-[#9ca3af] group-hover:text-white uppercase font-bold tracking-tighter">
+                  WhatsApp
+                </span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href={shareLinks.facebook}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-white/10 transition-all w-[75px]"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#1877F2]/20 text-[#1877F2] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="font-bold text-lg">F</span>
+                </div>
+                <span className="text-[10px] text-[#9ca3af] group-hover:text-white uppercase font-bold tracking-tighter">
+                  Facebook
+                </span>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href={shareLinks.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-white/10 transition-all w-[75px]"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#0A66C2]/20 text-[#0A66C2] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="font-bold text-lg">L</span>
+                </div>
+                <span className="text-[10px] text-[#9ca3af] group-hover:text-white uppercase font-bold tracking-tighter">
+                  LinkedIn
+                </span>
+              </a>
+
+              {/* Email */}
+              <a
+                href={shareLinks.email}
+                className="group flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-white/10 transition-all w-[75px]"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#a092ec]/20 text-[#a092ec] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <span className="font-bold text-lg">E</span>
+                </div>
+                <span className="text-[10px] text-[#9ca3af] group-hover:text-white uppercase font-bold tracking-tighter">
+                  Email
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PortfoliosPage() {
   const {
     templates,
@@ -41,8 +251,11 @@ export default function PortfoliosPage() {
   } = usePortfolios();
 
   // Mode flow
-  const [mode, setMode] = useState<'delete' | 'preview' | null>(null);
+  const [mode, setMode] = useState<'delete' | 'preview' | 'share' | null>(null);
   const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(
+    null
+  );
+  const [portfolioToShare, setPortfolioToShare] = useState<Portfolio | null>(
     null
   );
   const [isDeleting, setIsDeleting] = useState(false);
@@ -121,6 +334,24 @@ export default function PortfoliosPage() {
     }
   }, [deletePortfolio, portfolioToDelete, showToast]);
 
+  // --- Share handlers ---
+  const handleShareClick = useCallback(
+    (id: string) => {
+      const portfolio = portfolios.find((p) => p.id === id);
+      if (portfolio) {
+        if (portfolio.visibilidad === 'PRIVADO') {
+          showToast(
+            'Debes publicar el portafolio antes de compartirlo',
+            'error'
+          );
+          return;
+        }
+        setPortfolioToShare(portfolio);
+      }
+    },
+    [portfolios, showToast]
+  );
+
   // --- Publish handlers ---
   const handleEnterPublishMode = useCallback(() => {
     setMode(null);
@@ -165,7 +396,15 @@ export default function PortfoliosPage() {
 
   // Active list mode for PortfolioList
   const listMode =
-    mode === 'delete' ? 'delete' : mode === 'preview' ? 'preview' : publishPhase ? 'publish' : null;
+    mode === 'delete'
+      ? 'delete'
+      : mode === 'preview'
+        ? 'preview'
+        : mode === 'share'
+          ? 'share'
+          : publishPhase
+            ? 'publish'
+            : null;
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -208,7 +447,7 @@ export default function PortfoliosPage() {
               Agregar
             </button>
 
-            {/* Publicar — solo si hay portafolios privados */}
+            {/* Publicar */}
             {hasPrivatePortfolios && (
               <button
                 onClick={() => {
@@ -274,7 +513,7 @@ export default function PortfoliosPage() {
             )}
 
             {/* Previsualizar */}
-            {hasPrivatePortfolios && (
+            {portfolios.length > 0 && (
               <button
                 onClick={() => {
                   setMode((prev) => (prev === 'preview' ? null : 'preview'));
@@ -300,6 +539,39 @@ export default function PortfoliosPage() {
                   <circle cx="12" cy="12" r="3" />
                 </svg>
                 Previsualizar
+              </button>
+            )}
+
+            {/* Compartir */}
+            {portfolios.length > 0 && (
+              <button
+                onClick={() => {
+                  setMode((prev) => (prev === 'share' ? null : 'share'));
+                  setPublishPhase(false);
+                }}
+                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                  mode === 'share'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                    : 'border-white/10 text-[#9ca3af] hover:text-emerald-400 hover:border-emerald-500/20'
+                }`}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Compartir
               </button>
             )}
 
@@ -334,6 +606,35 @@ export default function PortfoliosPage() {
             )}
           </div>
         </header>
+
+        {/* Indicador de modo compartir */}
+        {mode === 'share' && portfolios.length > 0 && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            <span>Da click a un portafolio para compartirlo</span>
+            <button
+              onClick={() => setMode(null)}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
 
         {/* Indicador de modo eliminar */}
         {mode === 'delete' && portfolios.length > 0 && (
@@ -432,7 +733,7 @@ export default function PortfoliosPage() {
                   >
                     <circle cx="12" cy="12" r="10" />
                     <line x1="2" y1="12" x2="22" y2="12" />
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                   </svg>
                 </div>
                 <p className="text-white font-semibold">
@@ -450,9 +751,10 @@ export default function PortfoliosPage() {
                 onPublish={handlePublishCardClick}
                 onClick={(p) => {
                   if (listMode === 'preview') {
-                    const previewUrl = p.visibilidad === 'PUBLICO' && p.publicUrl
-                      ? p.publicUrl
-                      : `/p/${p.id}`;
+                    const previewUrl =
+                      p.visibilidad === 'PUBLICO' && p.publicUrl
+                        ? p.publicUrl
+                        : `/p/${p.id}`;
                     window.open(previewUrl, '_blank');
                   }
                 }}
@@ -464,10 +766,22 @@ export default function PortfoliosPage() {
               loading={loadingPortfolios}
               mode={listMode}
               onDelete={handleDeleteClick}
+              onShare={handleShareClick}
+              onClick={(p) => {
+                if (listMode === 'share') handleShareClick(p.id);
+              }}
             />
           )}
         </div>
       </section>
+
+      {/* Modal de Compartición */}
+      <SharePortfolioModal
+        isOpen={!!portfolioToShare}
+        onClose={() => setPortfolioToShare(null)}
+        portfolio={portfolioToShare}
+        publicUrl={portfolioToShare ? getPublicUrl(portfolioToShare) : ''}
+      />
 
       {/* Modal de Creación */}
       <PortfolioFormModal
@@ -478,7 +792,10 @@ export default function PortfoliosPage() {
         templatesError={templatesError}
         creating={creating}
         onCreatePortfolio={handleCreate}
-        existingPortfolios={portfolios.map((p) => ({ nombre: p.nombre, templateId: String(p.templateId) }))}
+        existingPortfolios={portfolios.map((p) => ({
+          nombre: p.nombre,
+          templateId: String(p.templateId),
+        }))}
       />
 
       {/* Modal de Eliminación */}
@@ -514,7 +831,7 @@ export default function PortfoliosPage() {
           >
             <circle cx="12" cy="12" r="10" />
             <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
           </svg>
         }
       />
