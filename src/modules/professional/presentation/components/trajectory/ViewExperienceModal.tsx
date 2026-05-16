@@ -206,24 +206,53 @@ export default function ViewExperienceModal({
                         </ul>
                       </div>
                     )}
-                    {exp.referenciaProfesional && (
-                      <div className="text-[#9ca3af] text-xs">
-                        <p className="text-[#6b7280] text-[10px] font-semibold uppercase tracking-wider mb-1.5">
-                          Referencia profesional
-                        </p>
-                        {exp.referenciaProfesional.correoJefe && (
-                          <p>Email: {exp.referenciaProfesional.correoJefe}</p>
-                        )}
-                        {exp.referenciaProfesional.numeroJefe && (
-                          <p>
-                            Teléfono: {exp.referenciaProfesional.numeroJefe}
+                    {exp.funcionesPrincipales &&
+                      exp.funcionesPrincipales.length > 0 && (
+                        <div>
+                          <p className="text-[#6b7280] text-[10px] font-semibold uppercase tracking-wider mb-1.5">
+                            Funciones principales
                           </p>
-                        )}
-                        {exp.referenciaProfesional.cargoJefe && (
-                          <p>Cargo: {exp.referenciaProfesional.cargoJefe}</p>
-                        )}
+                          <ul className="list-disc list-inside text-[#9ca3af] text-xs space-y-1">
+                            {exp.funcionesPrincipales.map((fn, i) => (
+                              <li key={i}>{fn}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    {exp.logros && exp.logros.length > 0 && (
+                      <div>
+                        <p className="text-[#6b7280] text-[10px] font-semibold uppercase tracking-wider mb-1.5">
+                          Logros
+                        </p>
+                        <ul className="list-disc list-inside text-[#9ca3af] text-xs space-y-1">
+                          {exp.logros.map((logro, i) => (
+                            <li key={i}>{logro}</li>
+                          ))}
+                        </ul>
                       </div>
                     )}
+                    {/* Solo muestra referencia profesional si existe al menos un dato */}
+                    {exp.referenciaProfesional &&
+                      (exp.referenciaProfesional.correoJefe ||
+                        exp.referenciaProfesional.numeroJefe ||
+                        exp.referenciaProfesional.cargoJefe) && (
+                        <div className="text-[#9ca3af] text-xs">
+                          <p className="text-[#6b7280] text-[10px] font-semibold uppercase tracking-wider mb-1.5">
+                            Referencia profesional
+                          </p>
+                          {exp.referenciaProfesional.correoJefe && (
+                            <p>Email: {exp.referenciaProfesional.correoJefe}</p>
+                          )}
+                          {exp.referenciaProfesional.numeroJefe && (
+                            <p>
+                              Teléfono: {exp.referenciaProfesional.numeroJefe}
+                            </p>
+                          )}
+                          {exp.referenciaProfesional.cargoJefe && (
+                            <p>Cargo: {exp.referenciaProfesional.cargoJefe}</p>
+                          )}
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
