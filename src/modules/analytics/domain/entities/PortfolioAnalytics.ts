@@ -9,6 +9,21 @@ export interface PortfolioAnalytics {
   redesSocialesRanking: RankingItem[];
 }
 
+export interface GlobalAnalytics {
+  totalVistas: number;
+  totalClicsProyectos: number;
+  visitantesUnicos: number;
+  duracionTotalSegundos: number;
+  chartSeries: PortfolioChartSeries[];
+}
+
+export interface PortfolioChartSeries {
+  portfolioId: string;
+  portfolioName: string;
+  color: string;
+  data: ChartPoint[];
+}
+
 export interface ChartPoint {
   label: string;
   value: number;

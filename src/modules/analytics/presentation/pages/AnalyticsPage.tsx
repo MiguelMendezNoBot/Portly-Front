@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { usePortfolios } from '../../../portfolios/application/usePortfolios';
 import { usePortfolioAnalytics } from '../../application/usePortfolioAnalytics';
+import { useGlobalAnalytics } from '../../application/useGlobalAnalytics';
 import type { AnalyticsPeriod } from '../../domain/entities/PortfolioAnalytics';
 import { PERIOD_LABELS } from '../../domain/entities/PortfolioAnalytics';
 import PortfolioSelector from '../components/PortfolioSelector';
 import AnalyticsKpiCard from '../components/AnalyticsKpiCard';
 import AnalyticsLineChart from '../components/AnalyticsLineChart';
+import AnalyticsMultiLineChart from '../components/AnalyticsMultiLineChart';
 import AnalyticsRankingTable from '../components/AnalyticsRankingTable';
 
 // ─── KPI Icons (inline SVGs) ──────────────────────────────────────────────────
@@ -67,10 +69,12 @@ const PERIODS: AnalyticsPeriod[] = ['all', '30d', '7d', '24h'];
 
 export default function AnalyticsPage() {
   const { portfolios, loading: loadingPortfolios } = usePortfolios();
+  const [modo, setModo] = useState<'Global' | 'Individual'>('Global');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [period, setPeriod] = useState<AnalyticsPeriod>('24h');
 
-  const { data, loading: loadingAnalytics } = usePortfolioAnalytics(selectedId, period);
+  const { data: indData, loading: indLoading } = usePortfolioAnalytics(selectedId, period);
+  const { data: globalData, loading: globalLoading } = useGlobalAnalytics(period);
 
   // Auto-select first portfolio
   const handlePortfolioChange = (id: string) => setSelectedId(id);
@@ -81,18 +85,27 @@ export default function AnalyticsPage() {
     <div className="flex flex-col gap-6 pt-1 pb-2 animate-fade-in">
       {/* Header with tabs + period filter */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Global / Individual toggle — solo muestra Individual activo */}
+        {/* Global / Individual toggle */}
         <div className="flex items-center gap-0 bg-src-171b28 border border-white/10 rounded-full p-1">
           <button
             type="button"
-            className="px-5 py-2 rounded-full text-sm font-medium text-src-6b7280 hover:text-src-9ca3af transition-colors"
-            disabled
+            onClick={() => setModo('Global')}
+            className={`px-5 py-2 rounded-full text-sm transition-colors ${
+              modo === 'Global'
+                ? 'font-bold bg-white text-src-0f111a shadow-sm'
+                : 'font-medium text-src-6b7280 hover:text-src-9ca3af'
+            }`}
           >
             Global
           </button>
           <button
             type="button"
-            className="px-5 py-2 rounded-full text-sm font-bold bg-white text-src-0f111a shadow-sm"
+            onClick={() => setModo('Individual')}
+            className={`px-5 py-2 rounded-full text-sm transition-colors ${
+              modo === 'Individual'
+                ? 'font-bold bg-white text-src-0f111a shadow-sm'
+                : 'font-medium text-src-6b7280 hover:text-src-9ca3af'
+            }`}
           >
             Individual
           </button>
@@ -117,93 +130,78 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Portfolio selector */}
-      <PortfolioSelector
-        portfolios={portfolios}
-        selectedId={selectedId}
-        onChange={handlePortfolioChange}
-        loading={loadingPortfolios}
-      />
+      {/* Portfolio selector solo en Individual */}
+      {modo === 'Individual' && (
+        <PortfolioSelector
+          portfolios={portfolios}
+          selectedId={selectedId}
+          onChange={handlePortfolioChange}
+          loading={loadingPortfolios}
+        />
+      )}
 
-      {/* Content — show after selecting a portfolio */}
-      {!selectedId ? (
-        <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-src-7c6bec/10 flex items-center justify-center">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              className="text-src-7c6bec"
-            >
-              <path d="M3 3v18h18" />
-              <path d="M7 16l4-4 4 4 4-6" />
-            </svg>
+      {/* Content */}
+      {modo === 'Global' ? (
+        globalLoading ? (
+          <div className="flex items-center justify-center min-h-[300px]">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-2 border-src-7c6bec/30 border-t-src-7c6bec rounded-full animate-spin" />
+              <p className="text-src-6b7280 text-sm">Cargando analíticas globales...</p>
+            </div>
           </div>
-          <p className="text-white font-semibold">Selecciona un portafolio</p>
-          <p className="text-src-5a6278 text-sm max-w-[260px]">
-            Elige un portafolio del selector para ver sus analíticas detalladas.
-          </p>
-        </div>
-      ) : loadingAnalytics ? (
-        <div className="flex items-center justify-center min-h-[300px]">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-2 border-src-7c6bec/30 border-t-src-7c6bec rounded-full animate-spin" />
-            <p className="text-src-6b7280 text-sm">Cargando analíticas...</p>
+        ) : globalData ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <AnalyticsKpiCard icon={icons.vistas} label="Vistas totales" value={formatNumber(globalData.totalVistas)} iconColor="#7c6bec" />
+              <AnalyticsKpiCard icon={icons.clics} label="Clics totales en proyectos" value={formatNumber(globalData.totalClicsProyectos)} iconColor="#3b82f6" />
+              <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos totales" value={formatNumber(globalData.visitantesUnicos)} iconColor="#22c55e" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
+            </div>
+            <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} />
+          </>
+        ) : null
+      ) : (
+        /* Modo Individual */
+        !selectedId ? (
+          <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-src-7c6bec/10 flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-src-7c6bec">
+                <path d="M3 3v18h18" /><path d="M7 16l4-4 4 4 4-6" />
+              </svg>
+            </div>
+            <p className="text-white font-semibold">Selecciona un portafolio</p>
+            <p className="text-src-5a6278 text-sm max-w-[260px]">
+              Elige un portafolio del selector para ver sus analíticas detalladas.
+            </p>
           </div>
-        </div>
-      ) : data ? (
-        <>
-          {/* KPI cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AnalyticsKpiCard
-              icon={icons.vistas}
-              label="Vistas"
-              value={formatNumber(data.totalVistas)}
-              iconColor="#7c6bec"
-            />
-            <AnalyticsKpiCard
-              icon={icons.visitantes}
-              label="Visitantes únicos"
-              value={formatNumber(data.visitantesUnicos)}
-              iconColor="#22c55e"
-            />
-            <AnalyticsKpiCard
-              icon={icons.tiempo}
-              label="Tiempo de visualización"
-              value={formatDuration(data.duracionTotalSegundos)}
-              iconColor="#818cf8"
-            />
+        ) : indLoading ? (
+          <div className="flex items-center justify-center min-h-[300px]">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-2 border-src-7c6bec/30 border-t-src-7c6bec rounded-full animate-spin" />
+              <p className="text-src-6b7280 text-sm">Cargando analíticas...</p>
+            </div>
           </div>
+        ) : indData ? (
+          <>
+            {/* KPI cards individual */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <AnalyticsKpiCard icon={icons.vistas} label="Vistas" value={formatNumber(indData.totalVistas)} iconColor="#7c6bec" />
+              <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos" value={formatNumber(indData.visitantesUnicos)} iconColor="#22c55e" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(indData.duracionTotalSegundos)} iconColor="#818cf8" />
+            </div>
 
-          {/* Chart */}
-          <AnalyticsLineChart
-            title={selectedPortfolio?.nombre || 'Portafolio'}
-            data={data.chartData}
-          />
+            {/* Chart individual */}
+            <AnalyticsLineChart title={selectedPortfolio?.nombre || 'Portafolio'} data={indData.chartData} />
 
-          {/* Rankings side by side */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AnalyticsRankingTable
-              title="Vistas por proyecto"
-              items={data.proyectosRanking}
-              emptyMessage="Sin interacciones en proyectos"
-            />
-            <AnalyticsRankingTable
-              title="Vistas por experiencia"
-              items={data.experienciasRanking}
-              emptyMessage="Sin interacciones en experiencias"
-            />
-            <AnalyticsRankingTable
-              title="Redes Sociales"
-              items={data.redesSocialesRanking}
-              emptyMessage="Sin interacciones en redes"
-            />
-          </div>
-        </>
-      ) : null}
+            {/* Rankings side by side */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <AnalyticsRankingTable title="Vistas por proyecto" items={indData.proyectosRanking} emptyMessage="Sin interacciones en proyectos" />
+              <AnalyticsRankingTable title="Vistas por experiencia" items={indData.experienciasRanking} emptyMessage="Sin interacciones en experiencias" />
+              <AnalyticsRankingTable title="Redes Sociales" items={indData.redesSocialesRanking} emptyMessage="Sin interacciones en redes" />
+            </div>
+          </>
+        ) : null
+      )}
     </div>
   );
 }
