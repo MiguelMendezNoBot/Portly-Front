@@ -226,11 +226,34 @@ export default function ExperienceFormModal({
   const performSave = async () => {
     setIsLoading(true);
     try {
-      // No convertimos a string, enviamos los arrays tal cual los espera el backend
+      // Limpiar datos antes de enviar
+      const cleanedFunciones = (formData.funcionesPrincipales || []).filter(
+        (f) => f.trim() !== ''
+      );
+      const cleanedLogros = (formData.logros || []).filter(
+        (l) => l.trim() !== ''
+      );
+
+      // Si el número es solo el prefijo por defecto, lo enviamos vacío
+      let numeroLimpio = formData.referenciaProfesional.numeroJefe.trim();
+      if (numeroLimpio === '+591' || numeroLimpio === '+591 ') {
+        numeroLimpio = '';
+      }
+
+      const dataToSave: Experience = {
+        ...formData,
+        funcionesPrincipales: cleanedFunciones,
+        logros: cleanedLogros,
+        referenciaProfesional: {
+          ...formData.referenciaProfesional,
+          numeroJefe: numeroLimpio,
+        },
+      };
+
       if (initialData?.id) {
-        await repo.update(formData);
+        await repo.update(dataToSave);
       } else {
-        await repo.save(formData);
+        await repo.save(dataToSave);
       }
       onSuccess();
       onClose();
