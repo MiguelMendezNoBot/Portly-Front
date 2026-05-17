@@ -2,29 +2,36 @@ import { useState, useMemo } from 'react';
 import { ActualizacionAcademica } from '../../../domain/entities/ActualizacionAcademica';
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  records: ActualizacionAcademica[];
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly records: ActualizacionAcademica[];
 }
 
 const formatDate = (dateStr: string | null | undefined): string => {
   if (!dateStr) return '';
   const [year, month] = dateStr.split('-');
   const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-  return `${months[parseInt(month, 10) - 1]} ${year}`;
+  return `${months[Number.parseInt(month, 10) - 1]} ${year}`;
 };
 
 export default function ViewActualizacionAcademicaModal({ isOpen, onClose, records }: Props) {
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  // 'asc' = actualmente A-Z  |  'desc' = actualmente Z-A
+  // El botón muestra la acción SIGUIENTE (lo que hará al hacer clic)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const sorted = useMemo(() => {
     return [...records].sort((a, b) => {
-      const diff = a.fechaInicio.localeCompare(b.fechaInicio);
-      return sortOrder === 'asc' ? diff : -diff;
+      const titleA = (a.titulo ?? '').toLowerCase();
+      const titleB = (b.titulo ?? '').toLowerCase();
+      if (titleA < titleB) return sortOrder === 'asc' ? -1 : 1;
+      if (titleA > titleB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
     });
   }, [records, sortOrder]);
 
   if (!isOpen) return null;
+
+  const isAsc = sortOrder === 'asc';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -35,31 +42,33 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
           <div>
             <h2 className="text-white text-xl font-bold">Actualización Académica</h2>
             <p className="text-[#9ca3af] text-xs mt-0.5">
-              {records.length} registro{records.length !== 1 ? 's' : ''}
+              {records.length} registro{records.length === 1 ? '' : 's'}
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* Botón muestra acción SIGUIENTE: si está en A-Z muestra "Descendente" y viceversa */}
             <button
-              onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+              onClick={() => setSortOrder(isAsc ? 'desc' : 'asc')}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20 transition-all text-xs font-medium"
-              title={sortOrder === 'asc' ? 'Orden ascendente por fecha' : 'Orden descendente por fecha'}
+              title={isAsc ? 'Ordenar Z-A' : 'Ordenar A-Z'}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {sortOrder === 'asc' ? (
-                  <>
-                    <line x1="12" y1="19" x2="12" y2="5" />
-                    <polyline points="5 12 12 5 19 12" />
-                  </>
-                ) : (
+                {isAsc ? (
                   <>
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <polyline points="19 12 12 19 5 12" />
                   </>
+                ) : (
+                  <>
+                    <line x1="12" y1="19" x2="12" y2="5" />
+                    <polyline points="5 12 12 5 19 12" />
+                  </>
                 )}
               </svg>
-              {sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
+              {isAsc ? 'Descendente' : 'Ascendente'}
             </button>
 
+            {/* Cerrar */}
             <button
               onClick={onClose}
               className="p-2 rounded-xl border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20 transition-all"
