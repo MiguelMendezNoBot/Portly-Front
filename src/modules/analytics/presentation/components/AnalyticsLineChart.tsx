@@ -156,13 +156,9 @@ function drawSmoothLine(
 ) {
   if (pts.length < 2) return;
   ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i = 0; i < pts.length - 1; i++) {
-    const xMid = (pts[i].x + pts[i + 1].x) / 2;
-    const yMid = (pts[i].y + pts[i + 1].y) / 2;
-    ctx.quadraticCurveTo(pts[i].x, pts[i].y, xMid, yMid);
+  for (let i = 1; i < pts.length; i++) {
+    ctx.lineTo(pts[i].x, pts[i].y);
   }
-  const last = pts[pts.length - 1];
-  ctx.lineTo(last.x, last.y);
 }
 
 function calculateYAxis(maxVal: number): { niceMax: number, ySteps: number, step: number } {
