@@ -19,6 +19,7 @@ import PublicProfessionalDetailPage from '../modules/professionals/presentation/
 import PortfoliosPage from '../modules/portfolios/presentation/pages/PortfoliosPage';
 import PortfolioPublicPage from '../modules/portfolios/presentation/pages/PortfolioPublicPage';
 import ExplorePage from '../modules/explore/presentation/pages/ExplorePage';
+import AnalyticsPage from '../modules/analytics/presentation/pages/AnalyticsPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -57,7 +58,7 @@ export const AppRouter = () => {
 
         <Route element={<AuthenticatedLayout />}>
           <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
-          <Route path="/analytics" element={<div className="text-white p-8">analytics</div>} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/portfolios" element={<PortfoliosPage />} />
           <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
           <Route path="/visibility" element={<ProfileCompleteRoute element={<VisibilityPage />} />} />
