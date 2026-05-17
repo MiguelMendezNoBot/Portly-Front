@@ -59,9 +59,8 @@ export default function AnalyticsLineChart({
     const values = data.map((d) => d.value);
     const maxVal = Math.max(...values, 1);
 
-    // Round up to nice number for Y axis
-    const niceMax = getNiceMax(maxVal);
-    const ySteps = 4;
+    // Calculate nice round numbers for Y axis
+    const { niceMax, ySteps } = calculateYAxis(maxVal);
 
     // Draw horizontal grid lines + Y labels
     ctx.font = '11px Inter, sans-serif';
@@ -166,16 +165,26 @@ function drawSmoothLine(
   ctx.lineTo(last.x, last.y);
 }
 
-/** Get a nice round max value for the Y axis */
-function getNiceMax(maxVal: number): number {
-  if (maxVal <= 5) return 5;
-  if (maxVal <= 10) return 10;
+function calculateYAxis(maxVal: number): { niceMax: number, ySteps: number, step: number } {
+  if (maxVal <= 0) return { niceMax: 4, ySteps: 4, step: 1 };
+  
   const magnitude = Math.pow(10, Math.floor(Math.log10(maxVal)));
-  const normalized = maxVal / magnitude;
-  if (normalized <= 1.5) return 1.5 * magnitude;
-  if (normalized <= 2) return 2 * magnitude;
-  if (normalized <= 3) return 3 * magnitude;
-  if (normalized <= 5) return 5 * magnitude;
-  if (normalized <= 7.5) return 7.5 * magnitude;
-  return 10 * magnitude;
+  const normalized = maxVal / magnitude; 
+  
+  let step: number;
+  if (normalized <= 1.5) step = 0.2 * magnitude; 
+  else if (normalized <= 3) step = 0.5 * magnitude;
+  else if (normalized <= 6) step = 1 * magnitude;
+  else step = 2 * magnitude;
+
+  step = Math.max(1, Math.ceil(step));
+  
+  const ySteps = Math.ceil(maxVal / step);
+  const finalYSteps = Math.max(3, ySteps);
+  
+  return { 
+    niceMax: finalYSteps * step, 
+    ySteps: finalYSteps, 
+    step 
+  };
 }

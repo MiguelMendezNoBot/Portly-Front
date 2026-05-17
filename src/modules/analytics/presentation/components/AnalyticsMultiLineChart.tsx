@@ -66,8 +66,7 @@ export default function AnalyticsMultiLineChart({
       }
     });
 
-    const niceMax = getNiceMax(maxVal);
-    const ySteps = 4;
+    const { niceMax, ySteps } = calculateYAxis(maxVal);
 
     ctx.font = '11px Inter, sans-serif';
     ctx.textAlign = 'right';
@@ -179,15 +178,26 @@ function drawSmoothLine(
   ctx.lineTo(last.x, last.y);
 }
 
-function getNiceMax(maxVal: number): number {
-  if (maxVal <= 5) return 5;
-  if (maxVal <= 10) return 10;
+function calculateYAxis(maxVal: number): { niceMax: number, ySteps: number, step: number } {
+  if (maxVal <= 0) return { niceMax: 4, ySteps: 4, step: 1 };
+  
   const magnitude = Math.pow(10, Math.floor(Math.log10(maxVal)));
-  const normalized = maxVal / magnitude;
-  if (normalized <= 1.5) return 1.5 * magnitude;
-  if (normalized <= 2) return 2 * magnitude;
-  if (normalized <= 3) return 3 * magnitude;
-  if (normalized <= 5) return 5 * magnitude;
-  if (normalized <= 7.5) return 7.5 * magnitude;
-  return 10 * magnitude;
+  const normalized = maxVal / magnitude; 
+  
+  let step: number;
+  if (normalized <= 1.5) step = 0.2 * magnitude; 
+  else if (normalized <= 3) step = 0.5 * magnitude;
+  else if (normalized <= 6) step = 1 * magnitude;
+  else step = 2 * magnitude;
+
+  step = Math.max(1, Math.ceil(step));
+  
+  const ySteps = Math.ceil(maxVal / step);
+  const finalYSteps = Math.max(3, ySteps);
+  
+  return { 
+    niceMax: finalYSteps * step, 
+    ySteps: finalYSteps, 
+    step 
+  };
 }
