@@ -2,6 +2,7 @@ export interface ExplorePortfolioPropietario {
   nombre: string;
   apellido: string;
   profesion?: string;
+  descripcion?: string;
   avatarUrl?: string;
 }
 
