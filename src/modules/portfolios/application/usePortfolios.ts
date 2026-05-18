@@ -15,6 +15,7 @@ export function usePortfolios() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [unpublishing, setUnpublishing] = useState(false);
 
   const fetchPortfolios = useCallback(async () => {
     setLoading(true);
@@ -77,6 +78,20 @@ export function usePortfolios() {
     []
   );
 
+  const unpublishPortfolio = useCallback(
+    async (id: string): Promise<Portfolio> => {
+      setUnpublishing(true);
+      try {
+        const updated = await repository.unpublish(id);
+        setPortfolios((prev) => prev.map((p) => (p.id === id ? updated : p)));
+        return updated;
+      } finally {
+        setUnpublishing(false);
+      }
+    },
+    []
+  );
+
   return {
     portfolios,
     loading,
@@ -88,5 +103,6 @@ export function usePortfolios() {
     deletePortfolio,
     updateVisibilidad,
     publishPortfolio,
+    unpublishPortfolio,
   };
 }

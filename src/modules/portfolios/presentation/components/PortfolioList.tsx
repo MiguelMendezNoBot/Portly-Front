@@ -1,15 +1,113 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Portfolio } from '../../domain/entities/Portfolio';
 
 interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
-  mode?: 'delete' | 'publish' | 'preview' | 'share' | null;
+  mode?: 'delete' | 'publish' | 'privatize' | 'preview' | 'share' | null;
   onDelete?: (id: string) => void;
   onPublish?: (portfolio: Portfolio) => void;
-  onShare?: (id: string) => void; // Añadido para el modo compartir
+  onPrivatize?: (portfolio: Portfolio) => void;
+  onShare?: (id: string) => void;
   onClick?: (portfolio: Portfolio) => void;
 }
+
+// ── Lazy load hook via IntersectionObserver ───────────────────────────────────
+function useInView(ref: React.RefObject<HTMLDivElement | null>) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [ref]);
+  return inView;
+}
+
+// ── Live Scaled Iframe Component ──────────────────────────────────────────────
+interface LiveIframePreviewProps {
+  portfolioId: string;
+  portfolioName: string;
+}
+
+const SCALE = 0.25;
+const PREVIEW_W = 280; // Ancho del contenedor
+const PREVIEW_H = 157; // Alto del contenedor (280 * 9 / 16 para aspect-video)
+const IFRAME_W = PREVIEW_W / SCALE; // 1120px ancho real
+const IFRAME_H = PREVIEW_H / SCALE; // 628px alto real
+
+function LiveIframePreview({ portfolioId, portfolioName }: LiveIframePreviewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(containerRef);
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full h-full bg-[#0a0a0f] overflow-hidden"
+    >
+      {/* Skeleton mientras carga */}
+      {(!inView || !loaded) && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#1a1d2e] to-[#0f111a] animate-pulse">
+          <div className="w-full h-full p-4 flex flex-col gap-3">
+            <div className="h-6 w-3/4 rounded bg-white/10" />
+            <div className="h-3 w-1/2 rounded bg-white/5" />
+            <div className="h-2.5 w-1/3 rounded bg-white/5" />
+            <div className="flex-1 flex gap-2.5 mt-2">
+              <div className="h-full flex-1 rounded-xl bg-white/5" />
+              <div className="h-full flex-1 rounded-xl bg-white/5" />
+            </div>
+          </div>
+          <svg
+            className="absolute bottom-3 right-3 animate-spin text-[#8e80f5] opacity-50"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          >
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        </div>
+      )}
+
+      {/* Iframe real escalado */}
+      {inView && (
+        <iframe
+          src={`/p/${portfolioId}`}
+          title={`Preview de ${portfolioName}`}
+          onLoad={() => setLoaded(true)}
+          tabIndex={-1}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: IFRAME_W,
+            height: IFRAME_H,
+            transform: `scale(${SCALE})`,
+            transformOrigin: 'top left',
+            border: 'none',
+            pointerEvents: 'none',
+            opacity: loaded ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Rest of components ────────────────────────────────────────────────────────
 
 const EmptyState = () => (
   <div className="flex flex-col items-center justify-center h-full min-h-[240px] gap-4 px-4 text-center">
@@ -57,6 +155,7 @@ export default function PortfolioList({
   mode,
   onDelete,
   onPublish,
+  onPrivatize,
   onShare,
   onClick,
 }: Readonly<PortfolioListProps>) {
@@ -91,6 +190,7 @@ export default function PortfolioList({
       {portfolios.map((p) => {
         const isDeleteMode = mode === 'delete';
         const isPublishMode = mode === 'publish';
+        const isPrivatizeMode = mode === 'privatize';
         const isShareMode = mode === 'share';
         const isPreviewMode = mode === 'preview';
 
@@ -100,6 +200,7 @@ export default function PortfolioList({
             onClick={() => {
               if (isDeleteMode && onDelete) onDelete(p.id);
               else if (isPublishMode && onPublish) onPublish(p);
+              else if (isPrivatizeMode && onPrivatize) onPrivatize(p);
               else if (isShareMode && onShare) onShare(p.id);
               else if (onClick) onClick(p);
             }}
@@ -108,11 +209,13 @@ export default function PortfolioList({
                 ? 'border-red-500/40 hover:bg-red-500/5 hover:border-red-500/60 hover:shadow-[0_0_15px_rgba(239,68,68,0.1)]'
                 : isPublishMode
                   ? 'border-[#7c6bec]/20 hover:bg-[#7c6bec]/10 hover:border-[#7c6bec]/40'
-                  : isShareMode
-                    ? 'border-emerald-500/20 hover:bg-emerald-500/5 hover:border-emerald-500/60 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                    : isPreviewMode
-                      ? 'border-blue-500/20 hover:bg-blue-500/10 hover:border-blue-500/40'
-                      : 'border-white/5 hover:border-[#7c6bec]/30'
+                  : isPrivatizeMode
+                    ? 'border-orange-500/20 hover:bg-orange-500/10 hover:border-orange-500/40'
+                    : isShareMode
+                      ? 'border-emerald-500/20 hover:bg-emerald-500/5 hover:border-emerald-500/60 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+                      : isPreviewMode
+                        ? 'border-blue-500/20 hover:bg-blue-500/10 hover:border-blue-500/40'
+                        : 'border-white/5 hover:border-[#7c6bec]/30'
             }`}
           >
             {/* Ícono de Eliminar (Hover) */}
@@ -136,7 +239,7 @@ export default function PortfolioList({
               </div>
             )}
 
-            {/* Ícono de Compartir (Hover) - NUEVO */}
+            {/* Ícono de Compartir (Hover) */}
             {isShareMode && (
               <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
                 <div className="p-2.5 bg-emerald-500/20 rounded-xl text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow-lg">
@@ -160,7 +263,27 @@ export default function PortfolioList({
               </div>
             )}
 
-            {/* Badges permanentes en otros modos */}
+            {isPrivatizeMode && (
+              <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                <div className="p-2.5 bg-orange-500/20 rounded-xl text-orange-400 border border-orange-500/30 backdrop-blur-md shadow-lg">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {/* Badges en otros modos */}
             {(isPublishMode || isPreviewMode) && (
               <div className="absolute top-4 right-4 z-10 pointer-events-none">
                 <span
@@ -204,27 +327,9 @@ export default function PortfolioList({
 
             {/* Body */}
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-stretch">
+              {/* Contenedor miniatura con Iframe en Vivo */}
               <div className="relative aspect-video w-full md:w-[280px] rounded-xl bg-[#0f111a] border border-white/5 overflow-hidden shrink-0 shadow-inner">
-                {p.previewImageUrl ? (
-                  <img
-                    src={p.previewImageUrl}
-                    alt={p.nombre}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1d2e] to-[#0f111a]">
-                    <svg
-                      width="40"
-                      height="40"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#7c6bec30"
-                      strokeWidth="1"
-                    >
-                      <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
-                    </svg>
-                  </div>
-                )}
+                <LiveIframePreview portfolioId={p.id} portfolioName={p.nombre} />
 
                 {p.visibilidad === 'PUBLICO' &&
                   !isDeleteMode &&
@@ -232,12 +337,12 @@ export default function PortfolioList({
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                       <button
                         onClick={(e) => handleCopyLink(e, p)}
-                        className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/80 border border-white/20 rounded-full backdrop-blur-sm text-white text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+                        className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-black/75 hover:bg-black border border-white/10 rounded-full backdrop-blur-md text-white text-xs font-semibold transition-all transform hover:scale-105 shadow-xl"
                       >
                         {copiedId === p.id ? (
                           <>
                             <svg
-                              className="w-4 h-4 text-emerald-400"
+                              className="w-3.5 h-3.5 text-emerald-400"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -256,7 +361,7 @@ export default function PortfolioList({
                         ) : (
                           <>
                             <svg
-                              className="w-4 h-4"
+                              className="w-3.5 h-3.5"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"

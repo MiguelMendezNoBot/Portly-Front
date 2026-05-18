@@ -14,6 +14,7 @@ export interface UseExploreReturn {
   totalPages: number;
   search: (params: ExploreSearchParams) => void;
   goToPage: (page: number) => void;
+  refetch: () => void;
   currentParams: ExploreSearchParams;
 }
 
@@ -32,24 +33,8 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
 
   // Debounce ref
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Cache simple en memoria por sesión
-  const cache = useRef<Map<string, { portfolios: ExplorePortfolio[]; total: number; totalPages: number }>>(
-    new Map()
-  );
-
   const fetchPortfolios = useCallback(
     async (params: ExploreSearchParams, targetPage: number) => {
-      const cacheKey = JSON.stringify({ ...params, page: targetPage });
-
-      if (cache.current.has(cacheKey)) {
-        const cached = cache.current.get(cacheKey)!;
-        setPortfolios(cached.portfolios);
-        setTotal(cached.total);
-        setTotalPages(cached.totalPages);
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       setError(null);
       try {
@@ -61,11 +46,6 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
         setPortfolios(result.portfolios);
         setTotal(result.total);
         setTotalPages(result.totalPages);
-        cache.current.set(cacheKey, {
-          portfolios: result.portfolios,
-          total: result.total,
-          totalPages: result.totalPages,
-        });
       } catch (err: unknown) {
         const e = err as { message?: string };
         setError(e?.message || 'Error al buscar portafolios');
@@ -105,6 +85,10 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
     [currentParams, fetchPortfolios]
   );
 
+  const refetch = useCallback(() => {
+    fetchPortfolios(currentParams, page);
+  }, [fetchPortfolios, currentParams, page]);
+
   return {
     portfolios,
     loading,
@@ -114,6 +98,7 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
     totalPages,
     search,
     goToPage,
+    refetch,
     currentParams,
   };
 }
