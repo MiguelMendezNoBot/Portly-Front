@@ -161,7 +161,12 @@ export default function AnalyticsPage() {
             </div>
             <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} />
           </>
-        ) : null
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-center">
+            <p className="text-red-400 font-semibold">Error al cargar analíticas globales</p>
+            <p className="text-src-5a6278 text-sm max-w-[300px]">No se pudieron obtener los datos. Verifica que el backend esté corriendo.</p>
+          </div>
+        )
       ) : (
         /* Modo Individual */
         !selectedId ? (
@@ -202,7 +207,12 @@ export default function AnalyticsPage() {
               <AnalyticsRankingTable title="Redes Sociales" items={indData.redesSocialesRanking} emptyMessage="Sin interacciones en redes" />
             </div>
           </>
-        ) : null
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-center">
+            <p className="text-red-400 font-semibold">Error al cargar analíticas</p>
+            <p className="text-src-5a6278 text-sm max-w-[300px]">No se pudieron obtener los datos del portafolio seleccionado.</p>
+          </div>
+        )
       )}
     </div>
   );
