@@ -56,8 +56,8 @@ export default function AnalyticsLineChart({
     // Clear
     ctx.clearRect(0, 0, width, height);
 
-    const values = data.map((d) => d.value);
-    const maxVal = Math.max(...values, 1);
+    const values = data.map((d) => d.value).filter((v) => v !== null) as number[];
+    const maxVal = values.length > 0 ? Math.max(...values, 1) : 1;
 
     // Calculate nice round numbers for Y axis
     const { niceMax, ySteps } = calculateYAxis(maxVal);
@@ -82,32 +82,36 @@ export default function AnalyticsLineChart({
     }
 
     // X positions
-    const points: { x: number; y: number }[] = data.map((d, i) => ({
+    const points: { x: number; y: number | null }[] = data.map((d, i) => ({
       x: padLeft + (chartW / (data.length - 1 || 1)) * i,
-      y: padTop + chartH - (chartH * d.value) / niceMax,
+      y: d.value === null ? null : padTop + chartH - (chartH * d.value) / niceMax,
     }));
 
-    // Fill area under curve
-    const gradient = ctx.createLinearGradient(0, padTop, 0, padTop + chartH);
-    gradient.addColorStop(0, fillGradientTop);
-    gradient.addColorStop(1, fillGradientBottom);
+    const validPts = points.filter(p => p.y !== null) as {x: number, y: number}[];
 
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, padTop + chartH);
-    drawSmoothLine(ctx, points);
-    ctx.lineTo(points[points.length - 1].x, padTop + chartH);
-    ctx.closePath();
-    ctx.fillStyle = gradient;
-    ctx.fill();
+    if (validPts.length > 0) {
+      // Fill area under curve
+      const gradient = ctx.createLinearGradient(0, padTop, 0, padTop + chartH);
+      gradient.addColorStop(0, fillGradientTop);
+      gradient.addColorStop(1, fillGradientBottom);
 
-    // Draw line
-    ctx.beginPath();
-    drawSmoothLine(ctx, points);
-    ctx.strokeStyle = accentColor;
-    ctx.lineWidth = 2.5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(validPts[0].x, padTop + chartH);
+      drawSmoothLine(ctx, validPts);
+      ctx.lineTo(validPts[validPts.length - 1].x, padTop + chartH);
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Draw line
+      ctx.beginPath();
+      drawSmoothLine(ctx, validPts);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
 
     // X labels (show subset to avoid overlap)
     ctx.fillStyle = labelColor;

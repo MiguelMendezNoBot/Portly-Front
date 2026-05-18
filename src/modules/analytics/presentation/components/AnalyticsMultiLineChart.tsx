@@ -58,7 +58,7 @@ export default function AnalyticsMultiLineChart({
 
     series.forEach((s) => {
       s.data.forEach((d) => {
-        if (d.value > maxVal) maxVal = d.value;
+        if (d.value !== null && d.value > maxVal) maxVal = d.value;
       });
       if (s.data.length > maxLen) {
         maxLen = s.data.length;
@@ -89,18 +89,22 @@ export default function AnalyticsMultiLineChart({
     // Dibujar cada serie
     series.forEach((s) => {
       if (s.data.length === 0) return;
-      const points: { x: number; y: number }[] = s.data.map((d, i) => ({
+      const points: { x: number; y: number | null }[] = s.data.map((d, i) => ({
         x: padLeft + (chartW / (s.data.length - 1 || 1)) * i,
-        y: padTop + chartH - (chartH * d.value) / niceMax,
+        y: d.value === null ? null : padTop + chartH - (chartH * d.value) / niceMax,
       }));
 
-      ctx.beginPath();
-      drawSmoothLine(ctx, points);
-      ctx.strokeStyle = s.color;
-      ctx.lineWidth = 2.5;
-      ctx.lineJoin = 'round';
-      ctx.lineCap = 'round';
-      ctx.stroke();
+      const validPts = points.filter((p) => p.y !== null) as { x: number; y: number }[];
+
+      if (validPts.length > 0) {
+        ctx.beginPath();
+        drawSmoothLine(ctx, validPts);
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
     });
 
     // Etiquetas X

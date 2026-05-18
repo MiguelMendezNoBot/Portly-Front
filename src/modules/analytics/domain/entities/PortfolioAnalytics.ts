@@ -26,7 +26,7 @@ export interface PortfolioChartSeries {
 
 export interface ChartPoint {
   label: string;
-  value: number;
+  value: number | null;
 }
 
 export interface RankingItem {
