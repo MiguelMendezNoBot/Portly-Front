@@ -120,10 +120,14 @@ export default function AnalyticsMultiLineChart({
         if (i % step === 0 || i === labels.length - 1) {
           const x = padLeft + (chartW / (labels.length - 1 || 1)) * i;
           let labelText = label;
-          if (labelText.endsWith('Z')) {
-            const date = new Date(labelText);
+          if (labelText.includes('T')) {
+            const date = new Date(labelText.endsWith('Z') ? labelText : labelText + 'Z');
             if (!isNaN(date.getTime())) {
               labelText = date.getHours().toString().padStart(2, '0') + ':00';
+            } else {
+              // Fallback robusto
+              const timePart = labelText.split('T')[1] || '';
+              labelText = timePart.substring(0, 5);
             }
           }
           ctx.fillText(labelText, x, padTop + chartH + 10);
