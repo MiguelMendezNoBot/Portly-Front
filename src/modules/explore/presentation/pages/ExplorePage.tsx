@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useExplore } from '../../application/useExplore';
 import ExploreSearchBar from '../components/ExploreSearchBar';
@@ -102,11 +102,21 @@ export default function ExplorePage() {
     totalPages,
     search,
     goToPage,
+    refetch,
     currentParams,
   } = useExplore(initialParams);
 
   const isViewing = Boolean(portfolioId);
   const hasQuery = Boolean(currentParams.q?.trim());
+
+  // Refetch when returning from a portfolio view
+  const wasViewing = useRef(isViewing);
+  useEffect(() => {
+    if (wasViewing.current && !isViewing) {
+      refetch();
+    }
+    wasViewing.current = isViewing;
+  }, [isViewing, refetch]);
 
   // Sync URL params when search changes
   const syncUrlParams = useCallback(
