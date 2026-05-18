@@ -14,6 +14,7 @@ export interface UseExploreReturn {
   totalPages: number;
   search: (params: ExploreSearchParams) => void;
   goToPage: (page: number) => void;
+  refetch: () => void;
   currentParams: ExploreSearchParams;
 }
 
@@ -84,6 +85,10 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
     [currentParams, fetchPortfolios]
   );
 
+  const refetch = useCallback(() => {
+    fetchPortfolios(currentParams, page);
+  }, [fetchPortfolios, currentParams, page]);
+
   return {
     portfolios,
     loading,
@@ -93,6 +98,7 @@ export function useExplore(initialParams?: ExploreSearchParams): UseExploreRetur
     totalPages,
     search,
     goToPage,
+    refetch,
     currentParams,
   };
 }
