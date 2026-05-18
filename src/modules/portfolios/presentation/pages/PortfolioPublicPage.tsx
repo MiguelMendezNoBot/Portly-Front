@@ -1118,7 +1118,10 @@ function ErrorState({ error }: { error: string }) {
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const { data, loading, error } = usePortfolioPublic(portfolioId);
-  const { trackProjectClick, trackSectionClick } = usePortfolioTracking(portfolioId);
+  const isIframe = window.self !== window.top;
+  const { trackProjectClick, trackSectionClick } = usePortfolioTracking(
+    isIframe ? undefined : portfolioId
+  );
 
   // Wrap project clicks with tracking
   const handleProjectClick = useCallback((projectId: number | undefined) => {
