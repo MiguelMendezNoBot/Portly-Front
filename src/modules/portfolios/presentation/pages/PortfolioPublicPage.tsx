@@ -1,8 +1,9 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
 import { BASE_URL } from '../../../../infrastructure/http/httpClient';
+import { usePortfolioTracking } from '../../../analytics/application/usePortfolioTracking';
 import type {
   PortfolioPublicData,
   PortfolioPublicSkill,
@@ -193,7 +194,7 @@ const SOCIAL_DEFS = [
   },
 ];
 
-function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPublicUser; t: Theme; justify?: string }) {
+function SocialIcons({ usuario, t, justify = 'center', onSocialClick }: { usuario: PortfolioPublicUser; t: Theme; justify?: string; onSocialClick?: (name: string) => void }) {
   const isBrutalist = t.border === '#000000';
   const links = SOCIAL_DEFS.filter((s) => usuario[s.key]);
   if (!links.length) return null;
@@ -202,6 +203,7 @@ function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPub
       {links.map((s) => (
         <a
           key={s.key}
+          onClick={() => onSocialClick?.(s.label)}
           href={s.key === 'email' ? `mailto:${usuario[s.key]}` : usuario[s.key] as string}
           target={s.key === 'email' ? undefined : '_blank'}
           rel={s.key === 'email' ? undefined : 'noopener noreferrer'}
@@ -232,7 +234,7 @@ function SocialIcons({ usuario, t, justify = 'center' }: { usuario: PortfolioPub
 
 // ─── Section renderers ────────────────────────────────────────────────────────
 
-function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme }) {
+function HeroSection({ usuario, t, onSocialClick }: { usuario: PortfolioPublicUser; t: Theme; onSocialClick?: (name: string) => void }) {
   const isMobile = useIsMobile();
   const fullName = `${usuario.nombre} ${usuario.apellido}`.trim();
   const isBrutalist = t.border === '#000000';
@@ -335,7 +337,7 @@ function HeroSection({ usuario, t }: { usuario: PortfolioPublicUser; t: Theme })
             </p>
           )}
           <div style={{ marginTop: 24 }}>
-            <SocialIcons usuario={usuario} t={t} justify={align} />
+            <SocialIcons usuario={usuario} t={t} justify={align} onSocialClick={onSocialClick} />
           </div>
         </div>
       </div>
@@ -440,7 +442,7 @@ function SoftSkillsSection({ softSkills, t, title }: { softSkills: PortfolioPubl
   );
 }
 
-function ExperienceSection({ experiencias, t, title }: { experiencias: PortfolioPublicExperience[]; t: Theme; title?: string }) {
+function ExperienceSection({ experiencias, t, title, onClick }: { experiencias: PortfolioPublicExperience[]; t: Theme; title?: string; onClick?: (id: string, name: string) => void }) {
   const [selected, setSelected] = useState<PortfolioPublicExperience | null>(null);
   const isBrutalist = t.border === '#000000';
   const isMobile = useIsMobile();
@@ -459,7 +461,12 @@ function ExperienceSection({ experiencias, t, title }: { experiencias: Portfolio
         {experiencias.map((e, i) => (
           <div
             key={i}
-            onClick={() => hasDetail(e) && setSelected(e)}
+            onClick={() => {
+              if (hasDetail(e)) {
+                setSelected(e);
+                onClick?.(e.id?.toString() || e.nombreEmpresa, e.cargo + ' en ' + e.nombreEmpresa);
+              }
+            }}
             style={{
               background: isBrutalist ? (i % 2 === 0 ? '#fff' : t.accent) : t.surface,
               borderRadius: isBrutalist ? 0 : 16,
@@ -641,7 +648,7 @@ function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function ProjectsSection({ proyectos, t, title }: { proyectos: PortfolioPublicProject[]; t: Theme; title?: string }) {
+function ProjectsSection({ proyectos, t, title, onClick }: { proyectos: PortfolioPublicProject[]; t: Theme; title?: string; onClick?: (id: number) => void }) {
   const [selected, setSelected] = useState<PortfolioPublicProject | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const isMobile = useIsMobile();
@@ -658,6 +665,7 @@ function ProjectsSection({ proyectos, t, title }: { proyectos: PortfolioPublicPr
   const openProject = (p: PortfolioPublicProject) => {
     setSelected(p);
     setGalleryIndex(0);
+    if (p.id) onClick?.(p.id);
   };
 
   return (
@@ -941,7 +949,7 @@ function EducationSection({ formaciones, t, title }: { formaciones: PortfolioPub
   );
 }
 
-function ContactSection({ usuario, t, title }: { usuario: PortfolioPublicUser; t: Theme; title?: string }) {
+function ContactSection({ usuario, t, title, onSocialClick }: { usuario: PortfolioPublicUser; t: Theme; title?: string; onSocialClick?: (name: string) => void }) {
   const isMobile = useIsMobile();
   const isBrutalist = t.border === '#000000';
   return (
@@ -983,7 +991,7 @@ function ContactSection({ usuario, t, title }: { usuario: PortfolioPublicUser; t
           </p>
         )}
         <div style={{ marginTop: 28 }}>
-          <SocialIcons usuario={usuario} t={t} justify="center" />
+          <SocialIcons usuario={usuario} t={t} justify="center" onSocialClick={onSocialClick} />
         </div>
       </div>
     </section>
@@ -992,17 +1000,24 @@ function ContactSection({ usuario, t, title }: { usuario: PortfolioPublicUser; t
 
 // ─── Section router ───────────────────────────────────────────────────────────
 
-function renderSection(section: TemplateSection, data: PortfolioPublicData, t: Theme) {
+function renderSection(
+  section: TemplateSection, 
+  data: PortfolioPublicData, 
+  t: Theme,
+  trackProjectClick?: (id: number) => void,
+  trackExperienceClick?: (id: string, name: string) => void,
+  trackSocialClick?: (name: string) => void
+) {
   const title = section.title;
   switch (section.type) {
-    case 'hero':       return <HeroSection key="hero" usuario={data.usuario} t={t} />;
+    case 'hero':       return <HeroSection key="hero" usuario={data.usuario} t={t} onSocialClick={trackSocialClick} />;
     case 'about':      return <AboutSection key="about" usuario={data.usuario} t={t} title={title} />;
     case 'skills':     return <SkillsSection key="skills" skills={data.skills} t={t} title={title} />;
     case 'softskills': return <SoftSkillsSection key="softskills" softSkills={data.softSkills} t={t} title={title} />;
-    case 'experience': return <ExperienceSection key="experience" experiencias={data.experiencias} t={t} title={title} />;
-    case 'projects':   return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} title={title} />;
+    case 'experience': return <ExperienceSection key="experience" experiencias={data.experiencias} t={t} title={title} onClick={trackExperienceClick} />;
+    case 'projects':   return <ProjectsSection key="projects" proyectos={data.proyectos} t={t} title={title} onClick={trackProjectClick} />;
     case 'education':  return <EducationSection key="education" formaciones={data.formaciones} t={t} title={title} />;
-    case 'contact':    return <ContactSection key="contact" usuario={data.usuario} t={t} title={title} />;
+    case 'contact':    return <ContactSection key="contact" usuario={data.usuario} t={t} title={title} onSocialClick={trackSocialClick} />;
     default:           return null;
   }
 }
@@ -1039,6 +1054,22 @@ function ErrorState({ error }: { error: string }) {
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const { data, loading, error } = usePortfolioPublic(portfolioId);
+  const { trackProjectClick, trackSectionClick } = usePortfolioTracking(portfolioId);
+
+  // Wrap project clicks with tracking
+  const handleProjectClick = useCallback((projectId: number | undefined) => {
+    if (projectId) trackProjectClick(projectId);
+  }, [trackProjectClick]);
+
+  // Wrap experience clicks with tracking
+  const handleExperienceClick = useCallback((id: string, name: string) => {
+    trackSectionClick('EXPERIENCIA', id, name);
+  }, [trackSectionClick]);
+
+  // Wrap social clicks with tracking
+  const handleSocialClick = useCallback((name: string) => {
+    trackSectionClick('RED_SOCIAL', name, name);
+  }, [trackSectionClick]);
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   useEffect(() => {
@@ -1099,7 +1130,7 @@ export default function PortfolioPublicPage() {
         </header>
 
         <main style={{ maxWidth: 960, margin: '0 auto', padding: isMobile ? '0 16px 60px' : '0 24px 80px' }}>
-          {visibleSections.map((section) => renderSection(section, data, t))}
+          {visibleSections.map((section) => renderSection(section, data, t, handleProjectClick, handleExperienceClick, handleSocialClick))}
         </main>
 
         <footer style={{ borderTop: `1px solid ${t.border}`, padding: '20px 24px', textAlign: 'center' }}>

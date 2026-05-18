@@ -13,8 +13,8 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     subtitle: 'Vista general de tu actividad',
   },
   '/analytics': {
-    title: 'Analíticas',
-    subtitle: 'Estadísticas y reportes',
+    title: 'Mis Analíticas',
+    subtitle: 'Puedes visualizar las analíticas de tus portafolios.',
   },
   '/portfolios': {
     title: 'Mis portafolios',
