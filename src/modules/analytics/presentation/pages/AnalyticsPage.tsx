@@ -79,7 +79,9 @@ export default function AnalyticsPage() {
   // Auto-select first portfolio
   const handlePortfolioChange = (id: string) => setSelectedId(id);
 
-  const selectedPortfolio = portfolios.find((p) => p.id === selectedId);
+  const publicPortfolios = portfolios.filter(p => p.visibilidad === 'PUBLICO');
+
+  const selectedPortfolio = publicPortfolios.find((p) => p.id === selectedId);
 
   return (
     <div className="flex flex-col gap-6 pt-1 pb-2 animate-fade-in">
@@ -133,7 +135,7 @@ export default function AnalyticsPage() {
       {/* Portfolio selector solo en Individual */}
       {modo === 'Individual' && (
         <PortfolioSelector
-          portfolios={portfolios}
+          portfolios={publicPortfolios}
           selectedId={selectedId}
           onChange={handlePortfolioChange}
           loading={loadingPortfolios}
