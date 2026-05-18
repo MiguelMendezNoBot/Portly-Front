@@ -3,11 +3,12 @@ import { BASE_URL } from '../../../infrastructure/http/httpClient';
 
 /**
  * Genera un ID de visitante anónimo basado en huellas del navegador.
- * Se almacena en sessionStorage para persistir durante la sesión.
+ * Se almacena en localStorage para persistir entre sesiones y así
+ * contar correctamente los visitantes únicos.
  */
 function getVisitorId(): string {
   const key = 'portly_visitor_id';
-  let id = sessionStorage.getItem(key);
+  let id = localStorage.getItem(key);
   if (id) return id;
 
   const raw = [
@@ -18,14 +19,14 @@ function getVisitorId(): string {
     new Date().getTimezoneOffset(),
   ].join('|');
 
-  // Simple hash
+  // Simple deterministic hash — same browser always produces the same ID
   let hash = 0;
   for (let i = 0; i < raw.length; i++) {
     const ch = raw.charCodeAt(i);
     hash = ((hash << 5) - hash + ch) | 0;
   }
-  id = Math.abs(hash).toString(36) + Date.now().toString(36);
-  sessionStorage.setItem(key, id);
+  id = 'v_' + Math.abs(hash).toString(36);
+  localStorage.setItem(key, id);
   return id;
 }
 
