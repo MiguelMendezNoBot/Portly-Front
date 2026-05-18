@@ -248,6 +248,7 @@ export default function PortfoliosPage() {
     createPortfolio,
     deletePortfolio,
     publishPortfolio,
+    unpublishPortfolio,
   } = usePortfolios();
 
   // Mode flow
@@ -270,6 +271,10 @@ export default function PortfoliosPage() {
   const [publishedPortfolio, setPublishedPortfolio] =
     useState<Portfolio | null>(null);
 
+  const [privatizePhase, setPrivatizePhase] = useState<boolean>(false);
+  const [portfolioToPrivatize, setPortfolioToPrivatize] = useState<Portfolio | null>(null);
+  const [isPrivatizing, setIsPrivatizing] = useState(false);
+
   // List Modal flow
   const [isListModalOpen, setIsListModalOpen] = useState(false);
 
@@ -278,6 +283,9 @@ export default function PortfoliosPage() {
   // Derived
   const hasPrivatePortfolios = portfolios.some(
     (p) => p.visibilidad === 'PRIVADO'
+  );
+  const hasPublicPortfolios = portfolios.some(
+    (p) => p.visibilidad === 'PUBLICO'
   );
 
   const portfoliosWithPreviews = portfolios.map((p) => {
@@ -293,6 +301,10 @@ export default function PortfoliosPage() {
 
   const privatePortfoliosWithPreviews = portfoliosWithPreviews.filter(
     (p) => p.visibilidad === 'PRIVADO'
+  );
+
+  const publicPortfoliosWithPreviews = portfoliosWithPreviews.filter(
+    (p) => p.visibilidad === 'PUBLICO'
   );
 
   // --- Create handlers ---
@@ -355,6 +367,7 @@ export default function PortfoliosPage() {
   // --- Publish handlers ---
   const handleEnterPublishMode = useCallback(() => {
     setMode(null);
+    setPrivatizePhase(false);
     setPublishPhase(true);
   }, []);
 
@@ -394,6 +407,40 @@ export default function PortfoliosPage() {
     return `${window.location.origin}/p/${portfolio.id}`;
   };
 
+  const handleEnterPrivatizeMode = useCallback(() => {
+    setMode(null);
+    setPublishPhase(false);
+    setPrivatizePhase(true);
+  }, []);
+
+  const handleCancelPrivatizeMode = useCallback(() => {
+    setPrivatizePhase(false);
+    setPortfolioToPrivatize(null);
+  }, []);
+
+  const handlePrivatizeCardClick = useCallback((portfolio: Portfolio) => {
+    setPortfolioToPrivatize(portfolio);
+  }, []);
+
+  const handleCancelPrivatizeConfirm = useCallback(() => {
+    setPortfolioToPrivatize(null);
+  }, []);
+
+  const handleConfirmPrivatize = useCallback(async () => {
+    if (!portfolioToPrivatize) return;
+    setIsPrivatizing(true);
+    try {
+      await unpublishPortfolio(portfolioToPrivatize.id);
+      setPortfolioToPrivatize(null);
+      setPrivatizePhase(false);
+      showToast('¡Portafolio privatizado!', 'success');
+    } catch (err: any) {
+      showToast(err?.message || 'Error al privatizar el portafolio', 'error');
+    } finally {
+      setIsPrivatizing(false);
+    }
+  }, [portfolioToPrivatize, unpublishPortfolio, showToast]);
+
   // Active list mode for PortfolioList
   const listMode =
     mode === 'delete'
@@ -404,7 +451,9 @@ export default function PortfoliosPage() {
           ? 'share'
           : publishPhase
             ? 'publish'
-            : null;
+            : privatizePhase
+              ? 'privatize'
+              : null;
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -481,6 +530,38 @@ export default function PortfoliosPage() {
               </button>
             )}
 
+            {hasPublicPortfolios && (
+              <button
+                onClick={() => {
+                  if (privatizePhase) {
+                    handleCancelPrivatizeMode();
+                  } else {
+                    handleEnterPrivatizeMode();
+                  }
+                }}
+                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                  privatizePhase
+                    ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
+                    : 'border-white/10 text-[#9ca3af] hover:text-orange-400 hover:border-orange-500/30'
+                }`}
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                Privatizar
+              </button>
+            )}
+
             {/* Visualizar Listado */}
             {portfolios.length > 0 && (
               <button
@@ -488,6 +569,7 @@ export default function PortfoliosPage() {
                   setIsListModalOpen(true);
                   setMode(null);
                   setPublishPhase(false);
+                  setPrivatizePhase(false);
                 }}
                 className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
               >
@@ -518,6 +600,7 @@ export default function PortfoliosPage() {
                 onClick={() => {
                   setMode((prev) => (prev === 'preview' ? null : 'preview'));
                   setPublishPhase(false);
+                  setPrivatizePhase(false);
                 }}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
                   mode === 'preview'
@@ -548,6 +631,7 @@ export default function PortfoliosPage() {
                 onClick={() => {
                   setMode((prev) => (prev === 'share' ? null : 'share'));
                   setPublishPhase(false);
+                  setPrivatizePhase(false);
                 }}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
                   mode === 'share'
@@ -581,6 +665,7 @@ export default function PortfoliosPage() {
                 onClick={() => {
                   setMode((prev) => (prev === 'delete' ? null : 'delete'));
                   setPublishPhase(false);
+                  setPrivatizePhase(false);
                 }}
                 className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
                   mode === 'delete'
@@ -716,39 +801,81 @@ export default function PortfoliosPage() {
           </div>
         )}
 
+        {privatizePhase && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm border bg-orange-500/10 border-orange-500/20 text-orange-400">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="shrink-0"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span>Escoge un portafolio para privatizarlo</span>
+            <button
+              onClick={handleCancelPrivatizeMode}
+              className="ml-auto text-xs underline opacity-60 hover:opacity-100"
+            >
+              Cancelar
+            </button>
+          </div>
+        )}
+
         {/* Lista */}
         <div className="flex-1 overflow-y-auto">
-          {publishPhase || mode === 'preview' ? (
-            privatePortfoliosWithPreviews.length === 0 ? (
+          {publishPhase || privatizePhase || mode === 'preview' ? (
+            (publishPhase || mode === 'preview' ? privatePortfoliosWithPreviews : publicPortfoliosWithPreviews).length === 0 ? (
               <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
-                <div className="w-16 h-16 rounded-2xl bg-[#7c6bec]/10 flex items-center justify-center">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    className="text-[#7c6bec]"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="2" y1="12" x2="22" y2="12" />
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                  </svg>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${privatizePhase ? 'bg-orange-500/10' : 'bg-[#7c6bec]/10'}`}>
+                  {privatizePhase ? (
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      className="text-orange-400"
+                    >
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      className="text-[#7c6bec]"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  )}
                 </div>
                 <p className="text-white font-semibold">
-                  No hay portafolios privados
+                  {privatizePhase ? 'No hay portafolios públicos' : 'No hay portafolios privados'}
                 </p>
                 <p className="text-[#5a6278] text-sm max-w-[220px]">
-                  Todos tus portafolios ya son públicos.
+                  {privatizePhase ? 'Todos tus portafolios ya son privados.' : 'Todos tus portafolios ya son públicos.'}
                 </p>
               </div>
             ) : (
               <PortfolioList
-                portfolios={privatePortfoliosWithPreviews}
+                portfolios={publishPhase || mode === 'preview' ? privatePortfoliosWithPreviews : publicPortfoliosWithPreviews}
                 loading={loadingPortfolios}
                 mode={listMode}
-                onPublish={handlePublishCardClick}
+                onPublish={publishPhase ? handlePublishCardClick : undefined}
+                onPrivatize={privatizePhase ? handlePrivatizeCardClick : undefined}
                 onClick={(p) => {
                   if (listMode === 'preview') {
                     const previewUrl =
@@ -832,6 +959,33 @@ export default function PortfoliosPage() {
             <circle cx="12" cy="12" r="10" />
             <line x1="2" y1="12" x2="22" y2="12" />
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        }
+      />
+
+      <ConfirmModal
+        isOpen={!!portfolioToPrivatize}
+        onClose={handleCancelPrivatizeConfirm}
+        onConfirm={handleConfirmPrivatize}
+        title="¿Quieres privatizar este portafolio?"
+        description={`"${portfolioToPrivatize?.nombre || ''}" dejará de ser visible para el público.`}
+        confirmText="ACEPTAR"
+        cancelText="CANCELAR"
+        confirmColor="red"
+        isLoading={isPrivatizing}
+        icon={
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         }
       />

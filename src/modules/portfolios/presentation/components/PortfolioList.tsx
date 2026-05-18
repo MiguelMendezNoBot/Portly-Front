@@ -4,9 +4,10 @@ import type { Portfolio } from '../../domain/entities/Portfolio';
 interface PortfolioListProps {
   portfolios: Portfolio[];
   loading: boolean;
-  mode?: 'delete' | 'publish' | 'preview' | 'share' | null;
+  mode?: 'delete' | 'publish' | 'privatize' | 'preview' | 'share' | null;
   onDelete?: (id: string) => void;
   onPublish?: (portfolio: Portfolio) => void;
+  onPrivatize?: (portfolio: Portfolio) => void;
   onShare?: (id: string) => void;
   onClick?: (portfolio: Portfolio) => void;
 }
@@ -154,6 +155,7 @@ export default function PortfolioList({
   mode,
   onDelete,
   onPublish,
+  onPrivatize,
   onShare,
   onClick,
 }: Readonly<PortfolioListProps>) {
@@ -188,6 +190,7 @@ export default function PortfolioList({
       {portfolios.map((p) => {
         const isDeleteMode = mode === 'delete';
         const isPublishMode = mode === 'publish';
+        const isPrivatizeMode = mode === 'privatize';
         const isShareMode = mode === 'share';
         const isPreviewMode = mode === 'preview';
 
@@ -197,6 +200,7 @@ export default function PortfolioList({
             onClick={() => {
               if (isDeleteMode && onDelete) onDelete(p.id);
               else if (isPublishMode && onPublish) onPublish(p);
+              else if (isPrivatizeMode && onPrivatize) onPrivatize(p);
               else if (isShareMode && onShare) onShare(p.id);
               else if (onClick) onClick(p);
             }}
@@ -205,11 +209,13 @@ export default function PortfolioList({
                 ? 'border-red-500/40 hover:bg-red-500/5 hover:border-red-500/60 hover:shadow-[0_0_15px_rgba(239,68,68,0.1)]'
                 : isPublishMode
                   ? 'border-[#7c6bec]/20 hover:bg-[#7c6bec]/10 hover:border-[#7c6bec]/40'
-                  : isShareMode
-                    ? 'border-emerald-500/20 hover:bg-emerald-500/5 hover:border-emerald-500/60 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                    : isPreviewMode
-                      ? 'border-blue-500/20 hover:bg-blue-500/10 hover:border-blue-500/40'
-                      : 'border-white/5 hover:border-[#7c6bec]/30'
+                  : isPrivatizeMode
+                    ? 'border-orange-500/20 hover:bg-orange-500/10 hover:border-orange-500/40'
+                    : isShareMode
+                      ? 'border-emerald-500/20 hover:bg-emerald-500/5 hover:border-emerald-500/60 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+                      : isPreviewMode
+                        ? 'border-blue-500/20 hover:bg-blue-500/10 hover:border-blue-500/40'
+                        : 'border-white/5 hover:border-[#7c6bec]/30'
             }`}
           >
             {/* Ícono de Eliminar (Hover) */}
@@ -252,6 +258,26 @@ export default function PortfolioList({
                     <circle cx="18" cy="19" r="3" />
                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {isPrivatizeMode && (
+              <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                <div className="p-2.5 bg-orange-500/20 rounded-xl text-orange-400 border border-orange-500/30 backdrop-blur-md shadow-lg">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
                 </div>
               </div>

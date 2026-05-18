@@ -42,4 +42,12 @@ export class HttpPortfolioRepository implements PortfolioRepository {
       'Error al publicar el portafolio'
     );
   }
+
+  async unpublish(id: string): Promise<Portfolio> {
+    return httpClient.putAuth<Portfolio>(
+      `${this.PATH}/${id}/privatizar`,
+      {},
+      'Error al privatizar el portafolio'
+    );
+  }
 }
