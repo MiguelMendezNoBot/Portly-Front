@@ -61,7 +61,7 @@ export function usePortfolioTracking(portfolioId: string | undefined) {
     startTimeRef.current = Date.now();
 
     // Register visit and store visitId for duration updates
-    fetch(`${BASE_URL}/api/analytics/track/visit`, {
+    fetch(`${BASE_URL}/api/metrics/ev/visit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ portfolioId, visitorId }),
@@ -88,7 +88,7 @@ export function usePortfolioTracking(portfolioId: string | undefined) {
       if (visitIdRef.current) {
         const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
         navigator.sendBeacon(
-          `${BASE_URL}/api/analytics/track/visit-duration`,
+          `${BASE_URL}/api/metrics/ev/visit-duration`,
           JSON.stringify({
             visitId: visitIdRef.current,
             durationSeconds: elapsed,
