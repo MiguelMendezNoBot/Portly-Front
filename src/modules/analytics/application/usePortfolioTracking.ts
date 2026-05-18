@@ -29,21 +29,14 @@ function getVisitorId(): string {
   return id;
 }
 
-/** Fire-and-forget POST to the tracking API using sendBeacon for reliability */
+/** Fire-and-forget POST to the tracking API */
 async function trackEvent(endpoint: string, body: Record<string, unknown>) {
   try {
-    const url = `${BASE_URL}/api/analytics/track/${endpoint}`;
-    const blob = new Blob([JSON.stringify(body)], { type: 'application/json' });
-    const sent = navigator.sendBeacon(url, blob);
-
-    // Fallback to fetch if sendBeacon fails
-    if (!sent) {
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-    }
+    await fetch(`${BASE_URL}/api/analytics/track/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
   } catch {
     // Tracking should never break the user experience
   }
