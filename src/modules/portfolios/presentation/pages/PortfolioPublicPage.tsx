@@ -1120,7 +1120,7 @@ export default function PortfolioPublicPage() {
   const { data, loading, error } = usePortfolioPublic(portfolioId);
   const isIframe = window.self !== window.top;
   const { trackProjectClick, trackSectionClick } = usePortfolioTracking(
-    isIframe ? undefined : portfolioId
+    isIframe ? undefined : data?.id
   );
 
   // Wrap project clicks with tracking
