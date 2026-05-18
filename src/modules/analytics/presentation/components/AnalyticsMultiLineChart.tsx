@@ -119,7 +119,14 @@ export default function AnalyticsMultiLineChart({
       labels.forEach((label, i) => {
         if (i % step === 0 || i === labels.length - 1) {
           const x = padLeft + (chartW / (labels.length - 1 || 1)) * i;
-          ctx.fillText(label, x, padTop + chartH + 10);
+          let labelText = label;
+          if (labelText.endsWith('Z')) {
+            const date = new Date(labelText);
+            if (!isNaN(date.getTime())) {
+              labelText = date.getHours().toString().padStart(2, '0') + ':00';
+            }
+          }
+          ctx.fillText(labelText, x, padTop + chartH + 10);
         }
       });
     }

@@ -123,7 +123,14 @@ export default function AnalyticsLineChart({
     const step = Math.max(1, Math.ceil(data.length / maxLabels));
     data.forEach((d, i) => {
       if (i % step === 0 || i === data.length - 1) {
-        ctx.fillText(d.label, points[i].x, padTop + chartH + 10);
+        let labelText = d.label;
+        if (labelText.endsWith('Z')) {
+          const date = new Date(labelText);
+          if (!isNaN(date.getTime())) {
+            labelText = date.getHours().toString().padStart(2, '0') + ':00';
+          }
+        }
+        ctx.fillText(labelText, points[i].x, padTop + chartH + 10);
       }
     });
   }, [data]);
