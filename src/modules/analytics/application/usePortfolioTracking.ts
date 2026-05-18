@@ -32,7 +32,7 @@ function getVisitorId(): string {
 /** Fire-and-forget POST to the tracking API */
 async function trackEvent(endpoint: string, body: Record<string, unknown>) {
   try {
-    await fetch(`${BASE_URL}/api/analytics/track/${endpoint}`, {
+    await fetch(`${BASE_URL}/api/metrics/ev/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
