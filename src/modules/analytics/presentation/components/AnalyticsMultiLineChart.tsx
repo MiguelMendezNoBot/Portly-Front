@@ -104,6 +104,14 @@ export default function AnalyticsMultiLineChart({
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
         ctx.stroke();
+
+        ctx.fillStyle = '#171b28';
+        validPts.forEach(pt => {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        });
       }
     });
 

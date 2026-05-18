@@ -111,6 +111,15 @@ export default function AnalyticsLineChart({
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
       ctx.stroke();
+
+      // Draw points
+      ctx.fillStyle = '#171b28';
+      validPts.forEach(pt => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
     }
 
     // X labels (show subset to avoid overlap)
