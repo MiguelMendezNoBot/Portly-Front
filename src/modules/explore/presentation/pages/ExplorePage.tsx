@@ -161,7 +161,7 @@ export default function ExplorePage() {
   // Derive section title
   const sectionTitle = hasQuery
     ? `${total} resultado${total !== 1 ? 's' : ''} para "${currentParams.q}"`
-    : 'Portafolios recientes';
+    : 'Resultados';
 
   return (
     <div className="relative min-h-full flex flex-col animate-fade-in">
@@ -181,13 +181,18 @@ export default function ExplorePage() {
           </div>
 
           {/* Section header */}
-          <div className="flex items-center justify-between px-1 mt-4">
-            <h2 className="text-white font-bold text-lg">
+          <div className="flex flex-col gap-1 px-1 mt-4 pb-3 border-b border-white/5">
+            <h2 className="text-white text-xl font-bold flex items-baseline gap-3">
               {loading && hasQuery ? 'Sincronizando resultados…' : sectionTitle}
+              {!loading && (
+                <span className="text-[#C9BEFF] text-sm font-semibold">
+                  ({total})
+                </span>
+              )}
             </h2>
-            <span className="text-[#5a6278] text-sm">
-              {total} portafolios
-            </span>
+            <p className="text-[#9ca3af] text-xs">
+              {hasQuery ? 'Resultados encontrados en el explorador público' : 'Explora los últimos portafolios de la comunidad'}
+            </p>
           </div>
 
           {/* Error state */}
