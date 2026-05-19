@@ -272,7 +272,8 @@ export default function PortfoliosPage() {
     useState<Portfolio | null>(null);
 
   const [privatizePhase, setPrivatizePhase] = useState<boolean>(false);
-  const [portfolioToPrivatize, setPortfolioToPrivatize] = useState<Portfolio | null>(null);
+  const [portfolioToPrivatize, setPortfolioToPrivatize] =
+    useState<Portfolio | null>(null);
   const [isPrivatizing, setIsPrivatizing] = useState(false);
 
   // List Modal flow
@@ -830,9 +831,14 @@ export default function PortfoliosPage() {
         {/* Lista */}
         <div className="flex-1 overflow-y-auto">
           {publishPhase || privatizePhase || mode === 'preview' ? (
-            (publishPhase || mode === 'preview' ? privatePortfoliosWithPreviews : publicPortfoliosWithPreviews).length === 0 ? (
+            (publishPhase || mode === 'preview'
+              ? privatePortfoliosWithPreviews
+              : publicPortfoliosWithPreviews
+            ).length === 0 ? (
               <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${privatizePhase ? 'bg-orange-500/10' : 'bg-[#7c6bec]/10'}`}>
+                <div
+                  className={`w-16 h-16 rounded-2xl flex items-center justify-center ${privatizePhase ? 'bg-orange-500/10' : 'bg-[#7c6bec]/10'}`}
+                >
                   {privatizePhase ? (
                     <svg
                       width="32"
@@ -858,24 +864,34 @@ export default function PortfoliosPage() {
                     >
                       <circle cx="12" cy="12" r="10" />
                       <line x1="2" y1="12" x2="22" y2="12" />
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                     </svg>
                   )}
                 </div>
                 <p className="text-white font-semibold">
-                  {privatizePhase ? 'No hay portafolios públicos' : 'No hay portafolios privados'}
+                  {privatizePhase
+                    ? 'No hay portafolios públicos'
+                    : 'No hay portafolios privados'}
                 </p>
                 <p className="text-[#5a6278] text-sm max-w-[220px]">
-                  {privatizePhase ? 'Todos tus portafolios ya son privados.' : 'Todos tus portafolios ya son públicos.'}
+                  {privatizePhase
+                    ? 'Todos tus portafolios ya son privados.'
+                    : 'Todos tus portafolios ya son públicos.'}
                 </p>
               </div>
             ) : (
               <PortfolioList
-                portfolios={publishPhase || mode === 'preview' ? privatePortfoliosWithPreviews : publicPortfoliosWithPreviews}
+                portfolios={
+                  publishPhase || mode === 'preview'
+                    ? privatePortfoliosWithPreviews
+                    : publicPortfoliosWithPreviews
+                }
                 loading={loadingPortfolios}
                 mode={listMode}
                 onPublish={publishPhase ? handlePublishCardClick : undefined}
-                onPrivatize={privatizePhase ? handlePrivatizeCardClick : undefined}
+                onPrivatize={
+                  privatizePhase ? handlePrivatizeCardClick : undefined
+                }
                 onClick={(p) => {
                   if (listMode === 'preview') {
                     const previewUrl =
@@ -887,9 +903,39 @@ export default function PortfoliosPage() {
                 }}
               />
             )
+          ) : mode === 'share' && publicPortfoliosWithPreviews.length === 0 ? (
+            <div className="flex flex-col items-center justify-center min-h-[200px] gap-3 text-center px-4">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  className="text-emerald-400"
+                >
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+              </div>
+              <p className="text-white font-semibold">
+                No tienes portafolios públicos
+              </p>
+              <p className="text-[#5a6278] text-sm max-w-[220px]">
+                Publica un portafolio para poder compartirlo.
+              </p>
+            </div>
           ) : (
             <PortfolioList
-              portfolios={portfoliosWithPreviews}
+              portfolios={
+                mode === 'share'
+                  ? publicPortfoliosWithPreviews
+                  : portfoliosWithPreviews
+              }
               loading={loadingPortfolios}
               mode={listMode}
               onDelete={handleDeleteClick}
