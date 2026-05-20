@@ -8,7 +8,16 @@ interface SoftSkillDefinition {
 }
 
 const BrainIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8" />
     <path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8" />
@@ -20,14 +29,32 @@ const BrainIcon = () => (
 );
 
 const HeartIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
   </svg>
 );
 
 const UsersIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
     <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
@@ -37,14 +64,32 @@ const UsersIcon = () => (
 );
 
 const MessageCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.501 12.116 0c3.526 2.502 4.124 6.937 1.8 10.374c-2.324 3.437 -7.128 5.107 -11.116 4l-6.2 1.9" />
   </svg>
 );
 
 const UsersGroupIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
     <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
@@ -56,7 +101,16 @@ const UsersGroupIcon = () => (
 );
 
 const ClockIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
     <path d="M12 7v5l3 3" />
@@ -64,14 +118,32 @@ const ClockIcon = () => (
 );
 
 const HandshakeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428m0 0a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
   </svg>
 );
 
 const LightbulbIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" />
     <path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" />
@@ -80,7 +152,16 @@ const LightbulbIcon = () => (
 );
 
 const RefreshIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
     <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
@@ -88,7 +169,16 @@ const RefreshIcon = () => (
 );
 
 const ScaleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M7 20l10 0" />
     <path d="M12 4l0 16" />
@@ -101,7 +191,16 @@ const ScaleIcon = () => (
 );
 
 const PresentationIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M3 4l18 0" />
     <path d="M4 4v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-10" />
@@ -112,7 +211,16 @@ const PresentationIcon = () => (
 );
 
 const StarIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
   </svg>
@@ -264,22 +372,30 @@ export default function SoftSkillsModal({
                     isAlreadyAdded
                       ? 'opacity-50 cursor-not-allowed bg-white/5'
                       : isChecked
-                      ? 'bg-[#6b72ff]/20 border border-[#6b72ff]/40'
-                      : 'hover:bg-white/5 border border-transparent'
+                        ? 'bg-[#6b72ff]/20 border border-[#6b72ff]/40'
+                        : 'hover:bg-white/5 border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     {/* Ícono con color morado */}
                     <span
                       className={`transition-colors duration-200 ${
-                        isAlreadyAdded ? 'text-[#6b7280]' : isChecked ? 'text-[#8b5cf6]' : 'text-[#6b72ff]'
+                        isAlreadyAdded
+                          ? 'text-[#6b7280]'
+                          : isChecked
+                            ? 'text-[#8b5cf6]'
+                            : 'text-[#6b72ff]'
                       }`}
                     >
                       {skill.icon}
                     </span>
                     <span
                       className={`text-sm font-medium transition-colors duration-200 ${
-                        isAlreadyAdded ? 'text-[#6b7280]' : isChecked ? 'text-white' : 'text-[#d1d5db]'
+                        isAlreadyAdded
+                          ? 'text-[#6b7280]'
+                          : isChecked
+                            ? 'text-white'
+                            : 'text-[#d1d5db]'
                       }`}
                     >
                       {skill.name}
@@ -292,8 +408,8 @@ export default function SoftSkillsModal({
                       isAlreadyAdded
                         ? 'border-[#4b5563] bg-transparent'
                         : isChecked
-                        ? 'bg-[#6b72ff] border-[#6b72ff]'
-                        : 'border-[#4b5563] group-hover:border-[#6b72ff]/60'
+                          ? 'bg-[#6b72ff] border-[#6b72ff]'
+                          : 'border-[#4b5563] group-hover:border-[#6b72ff]/60'
                     }`}
                   >
                     {isChecked && !isAlreadyAdded && (
