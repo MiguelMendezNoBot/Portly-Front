@@ -221,7 +221,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
               <input
                 id="ac-institucion"
                 disabled={isEditing}
-                className={`w-full bg-[#1a1c29] border ${errors.institucion ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
+                className={`w-full bg-[#1a1c29] border ${errors.institucion ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="Ej. Universidad Complutense"
                 value={formData.institucion}
                 maxLength={120}
@@ -245,7 +245,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
               <select
                 id="ac-nivel"
                 disabled={isEditing}
-                className={`w-full bg-[#1a1c29] border ${errors.nivel ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-white text-sm outline-none focus:border-[#6c63ff] transition-colors appearance-none cursor-pointer`}
+                className={`w-full bg-[#1a1c29] border ${errors.nivel ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-white text-sm outline-none focus:border-[#6c63ff] transition-colors appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
                 value={formData.nivel}
                 onChange={(e) => {
                   setFormData({ ...formData, nivel: e.target.value });
@@ -287,7 +287,7 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
               <input
                 id="ac-carrera"
                 disabled={isEditing}
-                className={`w-full bg-[#1a1c29] border ${errors.carrera ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
+                className={`w-full bg-[#1a1c29] border ${errors.carrera ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="Ej. Ingeniería en Sistemas"
                 value={formData.carrera}
                 maxLength={120}
