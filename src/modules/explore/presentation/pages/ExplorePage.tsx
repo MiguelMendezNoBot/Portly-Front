@@ -91,6 +91,10 @@ export default function ExplorePage() {
     q: searchParams.get('q') ?? undefined,
     sort: (searchParams.get('sort') as 'recientes' | 'nombre') ?? 'recientes',
     page: Number(searchParams.get('page') ?? 1),
+    nacionalidad: searchParams.get('nacionalidad') ?? undefined,
+    habilidadesBlandas: searchParams.get('habilidadesBlandas') ?? undefined,
+    habilidadesTecnicas: searchParams.get('habilidadesTecnicas') ?? undefined,
+    gradoAcademico: searchParams.get('gradoAcademico') ?? undefined,
   };
 
   const {
@@ -125,6 +129,12 @@ export default function ExplorePage() {
       if (params.q) next.set('q', params.q);
       if (params.sort && params.sort !== 'recientes')
         next.set('sort', params.sort);
+      if (params.nacionalidad) next.set('nacionalidad', params.nacionalidad);
+      if (params.habilidadesBlandas)
+        next.set('habilidadesBlandas', params.habilidadesBlandas);
+      if (params.habilidadesTecnicas)
+        next.set('habilidadesTecnicas', params.habilidadesTecnicas);
+      if (params.gradoAcademico) next.set('gradoAcademico', params.gradoAcademico);
       if (currentPage > 1) next.set('page', String(currentPage));
       setSearchParams(next, { replace: true });
     },
@@ -191,7 +201,9 @@ export default function ExplorePage() {
               )}
             </h2>
             <p className="text-[#9ca3af] text-xs">
-              {hasQuery ? 'Resultados encontrados en el explorador público' : 'Explora los últimos portafolios de la comunidad'}
+              {hasQuery
+                ? 'Resultados encontrados en el explorador público'
+                : 'Explora los últimos portafolios de la comunidad'}
             </p>
           </div>
 
@@ -261,10 +273,8 @@ export default function ExplorePage() {
                     </p>
                     <p className="text-white/40 text-sm mt-1 max-w-xs">
                       No encontramos portafolios para{' '}
-                      <span className="text-white">
-                        "{currentParams.q}"
-                      </span>
-                      . Intenta con otro nombre o profesión.
+                      <span className="text-white">"{currentParams.q}"</span>.
+                      Intenta con otro nombre o profesión.
                     </p>
                   </div>
                 </div>
