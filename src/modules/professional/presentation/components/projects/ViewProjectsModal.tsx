@@ -16,6 +16,7 @@ const formatDate = (dateStr: string | null | undefined): string => {
 export default function ViewProjectsModal({ isOpen, onClose, projects }: Props) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const sorted = useMemo(() => {
     return [...projects].sort((a, b) => {
@@ -175,19 +176,15 @@ export default function ViewProjectsModal({ isOpen, onClose, projects }: Props) 
                           Evidencias ({project.evidencias.length})
                         </p>
                         <div className="flex gap-2 flex-wrap">
-                          {project.evidencias.slice(0, 3).map((ev, i) => (
+                          {project.evidencias.map((ev, i) => (
                             <img
                               key={i}
                               src={ev.url}
                               alt={ev.nombre}
-                              className="w-16 h-16 object-cover rounded-lg border border-white/10"
+                              className="w-16 h-16 object-cover rounded-lg border border-white/10 cursor-pointer hover:opacity-80 hover:border-[#6c63ff]/40 transition-all"
+                              onClick={() => setSelectedImage(ev.url)}
                             />
                           ))}
-                          {project.evidencias.length > 3 && (
-                            <div className="w-16 h-16 rounded-lg bg-[#2c2f48] flex items-center justify-center text-[#9ca3af] text-xs font-bold">
-                              +{project.evidencias.length - 3}
-                            </div>
-                          )}
                         </div>
                       </div>
                     )}
@@ -282,6 +279,33 @@ export default function ViewProjectsModal({ isOpen, onClose, projects }: Props) 
           })}
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            alt="Detalle"
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
