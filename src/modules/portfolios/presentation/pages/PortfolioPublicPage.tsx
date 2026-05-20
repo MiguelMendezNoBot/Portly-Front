@@ -16,6 +16,7 @@ import type {
 import type { TemplateSection } from '../../domain/entities/Template';
 import { SOFT_SKILLS_CATALOG } from '../../../professional/presentation/components/Skills/SoftSkillsModal';
 import { TechIcon } from '../../../professional/presentation/components/Skills/icons/TechIcon';
+import detectiveImage from '../../../../assets/image.png';
 
 // ─── Mobile context ───────────────────────────────────────────────────────────
 const MobileCtx = createContext(false);
@@ -1039,11 +1040,74 @@ function LoadingState() {
 
 function ErrorState({ error }: { error: string }) {
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0c14', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ textAlign: 'center', padding: 32 }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
-        <p style={{ color: '#f87171', fontSize: 16, fontWeight: 600 }}>No se pudo cargar el portafolio</p>
-        <p style={{ color: '#6b7280', fontSize: 14, marginTop: 8 }}>{error}</p>
+    <div style={{ minHeight: '100vh', background: '#0a0c14', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ textAlign: 'center', padding: 32, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        
+        <div style={{ position: 'relative', marginBottom: 40, marginTop: 40 }}>
+          {/* Nube de pensamiento */}
+          <div style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: '50%',
+            transform: 'translateX(-50%) translateY(-16px)',
+            background: '#1f2937',
+            padding: '12px 24px',
+            borderRadius: 24,
+            border: '1px solid #374151',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+            whiteSpace: 'nowrap',
+            zIndex: 10,
+          }}>
+            <p style={{ color: '#f3f4f6', margin: 0, fontSize: 16, fontWeight: 700 }}>
+              Mmm... este portafolio ya no es público
+            </p>
+            {/* Burbujitas hacia abajo */}
+            <div style={{ position: 'absolute', bottom: -12, left: '50%', transform: 'translateX(-50%)', width: 12, height: 12, borderRadius: '50%', background: '#1f2937', border: '1px solid #374151' }} />
+            <div style={{ position: 'absolute', bottom: -24, left: 'calc(50% + 12px)', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: '#1f2937', border: '1px solid #374151' }} />
+          </div>
+
+          {/* Icono de Detective Incógnito (Personalizado igual a la imagen) */}
+          <div style={{
+            width: 120, 
+            height: 120, 
+            background: 'rgba(124,107,236,0.1)', 
+            borderRadius: '50%', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            border: '2px dashed rgba(124,107,236,0.3)',
+            boxShadow: '0 0 40px rgba(124,107,236,0.1)',
+            overflow: 'hidden'
+          }}>
+            <img 
+              src={detectiveImage} 
+              alt="Detective Incógnito" 
+              style={{ width: '80%', height: '80%', objectFit: 'contain', opacity: 0.8 }} 
+            />
+          </div>
+        </div>
+        
+        <p style={{ color: '#e5e7eb', fontSize: 26, fontWeight: 800, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
+          Acceso Restringido
+        </p>
+        <p style={{ color: '#9ca3af', fontSize: 16, margin: 0, maxWidth: 380, lineHeight: 1.6 }}>
+          El autor ha cambiado la visibilidad de este portafolio a privado o el enlace ya no existe.
+        </p>
+        
+        <a href="/explore" style={{
+          marginTop: 32,
+          display: 'inline-block',
+          background: '#7c6bec',
+          color: '#ffffff',
+          padding: '12px 24px',
+          borderRadius: 12,
+          fontWeight: 700,
+          textDecoration: 'none',
+          transition: 'background 0.2s',
+          border: '1px solid #6b5ce0'
+        }}>
+          Explorar otros portafolios
+        </a>
       </div>
     </div>
   );
@@ -1054,7 +1118,10 @@ function ErrorState({ error }: { error: string }) {
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const { data, loading, error } = usePortfolioPublic(portfolioId);
-  const { trackProjectClick, trackSectionClick } = usePortfolioTracking(portfolioId);
+  const isIframe = window.self !== window.top;
+  const { trackProjectClick, trackSectionClick } = usePortfolioTracking(
+    isIframe ? undefined : data?.id
+  );
 
   // Wrap project clicks with tracking
   const handleProjectClick = useCallback((projectId: number | undefined) => {

@@ -79,7 +79,9 @@ export default function AnalyticsPage() {
   // Auto-select first portfolio
   const handlePortfolioChange = (id: string) => setSelectedId(id);
 
-  const selectedPortfolio = portfolios.find((p) => p.id === selectedId);
+  const publicPortfolios = portfolios.filter(p => p.visibilidad === 'PUBLICO');
+
+  const selectedPortfolio = publicPortfolios.find((p) => p.id === selectedId);
 
   return (
     <div className="flex flex-col gap-6 pt-1 pb-2 animate-fade-in">
@@ -133,7 +135,7 @@ export default function AnalyticsPage() {
       {/* Portfolio selector solo en Individual */}
       {modo === 'Individual' && (
         <PortfolioSelector
-          portfolios={portfolios}
+          portfolios={publicPortfolios}
           selectedId={selectedId}
           onChange={handlePortfolioChange}
           loading={loadingPortfolios}
@@ -153,13 +155,18 @@ export default function AnalyticsPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <AnalyticsKpiCard icon={icons.vistas} label="Vistas totales" value={formatNumber(globalData.totalVistas)} iconColor="#7c6bec" />
-              <AnalyticsKpiCard icon={icons.clics} label="Clics totales en proyectos" value={formatNumber(globalData.totalClicsProyectos)} iconColor="#3b82f6" />
               <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos totales" value={formatNumber(globalData.visitantesUnicos)} iconColor="#22c55e" />
-              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo medio de visualización" value={formatDuration(Math.round(globalData.duracionTotalSegundos / Math.max(1, globalData.totalVistas)))} iconColor="#3b82f6" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo total de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
             </div>
-            <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} />
+            <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} period={period} />
           </>
-        ) : null
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-center">
+            <p className="text-red-400 font-semibold">Error al cargar analíticas globales</p>
+            <p className="text-src-5a6278 text-sm max-w-[300px]">No se pudieron obtener los datos. Verifica que el backend esté corriendo.</p>
+          </div>
+        )
       ) : (
         /* Modo Individual */
         !selectedId ? (
@@ -187,11 +194,11 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <AnalyticsKpiCard icon={icons.vistas} label="Vistas" value={formatNumber(indData.totalVistas)} iconColor="#7c6bec" />
               <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos" value={formatNumber(indData.visitantesUnicos)} iconColor="#22c55e" />
-              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(indData.duracionTotalSegundos)} iconColor="#818cf8" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo total de visualización" value={formatDuration(indData.duracionTotalSegundos)} iconColor="#818cf8" />
             </div>
 
             {/* Chart individual */}
-            <AnalyticsLineChart title={selectedPortfolio?.nombre || 'Portafolio'} data={indData.chartData} />
+            <AnalyticsLineChart title={selectedPortfolio?.nombre || 'Portafolio'} data={indData.chartData} period={period} />
 
             {/* Rankings side by side */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -200,7 +207,12 @@ export default function AnalyticsPage() {
               <AnalyticsRankingTable title="Redes Sociales" items={indData.redesSocialesRanking} emptyMessage="Sin interacciones en redes" />
             </div>
           </>
-        ) : null
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-center">
+            <p className="text-red-400 font-semibold">Error al cargar analíticas</p>
+            <p className="text-src-5a6278 text-sm max-w-[300px]">No se pudieron obtener los datos del portafolio seleccionado.</p>
+          </div>
+        )
       )}
     </div>
   );

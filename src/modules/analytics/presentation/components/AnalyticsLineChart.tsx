@@ -1,181 +1,146 @@
-import { useRef, useEffect } from 'react';
+import Chart from 'react-apexcharts';
+import { ApexOptions } from 'apexcharts';
 import type { ChartPoint } from '../../domain/entities/PortfolioAnalytics';
 
 interface AnalyticsLineChartProps {
   title: string;
   data: ChartPoint[];
+  period?: string;
   yLabel?: string;
 }
 
-/**
- * Gráfico de línea nativo con Canvas para visualizar visitas.
- * Sin dependencias externas — consistente con la paleta del proyecto.
- */
 export default function AnalyticsLineChart({
   title,
   data,
+  period = '24h',
   yLabel = 'Visitas',
 }: AnalyticsLineChartProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container || data.length === 0) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const rect = container.getBoundingClientRect();
-    const width = rect.width;
-    const height = 280;
-
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.scale(dpr, dpr);
-
-    // Colors
-    const accentColor = '#7c6bec';
-    const gridColor = 'rgba(255, 255, 255, 0.06)';
-    const labelColor = '#6b7280';
-    const fillGradientTop = 'rgba(124, 107, 236, 0.25)';
-    const fillGradientBottom = 'rgba(124, 107, 236, 0.02)';
-
-    // Chart area padding
-    const padLeft = 48;
-    const padRight = 20;
-    const padTop = 20;
-    const padBottom = 40;
-    const chartW = width - padLeft - padRight;
-    const chartH = height - padTop - padBottom;
-
-    // Clear
-    ctx.clearRect(0, 0, width, height);
-
-    const values = data.map((d) => d.value);
-    const maxVal = Math.max(...values, 1);
-
-    // Round up to nice number for Y axis
-    const niceMax = getNiceMax(maxVal);
-    const ySteps = 4;
-
-    // Draw horizontal grid lines + Y labels
-    ctx.font = '11px Inter, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'middle';
-    for (let i = 0; i <= ySteps; i++) {
-      const val = Math.round((niceMax / ySteps) * i);
-      const y = padTop + chartH - (chartH * i) / ySteps;
-
-      ctx.strokeStyle = gridColor;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padLeft, y);
-      ctx.lineTo(padLeft + chartW, y);
-      ctx.stroke();
-
-      ctx.fillStyle = labelColor;
-      ctx.fillText(String(val), padLeft - 8, y);
-    }
-
-    // X positions
-    const points: { x: number; y: number }[] = data.map((d, i) => ({
-      x: padLeft + (chartW / (data.length - 1 || 1)) * i,
-      y: padTop + chartH - (chartH * d.value) / niceMax,
-    }));
-
-    // Fill area under curve
-    const gradient = ctx.createLinearGradient(0, padTop, 0, padTop + chartH);
-    gradient.addColorStop(0, fillGradientTop);
-    gradient.addColorStop(1, fillGradientBottom);
-
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, padTop + chartH);
-    drawSmoothLine(ctx, points);
-    ctx.lineTo(points[points.length - 1].x, padTop + chartH);
-    ctx.closePath();
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Draw line
-    ctx.beginPath();
-    drawSmoothLine(ctx, points);
-    ctx.strokeStyle = accentColor;
-    ctx.lineWidth = 2.5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.stroke();
-
-    // X labels (show subset to avoid overlap)
-    ctx.fillStyle = labelColor;
-    ctx.font = '10px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-
-    const maxLabels = Math.floor(chartW / 60);
-    const step = Math.max(1, Math.ceil(data.length / maxLabels));
-    data.forEach((d, i) => {
-      if (i % step === 0 || i === data.length - 1) {
-        ctx.fillText(d.label, points[i].x, padTop + chartH + 10);
-      }
-    });
-  }, [data]);
-
   if (data.length === 0) {
     return (
-      <div className="bg-src-171b28 border border-white/5 rounded-2xl p-5">
-        <h3 className="text-white font-bold text-base mb-4">{title}</h3>
-        <p className="text-src-5a6278 text-sm">Sin datos para mostrar</p>
+      <div className="bg-src-171b28 border border-white/5 rounded-2xl p-6 shadow-lg min-h-[340px] flex flex-col justify-center items-center text-center">
+        <h3 className="text-white font-bold text-base mb-4 w-full text-left self-start">{title}</h3>
+        <p className="text-src-5a6278 text-sm flex-1 flex items-center justify-center">Sin datos para mostrar</p>
       </div>
     );
   }
 
+  const series = [
+    {
+      name: 'Visitas',
+      data: data.map(d => ({
+        x: new Date(d.label).getTime(),
+        y: d.value == null ? null : Number(d.value)
+      }))
+    }
+  ];
+
+  const firstValidIndex = series[0].data.findIndex(d => d.y !== null);
+
+  const options: ApexOptions = {
+    chart: {
+      type: 'area',
+      background: 'transparent',
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350
+        }
+      }
+    },
+    theme: {
+      mode: 'dark'
+    },
+    colors: ['#7c6bec'],
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [0, 100]
+      }
+    },
+    dataLabels: { enabled: false },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    xaxis: {
+      type: 'datetime',
+      tickAmount: period === '24h' ? 8 : period === '7d' ? 7 : period === '30d' ? 10 : undefined,
+      labels: {
+        style: { colors: '#6b7280', fontSize: '11px', fontFamily: 'Inter' },
+        datetimeUTC: false,
+        datetimeFormatter: {
+          year: 'yyyy',
+          month: 'MMM \'yy',
+          day: 'dd MMM',
+          hour: period === '24h' ? 'HH:mm' : 'dd MMM'
+        }
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      tooltip: { enabled: false }
+    },
+    yaxis: {
+      labels: {
+        style: { colors: '#6b7280', fontSize: '11px', fontFamily: 'Inter' },
+        formatter: (val) => Math.round(val).toString()
+      },
+      title: {
+        text: yLabel,
+        style: { color: '#6b7280', fontSize: '10px', fontWeight: 500 }
+      },
+      min: 0,
+    },
+    grid: {
+      borderColor: 'rgba(255,255,255,0.06)',
+      strokeDashArray: 4,
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } },
+      padding: { top: 0, right: 25, bottom: 0, left: 10 }
+    },
+    annotations: {
+      points: firstValidIndex !== -1 && series[0].data[firstValidIndex].y !== null ? [{
+        x: series[0].data[firstValidIndex].x,
+        y: series[0].data[firstValidIndex].y as number,
+        marker: {
+          size: 5,
+          fillColor: '#ffffff',
+          strokeColor: '#7c6bec',
+          strokeWidth: 3,
+          shape: "circle"
+        }
+      }] : []
+    },
+    markers: {
+      size: 0, 
+      hover: {
+        size: 7
+      }
+    },
+    tooltip: {
+      theme: 'dark',
+      x: { format: period === '24h' ? 'dd MMM yyyy HH:mm' : 'dd MMM yyyy' },
+      y: { formatter: (val) => `${val} visitas` },
+      marker: { show: false }
+    }
+  };
+
   return (
-    <div className="bg-src-171b28 border border-white/5 rounded-2xl p-5">
-      <h3 className="text-white font-bold text-base mb-2">{title}</h3>
-      <div className="relative" ref={containerRef}>
-        {/* Y-axis label */}
-        <span className="absolute -left-1 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-src-6b7280 font-medium tracking-wider select-none">
-          {yLabel}
-        </span>
-        <canvas ref={canvasRef} className="w-full" />
+    <div className="bg-src-171b28 border border-white/5 rounded-2xl p-6 shadow-lg transition-all duration-300 hover:border-white/10 relative overflow-hidden">
+      {/* Decorative gradient blur in background */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#7c6bec] rounded-full blur-3xl -z-10 pointer-events-none translate-x-1/2 -translate-y-1/2 opacity-10" />
+      
+      <h3 className="text-white font-bold text-base mb-4 relative z-10">{title}</h3>
+      <div className="w-full h-[280px] relative z-10">
+        <Chart options={options} series={series} type="area" height="100%" />
       </div>
     </div>
   );
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Smooth curve through points using quadratic bezier */
-function drawSmoothLine(
-  ctx: CanvasRenderingContext2D,
-  pts: { x: number; y: number }[]
-) {
-  if (pts.length < 2) return;
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i = 0; i < pts.length - 1; i++) {
-    const xMid = (pts[i].x + pts[i + 1].x) / 2;
-    const yMid = (pts[i].y + pts[i + 1].y) / 2;
-    ctx.quadraticCurveTo(pts[i].x, pts[i].y, xMid, yMid);
-  }
-  const last = pts[pts.length - 1];
-  ctx.lineTo(last.x, last.y);
-}
-
-/** Get a nice round max value for the Y axis */
-function getNiceMax(maxVal: number): number {
-  if (maxVal <= 5) return 5;
-  if (maxVal <= 10) return 10;
-  const magnitude = Math.pow(10, Math.floor(Math.log10(maxVal)));
-  const normalized = maxVal / magnitude;
-  if (normalized <= 1.5) return 1.5 * magnitude;
-  if (normalized <= 2) return 2 * magnitude;
-  if (normalized <= 3) return 3 * magnitude;
-  if (normalized <= 5) return 5 * magnitude;
-  if (normalized <= 7.5) return 7.5 * magnitude;
-  return 10 * magnitude;
 }

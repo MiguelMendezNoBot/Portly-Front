@@ -2,6 +2,7 @@ export interface ExplorePortfolioPropietario {
   nombre: string;
   apellido: string;
   profesion?: string;
+  descripcion?: string;
   avatarUrl?: string;
 }
 
@@ -19,6 +20,10 @@ export interface ExploreSearchParams {
   sort?: 'recientes' | 'nombre';
   page?: number;
   limit?: number;
+  nacionalidad?: string;
+  habilidadesBlandas?: string;
+  habilidadesTecnicas?: string;
+  gradoAcademico?: string;
 }
 
 export interface ExploreSearchResult {
