@@ -21,11 +21,13 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
 
   const sorted = useMemo(() => {
     return [...records].sort((a, b) => {
-      const titleA = (a.titulo ?? '').toLowerCase();
-      const titleB = (b.titulo ?? '').toLowerCase();
-      if (titleA < titleB) return sortOrder === 'asc' ? -1 : 1;
-      if (titleA > titleB) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
+      const dateA = a.fechaInicio ?? '';
+      const dateB = b.fechaInicio ?? '';
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+      const diff = dateA.localeCompare(dateB);
+      return sortOrder === 'asc' ? diff : -diff;
     });
   }, [records, sortOrder]);
 
@@ -50,22 +52,22 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
             <button
               onClick={() => setSortOrder(isAsc ? 'desc' : 'asc')}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20 transition-all text-xs font-medium"
-              title={isAsc ? 'Ordenar Z-A' : 'Ordenar A-Z'}
+              title={isAsc ? 'Cambiar a descendente' : 'Cambiar a ascendente'}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {isAsc ? (
                   <>
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <polyline points="19 12 12 19 5 12" />
-                  </>
-                ) : (
-                  <>
                     <line x1="12" y1="19" x2="12" y2="5" />
                     <polyline points="5 12 12 5 19 12" />
                   </>
+                ) : (
+                  <>
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
+                  </>
                 )}
               </svg>
-              {isAsc ? 'Descendente' : 'Ascendente'}
+              {isAsc ? 'Ascendente' : 'Descendente'}
             </button>
 
             {/* Cerrar */}
@@ -87,7 +89,7 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
           {sorted.map((rec) => (
             <div
               key={rec.idActualizacionAcademica}
-              className="bg-[#171B28] p-5 rounded-2xl border border-white/5"
+              className="bg-[#171B28] p-5 rounded-2xl border border-white/5 overflow-hidden min-w-0"
             >
               <h4 className="text-white text-sm font-bold leading-snug">{rec.titulo}</h4>
               {rec.tipo && (
@@ -101,7 +103,7 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
                 {rec.aunNoLoFinalice ? 'Presente' : formatDate(rec.fechaFinalizacion)}
               </p>
               {rec.descripcion && (
-                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed">{rec.descripcion}</p>
+                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed break-all">{rec.descripcion}</p>
               )}
             </div>
           ))}

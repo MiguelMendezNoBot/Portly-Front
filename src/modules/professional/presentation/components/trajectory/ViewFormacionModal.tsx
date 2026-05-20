@@ -21,6 +21,9 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
     return [...records].sort((a, b) => {
       const dateA = a.fechaEgreso ?? '';
       const dateB = b.fechaEgreso ?? '';
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
       const diff = dateA.localeCompare(dateB);
       return sortOrder === 'asc' ? diff : -diff;
     });
@@ -80,7 +83,7 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
           {sorted.map((rec) => (
             <div
               key={rec.idFormacionAcademica}
-              className="bg-[#171B28] p-5 rounded-2xl border border-white/5"
+              className="bg-[#171B28] p-5 rounded-2xl border border-white/5 overflow-hidden min-w-0"
             >
               <h4 className="text-white text-sm font-bold leading-snug">
                 {rec.carrera}
@@ -95,7 +98,7 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
                 • {rec.actualmenteEstudiando ? 'En curso' : formatDate(rec.fechaEgreso)}
               </p>
               {rec.descripcion && (
-                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed">{rec.descripcion}</p>
+                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed break-all">{rec.descripcion}</p>
               )}
             </div>
           ))}

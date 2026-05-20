@@ -434,9 +434,9 @@ export default function PortfoliosPage() {
       await unpublishPortfolio(portfolioToPrivatize.id);
       setPortfolioToPrivatize(null);
       setPrivatizePhase(false);
-      showToast('¡Portafolio privatizado!', 'success');
+      showToast('¡Portafolio despublicado!', 'success');
     } catch (err: any) {
-      showToast(err?.message || 'Error al privatizar el portafolio', 'error');
+      showToast(err?.message || 'Error al despublicar el portafolio', 'error');
     } finally {
       setIsPrivatizing(false);
     }
@@ -559,7 +559,7 @@ export default function PortfoliosPage() {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                Privatizar
+                Despublicar
               </button>
             )}
 
@@ -818,7 +818,7 @@ export default function PortfoliosPage() {
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            <span>Escoge un portafolio para privatizarlo</span>
+            <span>Escoge un portafolio para despublicarlo</span>
             <button
               onClick={handleCancelPrivatizeMode}
               className="ml-auto text-xs underline opacity-60 hover:opacity-100"
@@ -1013,7 +1013,7 @@ export default function PortfoliosPage() {
         isOpen={!!portfolioToPrivatize}
         onClose={handleCancelPrivatizeConfirm}
         onConfirm={handleConfirmPrivatize}
-        title="¿Quieres privatizar este portafolio?"
+        title="¿Quieres despublicar este portafolio?"
         description={`"${portfolioToPrivatize?.nombre || ''}" dejará de ser visible para el público.`}
         confirmText="ACEPTAR"
         cancelText="CANCELAR"
