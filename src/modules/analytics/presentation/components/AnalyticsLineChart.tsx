@@ -36,6 +36,7 @@ export default function AnalyticsLineChart({
 
   const firstValidIndex = series[0].data.findIndex(d => d.y !== null);
 
+
   const options: ApexOptions = {
     chart: {
       type: 'area',

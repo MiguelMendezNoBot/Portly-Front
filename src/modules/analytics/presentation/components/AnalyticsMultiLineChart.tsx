@@ -62,7 +62,7 @@ export default function AnalyticsMultiLineChart({
         x: s.data[0].x,
         y: s.data[0].y,
         marker: {
-          size: 5,
+          size: 8,
           fillColor: '#ffffff',
           strokeColor: colors[idx] || '#ffffff',
           strokeWidth: 3,
@@ -139,7 +139,7 @@ export default function AnalyticsMultiLineChart({
       strokeDashArray: 4,
       xaxis: { lines: { show: false } },
       yaxis: { lines: { show: true } },
-      padding: { top: 0, right: 25, bottom: 0, left: 10 }
+      padding: { top: 0, right: 25, bottom: 15, left: 10 }
     },
     annotations: {
       points: annotationPoints
