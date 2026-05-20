@@ -29,6 +29,7 @@ export default function ViewProjectsModal({ isOpen, onClose, projects }: Props) 
 
   if (!isOpen) return null;
 
+  return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <div className="bg-[#0f111a] w-full max-w-lg max-h-[85vh] flex flex-col rounded-[24px] border border-white/10 shadow-2xl">
