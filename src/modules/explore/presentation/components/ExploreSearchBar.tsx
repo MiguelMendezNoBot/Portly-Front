@@ -210,7 +210,7 @@ export default function ExploreSearchBar({
     triggerSearch(q, sort, nextFilters);
   };
 
-  const handleClear = () => {
+  const handleClearAll = () => {
     const cleared = {
       nacionalidad: '',
       habilidadesBlandas: '',
@@ -223,8 +223,22 @@ export default function ExploreSearchBar({
     inputRef.current?.focus();
   };
 
+  const handleClearSelectFilters = () => {
+    const cleared = {
+      nacionalidad: '',
+      habilidadesBlandas: '',
+      habilidadesTecnicas: '',
+      gradoAcademico: '',
+    };
+    setFilters(cleared);
+    triggerSearch(q, sort, cleared);
+  };
+
   const hasActiveFilters =
     Object.values(filters).some((v) => v !== '') || q !== '';
+
+  const hasActiveSelectFilters =
+    Object.values(filters).some((v) => v !== '');
 
   if (compact) {
     return (
@@ -257,7 +271,7 @@ export default function ExploreSearchBar({
             />
             {hasActiveFilters && (
               <button
-                onClick={handleClear}
+                onClick={handleClearAll}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a6278] hover:text-white transition-colors"
               >
                 <svg
@@ -359,9 +373,9 @@ export default function ExploreSearchBar({
           <span className="text-[13px] uppercase font-bold tracking-wider text-[#7c6bec] bg-[#7c6bec]/10 px-4 py-1.5 rounded-full border border-[#7c6bec]/20 shadow-sm">
             Filtros de Búsqueda
           </span>
-          {hasActiveFilters && (
+          {hasActiveSelectFilters && (
             <button
-              onClick={handleClear}
+              onClick={handleClearSelectFilters}
               className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors px-3 py-1.5 rounded-full hover:bg-red-500/10 flex items-center gap-1"
             >
               <svg
