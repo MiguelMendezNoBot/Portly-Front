@@ -35,21 +35,7 @@ export default function AnalyticsLineChart({
   ];
 
   const firstValidIndex = series[0].data.findIndex(d => d.y !== null);
-  
-  const discreteMarkers: any[] = [];
-  series.forEach((s, sIdx) => {
-    s.data.forEach((p, pIdx) => {
-      if (p.y !== null && (pIdx === firstValidIndex || (p.y as number) > 0)) {
-        discreteMarkers.push({
-          seriesIndex: sIdx,
-          dataPointIndex: pIdx,
-          fillColor: '#ffffff',
-          strokeColor: '#7c6bec',
-          size: 4
-        });
-      }
-    });
-  });
+
 
   const options: ApexOptions = {
     chart: {
@@ -120,9 +106,21 @@ export default function AnalyticsLineChart({
       yaxis: { lines: { show: true } },
       padding: { top: 0, right: 25, bottom: 0, left: 10 }
     },
+    annotations: {
+      points: firstValidIndex !== -1 && series[0].data[firstValidIndex].y !== null ? [{
+        x: series[0].data[firstValidIndex].x,
+        y: series[0].data[firstValidIndex].y as number,
+        marker: {
+          size: 5,
+          fillColor: '#ffffff',
+          strokeColor: '#7c6bec',
+          strokeWidth: 3,
+          shape: "circle"
+        }
+      }] : []
+    },
     markers: {
       size: 0, 
-      discrete: discreteMarkers,
       hover: {
         size: 7
       }
