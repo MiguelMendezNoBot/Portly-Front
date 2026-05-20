@@ -20,6 +20,10 @@ export interface ExploreSearchParams {
   sort?: 'recientes' | 'nombre';
   page?: number;
   limit?: number;
+  nacionalidad?: string;
+  habilidadesBlandas?: string;
+  habilidadesTecnicas?: string;
+  gradoAcademico?: string;
 }
 
 export interface ExploreSearchResult {
