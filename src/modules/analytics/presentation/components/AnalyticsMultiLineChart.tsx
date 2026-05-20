@@ -54,22 +54,21 @@ export default function AnalyticsMultiLineChart({
     });
   });
 
-  // Anotaciones: punto de inicio para cada serie
-  const annotationPoints: any[] = [];
-  chartSeries.forEach((s, idx) => {
-    if (s.data.length > 0) {
-      annotationPoints.push({
-        x: s.data[0].x,
-        y: s.data[0].y,
-        marker: {
-          size: 5,
+  // Marcadores discretos: punto de inicio para cada serie y puntos con visitas > 0
+  // Esto asegura que los picos se vean siempre sin importar el zoom (100%, 75%, 67%)
+  const discreteMarkers: any[] = [];
+  chartSeries.forEach((s, sIdx) => {
+    s.data.forEach((p, pIdx) => {
+      if (pIdx === 0 || p.y > 0) {
+        discreteMarkers.push({
+          seriesIndex: sIdx,
+          dataPointIndex: pIdx,
           fillColor: '#ffffff',
-          strokeColor: colors[idx] || '#ffffff',
-          strokeWidth: 3,
-          shape: 'circle'
-        }
-      });
-    }
+          strokeColor: colors[sIdx] || '#ffffff',
+          size: 4
+        });
+      }
+    });
   });
 
   const options: ApexOptions = {
@@ -141,11 +140,9 @@ export default function AnalyticsMultiLineChart({
       yaxis: { lines: { show: true } },
       padding: { top: 0, right: 25, bottom: 0, left: 10 }
     },
-    annotations: {
-      points: annotationPoints
-    },
     markers: {
       size: 0,
+      discrete: discreteMarkers,
       hover: {
         size: 7
       }
