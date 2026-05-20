@@ -236,7 +236,8 @@ export default function ActualizacionAcademicaFormModal({
               </span>
               <input
                 id="aa-institucion"
-                className={`w-full bg-[#1a1c29] border ${errors.institucion ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
+                disabled={isEditing}
+                className={`w-full bg-[#1a1c29] border ${errors.institucion ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="Ej. Universidad Mayor de San Andrés"
                 value={formData.institucion}
                 maxLength={120}
@@ -259,7 +260,8 @@ export default function ActualizacionAcademicaFormModal({
             <div className="relative">
               <select
                 id="aa-tipo"
-                className={`w-full bg-[#1a1c29] border ${errors.tipo ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-white text-sm outline-none focus:border-[#6c63ff] transition-colors appearance-none cursor-pointer`}
+                disabled={isEditing}
+                className={`w-full bg-[#1a1c29] border ${errors.tipo ? 'border-red-500' : 'border-white/10'} rounded-xl p-3.5 text-white text-sm outline-none focus:border-[#6c63ff] transition-colors appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
                 value={formData.tipo}
                 onChange={(e) => {
                   setFormData({ ...formData, tipo: e.target.value });
@@ -300,7 +302,8 @@ export default function ActualizacionAcademicaFormModal({
               </span>
               <input
                 id="aa-titulo"
-                className={`w-full bg-[#1a1c29] border ${errors.titulo ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors`}
+                disabled={isEditing}
+                className={`w-full bg-[#1a1c29] border ${errors.titulo ? 'border-red-500' : 'border-white/10'} rounded-xl pl-10 pr-4 py-3.5 text-white outline-none focus:border-[#6c63ff] text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="Ej. Certificación en Gestión de Proyectos"
                 value={formData.titulo}
                 maxLength={120}
