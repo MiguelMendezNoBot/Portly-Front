@@ -65,6 +65,27 @@ function formatNumber(n: number): string {
 
 const PERIODS: AnalyticsPeriod[] = ['all', '30d', '7d', '24h'];
 
+// ─── Chart labels per period ─────────────────────────────────────────────────
+
+const CHART_LABELS: Record<AnalyticsPeriod, { title: string; subtitle: string }> = {
+  all: {
+    title: 'Visualizaciones totales',
+    subtitle: 'Todas las vistas registradas desde la creación del portafolio.',
+  },
+  '30d': {
+    title: 'Visualizaciones de los últimos 30 días',
+    subtitle: 'Vistas acumuladas por portafolio durante los últimos 30 días.',
+  },
+  '7d': {
+    title: 'Visualizaciones de los últimos 7 días',
+    subtitle: 'Vistas acumuladas por portafolio durante los últimos 7 días.',
+  },
+  '24h': {
+    title: 'Visualizaciones de las últimas 24 horas',
+    subtitle: 'Vistas acumuladas por portafolio durante las últimas 24 horas.',
+  },
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
@@ -159,7 +180,7 @@ export default function AnalyticsPage() {
               <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo medio de visualización" value={formatDuration(Math.round(globalData.duracionTotalSegundos / Math.max(1, globalData.totalVistas)))} iconColor="#3b82f6" />
               <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo total de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
             </div>
-            <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} period={period} />
+            <AnalyticsMultiLineChart title={CHART_LABELS[period].title} subtitle={CHART_LABELS[period].subtitle} series={globalData.chartSeries} period={period} />
           </>
         ) : (
           <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-center">
