@@ -13,7 +13,8 @@ const LEVEL_ORDER: Record<string, number> = {
   Básico: 1,
   Intermedio: 2,
   Avanzado: 3,
-  Experto: 4,
+  Maestro: 4,
+  Experto: 5,
 };
 
 export default function ViewSkillsModal({ isOpen, onClose, skills }: Props) {
