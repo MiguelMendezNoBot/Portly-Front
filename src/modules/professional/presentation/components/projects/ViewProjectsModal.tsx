@@ -192,6 +192,68 @@ export default function ViewProjectsModal({ isOpen, onClose, projects }: Props) 
                       </div>
                     )}
 
+                    {/* Documentos */}
+                    {project.documentos && project.documentos.length > 0 && (
+                      <div>
+                        <p className="text-[#6b7280] text-[10px] font-semibold uppercase tracking-wider mb-1.5">
+                          Documentos ({project.documentos.length})
+                        </p>
+                        <div className="space-y-1.5">
+                          {project.documentos.map((doc, i) => {
+                            const ext = doc.tipo?.toLowerCase() || doc.nombre?.split('.').pop()?.toLowerCase() || '';
+                            const isPdf = ext === 'pdf';
+                            const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
+
+                            return (
+                              <a
+                                key={i}
+                                href={`${baseUrl}${doc.urlDescarga}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2.5 bg-[#0f111a] border border-white/5 rounded-xl p-2.5 hover:border-[#6c63ff]/30 transition-colors group"
+                              >
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                                  isPdf ? 'bg-red-500/15' : 'bg-blue-500/15'
+                                }`}>
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke={isPdf ? '#ef4444' : '#3b82f6'}
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white text-xs font-medium truncate group-hover:text-[#a3a6ff] transition-colors">
+                                    {doc.nombre}
+                                  </p>
+                                  <p className="text-[#6b7280] text-[10px] mt-0.5">
+                                    {ext.toUpperCase()}
+                                    {doc.pesoBytes ? ` • ${(doc.pesoBytes / (1024 * 1024)).toFixed(1)} MB` : ''}
+                                  </p>
+                                </div>
+                                <div className="shrink-0 text-[#6b7280] group-hover:text-[#6c63ff] transition-colors">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                  </svg>
+                                </div>
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Enlace(s) */}
                     {project.enlaces && project.enlaces.length > 0 && (
                       <div className="flex flex-wrap gap-2">
