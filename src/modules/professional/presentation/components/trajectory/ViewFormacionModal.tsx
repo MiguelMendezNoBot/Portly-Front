@@ -21,6 +21,9 @@ export default function ViewFormacionModal({ isOpen, onClose, records }: Props) 
     return [...records].sort((a, b) => {
       const dateA = a.fechaEgreso ?? '';
       const dateB = b.fechaEgreso ?? '';
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
       const diff = dateA.localeCompare(dateB);
       return sortOrder === 'asc' ? diff : -diff;
     });
