@@ -21,11 +21,8 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
 
   const sorted = useMemo(() => {
     return [...records].sort((a, b) => {
-      const titleA = (a.titulo ?? '').toLowerCase();
-      const titleB = (b.titulo ?? '').toLowerCase();
-      if (titleA < titleB) return sortOrder === 'asc' ? -1 : 1;
-      if (titleA > titleB) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
+      const diff = (a.fechaInicio ?? '').localeCompare(b.fechaInicio ?? '');
+      return sortOrder === 'asc' ? diff : -diff;
     });
   }, [records, sortOrder]);
 
@@ -87,7 +84,7 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
           {sorted.map((rec) => (
             <div
               key={rec.idActualizacionAcademica}
-              className="bg-[#171B28] p-5 rounded-2xl border border-white/5"
+              className="bg-[#171B28] p-5 rounded-2xl border border-white/5 overflow-hidden min-w-0"
             >
               <h4 className="text-white text-sm font-bold leading-snug">{rec.titulo}</h4>
               {rec.tipo && (
@@ -101,7 +98,7 @@ export default function ViewActualizacionAcademicaModal({ isOpen, onClose, recor
                 {rec.aunNoLoFinalice ? 'Presente' : formatDate(rec.fechaFinalizacion)}
               </p>
               {rec.descripcion && (
-                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed">{rec.descripcion}</p>
+                <p className="text-[#9ca3af] text-xs mt-2 leading-relaxed break-all">{rec.descripcion}</p>
               )}
             </div>
           ))}
