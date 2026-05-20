@@ -42,5 +42,5 @@ export const PERIOD_LABELS: Record<AnalyticsPeriod, string> = {
   all: 'Todo',
   '30d': 'Últimos 30 días',
   '7d': 'Últimos 7 días',
-  '24h': 'Últimas 24hrs',
+  '24h': 'Últimas 24 horas',
 };

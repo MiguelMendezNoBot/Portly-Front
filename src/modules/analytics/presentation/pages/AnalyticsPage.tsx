@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
               <AnalyticsKpiCard icon={icons.vistas} label="Vistas totales" value={formatNumber(globalData.totalVistas)} iconColor="#7c6bec" />
               <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos totales" value={formatNumber(globalData.visitantesUnicos)} iconColor="#22c55e" />
               <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo medio de visualización" value={formatDuration(Math.round(globalData.duracionTotalSegundos / Math.max(1, globalData.totalVistas)))} iconColor="#3b82f6" />
-              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo total de visualización" value={formatDuration(globalData.duracionTotalSegundos)} iconColor="#818cf8" />
             </div>
             <AnalyticsMultiLineChart title="Visualizaciones totales por dia" subtitle="Visualización detallada de las vistas de los portafolios por día." series={globalData.chartSeries} period={period} />
           </>
@@ -194,7 +194,7 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <AnalyticsKpiCard icon={icons.vistas} label="Vistas" value={formatNumber(indData.totalVistas)} iconColor="#7c6bec" />
               <AnalyticsKpiCard icon={icons.visitantes} label="Visitantes únicos" value={formatNumber(indData.visitantesUnicos)} iconColor="#22c55e" />
-              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo de visualización" value={formatDuration(indData.duracionTotalSegundos)} iconColor="#818cf8" />
+              <AnalyticsKpiCard icon={icons.tiempo} label="Tiempo total de visualización" value={formatDuration(indData.duracionTotalSegundos)} iconColor="#818cf8" />
             </div>
 
             {/* Chart individual */}
