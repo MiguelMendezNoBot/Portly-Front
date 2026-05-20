@@ -40,7 +40,7 @@ export type AnalyticsPeriod = 'all' | '30d' | '7d' | '24h';
 
 export const PERIOD_LABELS: Record<AnalyticsPeriod, string> = {
   all: 'Todo',
-  '30d': 'Este Mes',
+  '30d': 'Últimos 30 días',
   '7d': 'Últimos 7 días',
   '24h': 'Últimas 24hrs',
 };
