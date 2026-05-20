@@ -168,10 +168,8 @@ export default function ExplorePage() {
     navigate(-1);
   }, [navigate]);
 
-  // Derive section title
-  const sectionTitle = hasQuery
-    ? `${total} resultado${total !== 1 ? 's' : ''} para "${currentParams.q}"`
-    : 'Resultados';
+  // Fixed section title for results label
+  const sectionTitle = 'Resultados';
 
   return (
     <div className="relative min-h-full flex flex-col animate-fade-in">
@@ -193,17 +191,13 @@ export default function ExplorePage() {
           {/* Section header */}
           <div className="flex flex-col gap-1 px-1 mt-4 pb-3 border-b border-white/5">
             <h2 className="text-white text-xl font-bold flex items-baseline gap-3">
-              {loading && hasQuery ? 'Sincronizando resultados…' : sectionTitle}
-              {!loading && (
-                <span className="text-[#C9BEFF] text-sm font-semibold">
-                  ({total})
-                </span>
-              )}
+              {sectionTitle}
+              <span className="text-[#C9BEFF] text-sm font-semibold">
+                ({total})
+              </span>
             </h2>
             <p className="text-[#9ca3af] text-xs">
-              {hasQuery
-                ? 'Resultados encontrados en el explorador público'
-                : 'Explora los últimos portafolios de la comunidad'}
+              Descubre el talento y los proyectos destacados de nuestra comunidad
             </p>
           </div>
 
@@ -271,10 +265,8 @@ export default function ExplorePage() {
                     <p className="text-white font-semibold text-lg">
                       Sin resultados
                     </p>
-                    <p className="text-white/40 text-sm mt-1 max-w-xs">
-                      No encontramos portafolios para{' '}
-                      <span className="text-white">"{currentParams.q}"</span>.
-                      Intenta con otro nombre o profesión.
+                    <p className="text-white/40 text-sm mt-1 max-w-xs leading-relaxed">
+                      No se encontró portafolios. Intenta realizar otra búsqueda.
                     </p>
                   </div>
                 </div>
