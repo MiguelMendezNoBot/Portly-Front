@@ -304,7 +304,7 @@ export default function FormacionAcademicaSection() {
                   if (mode === 'edit') handleOpenEdit(rec);
                   else if (mode === 'delete') handleDeleteClick(rec);
                 }}
-                className={`relative bg-[#2D3449] p-6 rounded-2xl border transition-all ${
+                className={`group relative bg-[#2D3449] p-6 rounded-2xl border transition-all ${
                   mode === 'edit'
                     ? 'border-white/20 cursor-pointer hover:bg-[#2a3060] hover:border-white/30'
                     : mode === 'delete'
@@ -312,14 +312,14 @@ export default function FormacionAcademicaSection() {
                     : 'border-white/5 hover:bg-[#1f2233]'
                 }`}
               >
-                {/* Indicador de acción en el ítem */}
+                {/* Indicador de acción en el ítem — visible solo en hover */}
                 {mode === 'edit' && (
-                  <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white">
+                  <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white opacity-0 group-hover:opacity-100 transition-opacity">
                     <EditIcon />
                   </div>
                 )}
                 {mode === 'delete' && (
-                  <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400">
+                  <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     <TrashIcon />
                   </div>
                 )}
