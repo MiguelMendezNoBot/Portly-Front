@@ -4,6 +4,7 @@ interface AuthUser {
   displayName: string;
   email: string;
   perfilCompleto: boolean;
+  rol: string;
 }
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
@@ -27,8 +28,9 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
 
   const payload = decodeJwtPayload(token);
   const perfilCompleto = payload?.perfilCompleto !== false;
+  const rol = typeof payload?.rol === 'string' ? payload.rol.toUpperCase() : 'USER';
 
-  const user: AuthUser = { displayName, email, perfilCompleto };
+  const user: AuthUser = { displayName, email, perfilCompleto, rol };
 
   const logout = () => {
     localStorage.removeItem('token');
