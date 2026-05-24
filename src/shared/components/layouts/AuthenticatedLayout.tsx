@@ -61,6 +61,11 @@ export default function AuthenticatedLayout() {
     return null;
   }
 
+  if (user.rol === 'ADMIN') {
+    navigate('/admin', { replace: true });
+    return null;
+  }
+
   const fullName = profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Usuario');
   const avatarUrl = profile?.avatarUrl;
 
