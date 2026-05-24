@@ -40,7 +40,8 @@ export function AuthCallbackPage() {
     if (payload.sub) saveUsuarioId(payload.sub);
     if (payload.email) saveEmail(payload.email);
     sessionStorage.setItem('oauth_login_success', '1');
-    window.location.replace('/');
+    const isAdmin = typeof payload.rol === 'string' && payload.rol.toUpperCase() === 'ADMIN';
+    window.location.replace(isAdmin ? '/admin' : '/');
   }, []);
 
   if (error) {

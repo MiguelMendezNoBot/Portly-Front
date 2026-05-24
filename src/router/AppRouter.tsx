@@ -20,6 +20,9 @@ import PortfoliosPage from '../modules/portfolios/presentation/pages/PortfoliosP
 import PortfolioPublicPage from '../modules/portfolios/presentation/pages/PortfolioPublicPage';
 import ExplorePage from '../modules/explore/presentation/pages/ExplorePage';
 import AnalyticsPage from '../modules/analytics/presentation/pages/AnalyticsPage';
+import { AdminLayout } from '../modules/admin/presentation/layouts/AdminLayout';
+import { ReportsPage } from '../modules/admin/presentation/pages/ReportsPage';
+import { AdminPlaceholderPage } from '../modules/admin/presentation/pages/AdminPlaceholderPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -63,6 +66,16 @@ export const AppRouter = () => {
           <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
           <Route path="/visibility" element={<ProfileCompleteRoute element={<VisibilityPage />} />} />
           <Route path="/integrations" element={<ProfileCompleteRoute element={<IntegrationsPage />} />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminPlaceholderPage title="Dashboard" />} />
+          <Route path="usuarios" element={<AdminPlaceholderPage title="Usuarios" />} />
+          <Route path="denuncias" element={<AdminPlaceholderPage title="Denuncias" />} />
+          <Route path="suspendidos" element={<AdminPlaceholderPage title="Suspendidos" />} />
+          <Route path="reportes" element={<ReportsPage />} />
+          <Route path="configuracion" element={<AdminPlaceholderPage title="Configuración" />} />
         </Route>
 
         <Route path="/profesionales" element={<ProfessionalsPage />} />

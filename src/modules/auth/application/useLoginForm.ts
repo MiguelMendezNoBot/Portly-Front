@@ -45,7 +45,8 @@ export const useLoginForm = () => {
       saveUsuarioId(data.idUsuario);
       saveEmail(data.email);
       showToast('¡Bienvenido!', 'success');
-      setTimeout(() => navigate('/'), 1500);
+      const isAdmin = data.rol?.toUpperCase() === 'ADMIN';
+      setTimeout(() => navigate(isAdmin ? '/admin' : '/'), 1500);
     } catch {
       showToast('Credenciales inválidas', 'error');
     }
