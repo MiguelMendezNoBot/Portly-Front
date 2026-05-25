@@ -23,6 +23,7 @@ import AnalyticsPage from '../modules/analytics/presentation/pages/AnalyticsPage
 import { AdminLayout } from '../modules/admin/presentation/layouts/AdminLayout';
 import { ReportsPage } from '../modules/admin/presentation/pages/ReportsPage';
 import { AdminPlaceholderPage } from '../modules/admin/presentation/pages/AdminPlaceholderPage';
+import { UsersPage } from '../modules/admin/presentation/pages/UsersPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -71,7 +72,7 @@ export const AppRouter = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminPlaceholderPage title="Dashboard" />} />
-          <Route path="usuarios" element={<AdminPlaceholderPage title="Usuarios" />} />
+          <Route path="usuarios" element={<UsersPage />} />
           <Route path="denuncias" element={<AdminPlaceholderPage title="Denuncias" />} />
           <Route path="suspendidos" element={<AdminPlaceholderPage title="Suspendidos" />} />
           <Route path="reportes" element={<ReportsPage />} />
