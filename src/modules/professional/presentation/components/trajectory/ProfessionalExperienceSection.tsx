@@ -114,7 +114,7 @@ export default function TrayectoriaSection() {
 
   return (
     <>
-      <section className="flex flex-col gap-6 w-full animate-fade-in bg-[#171B28] p-4 rounded-2xl">
+      <section className="flex flex-col gap-6 w-full animate-fade-in p-4 rounded-2xl">
         <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h3 className="text-white text-2xl font-bold">
