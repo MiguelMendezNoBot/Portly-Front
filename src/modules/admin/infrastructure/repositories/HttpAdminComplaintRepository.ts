@@ -2,7 +2,7 @@
 
 import { ComplaintGroup, Revision, Suspension } from "../../domain/entities/Complaint";
 
-const BASE_URL = 'http://localhost:8000/admin';
+const BASE_URL = 'http://localhost:8080/admin';
 
 export class HttpAdminComplaintRepository {
   async getAll(): Promise<ComplaintGroup[]> {

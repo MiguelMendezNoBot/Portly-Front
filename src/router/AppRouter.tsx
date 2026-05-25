@@ -23,6 +23,7 @@ import AnalyticsPage from '../modules/analytics/presentation/pages/AnalyticsPage
 import { AdminLayout } from '../modules/admin/presentation/layouts/AdminLayout';
 import { ReportsPage } from '../modules/admin/presentation/pages/ReportsPage';
 import { AdminPlaceholderPage } from '../modules/admin/presentation/pages/AdminPlaceholderPage';
+import { DashboardPage } from '../modules/admin/presentation/pages/DashboardPage';
 import { UsersPage } from '../modules/admin/presentation/pages/UsersPage';
 import { ComplaintPage } from '../modules/admin/presentation/pages/ComplaintPage';
 import { ComplaintDetailPage } from '../modules/admin/presentation/components/complaint/ComplaintDetailPage';
@@ -74,7 +75,7 @@ export const AppRouter = () => {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<AdminPlaceholderPage title="Dashboard" />} />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="usuarios" element={<UsersPage />} />
           <Route path="denuncias" element={<ComplaintPage />} />
           <Route path="denuncias/:id/revisar" element={<ComplaintDetailPage />} />

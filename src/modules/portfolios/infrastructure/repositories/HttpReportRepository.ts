@@ -1,6 +1,6 @@
 import { ReportSubmission } from "../../domain/entities/ReportSubmission";
 
-const BASE_URL = 'http://localhost:8000/admin';
+const BASE_URL = 'http://localhost:8080/admin';
 
 export class HttpReportRepository {
   async submitReport(report: ReportSubmission): Promise<void> {
