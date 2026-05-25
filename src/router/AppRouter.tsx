@@ -24,7 +24,9 @@ import { AdminLayout } from '../modules/admin/presentation/layouts/AdminLayout';
 import { ReportsPage } from '../modules/admin/presentation/pages/ReportsPage';
 import { AdminPlaceholderPage } from '../modules/admin/presentation/pages/AdminPlaceholderPage';
 import { UsersPage } from '../modules/admin/presentation/pages/UsersPage';
-import { DenunciasPage } from '../modules/admin/presentation/pages/ComplaintPage';
+import { ComplaintPage } from '../modules/admin/presentation/pages/ComplaintPage';
+import { ComplaintDetailPage } from '../modules/admin/presentation/components/complaint/ComplaintDetailPage';
+import { SuspendedUsersPage } from '../modules/admin/presentation/pages/SuspendedUsersPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -74,8 +76,9 @@ export const AppRouter = () => {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminPlaceholderPage title="Dashboard" />} />
           <Route path="usuarios" element={<UsersPage />} />
-          <Route path="denuncias" element={<DenunciasPage />} />
-          <Route path="suspendidos" element={<AdminPlaceholderPage title="Suspendidos" />} />
+          <Route path="denuncias" element={<ComplaintPage />} />
+          <Route path="denuncias/:id/revisar" element={<ComplaintDetailPage />} />
+          <Route path="suspendidos" element={<SuspendedUsersPage />} />
           <Route path="reportes" element={<ReportsPage />} />
           <Route path="configuracion" element={<AdminPlaceholderPage title="Configuración" />} />
         </Route>

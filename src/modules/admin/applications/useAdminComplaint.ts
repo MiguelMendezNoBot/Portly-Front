@@ -1,22 +1,22 @@
+// src/modules/admin/applications/useAdminComplaint.ts
+
 import { useState, useEffect, useCallback } from 'react';
-import { DenunciaAgrupada } from '../domain/entities/Complaint';
-import { HttpAdminDenunciaRepository } from '../infrastructure/repositories/HttpAdminComplaintRepository';
+import { ComplaintGroup } from '../domain/entities/Complaint';
+import { HttpAdminComplaintRepository } from '../infrastructure/repositories/HttpAdminComplaintRepository';
 
-const repo = new HttpAdminDenunciaRepository();
+const repo = new HttpAdminComplaintRepository();
 
-export function useAdminDenuncias() {
-  const [denuncias, setDenuncias] = useState<DenunciaAgrupada[]>([]);
+export function useAdminComplaint() {
+  const [complaints, setComplaints] = useState<ComplaintGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actionMode, setActionMode] = useState<'view' | 'review' | null>(null);
-  const [selectedDenuncia, setSelectedDenuncia] = useState<DenunciaAgrupada | null>(null);
 
-  const loadDenuncias = useCallback(async () => {
+  const loadComplaints = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
       const data = await repo.getAll();
-      setDenuncias(data);
+      setComplaints(data);
     } catch (err: any) {
       setError(err.message || 'Error al cargar denuncias');
     } finally {
@@ -25,37 +25,8 @@ export function useAdminDenuncias() {
   }, []);
 
   useEffect(() => {
-    loadDenuncias();
-  }, [loadDenuncias]);
+    loadComplaints();
+  }, [loadComplaints]);
 
-  const handleCardClick = (denuncia: DenunciaAgrupada) => {
-    if (!actionMode) return;
-    setSelectedDenuncia(denuncia);
-  };
-
-  const clearSelection = () => setSelectedDenuncia(null);
-
-  const handleUpdateStatus = async (id: number, newStatus: string) => {
-    try {
-      const updated = await repo.updateStatus(id, newStatus);
-      setDenuncias(prev => prev.map(d => d.id === id ? updated : d));
-      clearSelection();
-      setActionMode(null);
-    } catch (err: any) {
-      throw err; // lo manejaremos en el modal
-    }
-  };
-
-  return {
-    denuncias,
-    isLoading,
-    error,
-    actionMode,
-    setActionMode,
-    selectedDenuncia,
-    handleCardClick,
-    clearSelection,
-    handleUpdateStatus,
-    reload: loadDenuncias,
-  };
+  return { complaints, isLoading, error, reload: loadComplaints };
 }

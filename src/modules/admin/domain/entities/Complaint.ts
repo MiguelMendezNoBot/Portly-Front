@@ -1,19 +1,36 @@
-export interface DenunciaIndividual {
+
+export interface ComplaintItem {
   id: number;
   reason: string;
   description: string;
-  createdAt: string; // ISO string o formato DD/MM/YYYY, lo trataremos como string
+  createdAt: string;
   reportedBy: string;
 }
 
-export interface DenunciaAgrupada {
+export interface Revision {
+  resultado: string;
+  fecha: string;
+  adminId: string;
+}
+
+export interface ComplaintGroup {
   id: number;
   portfolioId: number;
   portfolioTitle: string;
+  portfolioPublicUrl: string;
   ownerUserId: number;
   ownerUserName: string;
-  complaintCount: number;
-  latestReason: string;
-  status: 'pendiente' | 'revisado' | 'suspendido';
-  complaints: DenunciaIndividual[];
+  ownerUserStatus: 'activo' | 'suspendido';
+  status: 'pendiente' | 'revisado';
+  complaints: ComplaintItem[];
+  revision: Revision | null;
+}
+
+export interface Suspension {
+  id?: number;
+  userId: number;
+  motivo: string;
+  fechaSuspension: string;
+  adminId: string;
+  motivoCancelacion: string | null;
 }
