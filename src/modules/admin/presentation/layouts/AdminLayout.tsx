@@ -45,10 +45,6 @@ export function AdminLayout() {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  if (!user || user.rol !== 'ADMIN') {
-    navigate('/', { replace: true });
-    return null;
-  }
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
