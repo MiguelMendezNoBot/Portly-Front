@@ -56,13 +56,15 @@ export default function AuthenticatedLayout() {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  if (!user) {
-    navigate('/login', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { replace: true });
+    } else if (user.rol === 'ADMIN') {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, navigate]);
 
-  if (user.rol === 'ADMIN') {
-    navigate('/admin', { replace: true });
+  if (!user || user.rol === 'ADMIN') {
     return null;
   }
 

@@ -4,13 +4,13 @@ import { HttpAdminComplaintRepository } from '../../../infrastructure/repositori
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  complaintId: number;
+  complaintIds: number[];
   onSuccess: () => void;
 }
 
 const repo = new HttpAdminComplaintRepository();
 
-export function ReviewComplaintModal({ isOpen, onClose, complaintId, onSuccess }: Props) {
+export function ReviewComplaintModal({ isOpen, onClose, complaintIds, onSuccess }: Props) {
   const [resultado, setResultado] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,14 +23,16 @@ export function ReviewComplaintModal({ isOpen, onClose, complaintId, onSuccess }
     setIsSubmitting(true);
     setError(null);
     try {
-      await repo.updateStatus(complaintId, {
-        status: 'revisado',
-        revision: {
-          resultado,
-          fecha: new Date().toISOString(),
-          adminId: 'admin1',
-        },
-      });
+      await Promise.all(
+        complaintIds.map(id => repo.updateStatus(id, {
+          status: 'revisado',
+          revision: {
+            resultado,
+            fecha: new Date().toISOString(),
+            adminId: 'admin1', // In a real app, from auth token
+          },
+        }))
+      );
       onSuccess();
       onClose();
     } catch (err: any) {

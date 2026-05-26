@@ -1,10 +1,10 @@
 import { ReportSubmission } from "../../domain/entities/ReportSubmission";
 
-const BASE_URL = 'http://localhost:8080/admin';
+const BASE_URL = 'http://localhost:8080/api/public';
 
 export class HttpReportRepository {
   async submitReport(report: ReportSubmission): Promise<void> {
-    const res = await fetch(`${BASE_URL}/denuncias/reportar`, {
+    const res = await fetch(`${BASE_URL}/reportar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(report),

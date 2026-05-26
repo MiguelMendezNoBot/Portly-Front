@@ -3,4 +3,6 @@ export interface ReportSubmission {
   reason: string;
   description?: string;
   reportedBy?: string; // anónimo por defecto
+  reporterName?: string;
+  reporterAvatar?: string;
 }

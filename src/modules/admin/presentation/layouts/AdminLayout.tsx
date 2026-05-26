@@ -45,8 +45,13 @@ export function AdminLayout() {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!user || user.rol !== 'ADMIN') {
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
+
   if (!user || user.rol !== 'ADMIN') {
-    navigate('/', { replace: true });
     return null;
   }
 

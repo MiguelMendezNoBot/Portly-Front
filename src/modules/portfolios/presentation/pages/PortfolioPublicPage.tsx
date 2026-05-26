@@ -8,6 +8,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
+import { useAuth } from '../../../home/presentation/hooks/useAuth';
 import { BASE_URL } from '../../../../infrastructure/http/httpClient';
 import { usePortfolioTracking } from '../../../analytics/application/usePortfolioTracking';
 import type {
@@ -2514,6 +2515,7 @@ export default function PortfolioPublicPage() {
   const { trackProjectClick, trackSectionClick } = usePortfolioTracking(
     isIframe ? undefined : data?.id
   );
+  const { user } = useAuth();
   const [reportModalOpen, setReportModalOpen] = useState(false);
 
   // Wrap project clicks with tracking
@@ -2666,23 +2668,47 @@ export default function PortfolioPublicPage() {
           <p style={{ color: t.textMuted, fontSize: 12, margin: 0 }}>
             Portafolio creado con{' '}
             <span style={{ color: t.accent, fontWeight: 600 }}>Portly</span>
-            {' · '}
-            <button
-              onClick={() => setReportModalOpen(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: t.textMuted,
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                fontSize: 12,
-                fontWeight: 600,
-              }}
-            >
-              Reportar portafolio
-            </button>
           </p>
         </footer>
+
+        {/* Floating Report Button */}
+        {user?.rol !== 'ADMIN' && !data?.hasPendingReport && (
+          <button
+            onClick={() => setReportModalOpen(true)}
+            title="Reportar portafolio"
+            style={{
+              position: 'fixed',
+              bottom: isMobile ? 24 : 32,
+              right: isMobile ? 24 : 32,
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              background: '#ef4444',
+              color: '#ffffff',
+              border: 'none',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: 1000,
+              transition: 'transform 0.2s, box-shadow 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+              <line x1="4" y1="22" x2="4" y2="15" />
+            </svg>
+          </button>
+        )}
       </div>
       <ReportPortfolioModal
         isOpen={reportModalOpen}
