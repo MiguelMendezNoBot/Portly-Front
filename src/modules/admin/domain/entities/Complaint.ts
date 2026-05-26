@@ -5,6 +5,8 @@ export interface ComplaintItem {
   description: string;
   createdAt: string;
   reportedBy: string;
+  reporterName?: string;
+  reporterAvatar?: string;
 }
 
 export interface Revision {
@@ -15,10 +17,10 @@ export interface Revision {
 
 export interface ComplaintGroup {
   id: number;
-  portfolioId: number;
+  portfolioId: string;
   portfolioTitle: string;
   portfolioPublicUrl: string;
-  ownerUserId: number;
+  ownerUserId: string;
   ownerUserName: string;
   ownerUserStatus: 'activo' | 'suspendido';
   status: 'pendiente' | 'revisado';
@@ -28,7 +30,7 @@ export interface ComplaintGroup {
 
 export interface Suspension {
   id?: number;
-  userId: number;
+  userId: string;
   motivo: string;
   fechaSuspension: string;
   adminId: string;

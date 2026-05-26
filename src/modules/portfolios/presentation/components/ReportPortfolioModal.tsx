@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useReportPortfolio } from '../../application/useReportPortfolio';
+import { useAuth } from '../../../home/presentation/hooks/useAuth';
+import { useUserProfile } from '../../../profile/application/useUserProfile';
 
 const MOTIVOS = [
   'Contenido inapropiado',
@@ -21,6 +23,14 @@ export function ReportPortfolioModal({ isOpen, onClose, portfolioId, portfolioTi
   const [description, setDescription] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
   const { submit, isSubmitting, error: serverError } = useReportPortfolio();
+  const { user } = useAuth();
+  const { profile } = useUserProfile();
+
+  const reportedByName = user
+    ? (profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Usuario'))
+    : 'Visitante Anónimo';
+  
+  const reportedByAvatar = profile?.avatarUrl || undefined;
 
   const handleSubmit = async () => {
     if (!motivo) {
@@ -33,7 +43,9 @@ export function ReportPortfolioModal({ isOpen, onClose, portfolioId, portfolioTi
         portfolioId,
         reason: motivo,
         description: description || undefined,
-        reportedBy: 'visitante_anónimo',
+        reportedBy: user ? String(user.id) : 'visitante_anonimo',
+        reporterName: reportedByName,
+        reporterAvatar: reportedByAvatar,
       });
       onClose();
     } catch {

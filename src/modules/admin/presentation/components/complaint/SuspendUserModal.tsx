@@ -4,7 +4,7 @@ import { HttpAdminComplaintRepository } from '../../../infrastructure/repositori
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  userId: number;
+  userId: string;
   userName: string;
   onSuccess: () => void;
 }

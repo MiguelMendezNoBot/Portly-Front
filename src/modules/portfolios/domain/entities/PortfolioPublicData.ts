@@ -86,6 +86,7 @@ export interface PortfolioPublicData {
   visibilidad: string;
   templateNombre: string;
   templateSchema: TemplateSchema;
+  hasPendingReport?: boolean;
   usuario: PortfolioPublicUser;
   skills: PortfolioPublicSkill[];
   softSkills: PortfolioPublicSoftSkill[];

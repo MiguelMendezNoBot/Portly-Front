@@ -28,7 +28,7 @@ export function useAdminSuspendedUsers() {
     load();
   }, [load]);
 
-  const reactivateUser = async (userId: number) => {
+  const reactivateUser = async (userId: string) => {
     await repo.reactivateUser(userId);
     await load(); // refrescar lista
   };

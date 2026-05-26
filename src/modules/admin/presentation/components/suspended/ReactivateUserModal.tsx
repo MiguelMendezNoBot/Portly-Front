@@ -3,9 +3,9 @@ import { useState } from 'react';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  userId: number;
+  userId: string;
   userName: string;
-  onReactivate: (userId: number, motivo: string) => Promise<void>;
+  onReactivate: (userId: string, motivo: string) => Promise<void>;
 }
 
 export function ReactivateUserModal({ isOpen, onClose, userId, userName, onReactivate }: Props) {
