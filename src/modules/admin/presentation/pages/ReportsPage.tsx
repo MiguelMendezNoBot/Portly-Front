@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { UserReportModal } from '../components/UserReportModal';
+import { SkillReportModal } from '../components/SkillReportModal';
 import { HttpAdminReportRepository } from '../../infrastructure/repositories/HttpAdminReportRepository';
 
 const cards = [
@@ -29,7 +30,7 @@ const cards = [
   },
   {
     id: 'skills',
-    title: 'Reporte de habilidades',
+    title: 'Reporte de habilidades registradas',
     description: 'Genera un PDF con el ranking de habilidades más registradas filtrando por tipo y periodo.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -40,7 +41,8 @@ const cards = [
 ];
 
 export function ReportsPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [userModalOpen, setUserModalOpen] = useState(false);
+  const [skillModalOpen, setSkillModalOpen] = useState(false);
   const repo = new HttpAdminReportRepository();
 
   return (
@@ -57,7 +59,8 @@ export function ReportsPage() {
             </p>
             <button
               onClick={() => {
-                if (card.id === 'users') setModalOpen(true);
+                if (card.id === 'users') setUserModalOpen(true);
+                if (card.id === 'skills') setSkillModalOpen(true);
               }}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/20 text-white font-semibold hover:bg-white/5 transition-colors"
             >
@@ -75,8 +78,14 @@ export function ReportsPage() {
       </div>
 
       <UserReportModal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)}
+        isOpen={userModalOpen} 
+        onClose={() => setUserModalOpen(false)}
+        repository={repo}
+      />
+
+      <SkillReportModal 
+        isOpen={skillModalOpen} 
+        onClose={() => setSkillModalOpen(false)}
         repository={repo}
       />
     </div>
