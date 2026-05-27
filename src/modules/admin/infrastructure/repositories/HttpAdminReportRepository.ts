@@ -74,4 +74,39 @@ export class HttpAdminReportRepository {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   }
+
+  async downloadTemplateReport(filters: { desde: string; hasta: string; estado: string }): Promise<void> {
+    const query = new URLSearchParams({
+      desde: filters.desde,
+      hasta: filters.hasta,
+      estado: filters.estado,
+    }).toString();
+
+    const headers: Record<string, string> = {};
+    const token = getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}${this.PATH}/templates?${query}`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (res.status === 204) {
+      throw new Error('No hay plantillas que coincidan con los filtros seleccionados.');
+    }
+
+    if (!res.ok) {
+      throw new Error('Error al generar el reporte.');
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'reporte_plantillas.pdf';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserReportModal } from '../components/UserReportModal';
 import { SkillReportModal } from '../components/SkillReportModal';
+import { TemplateReportModal } from '../components/TemplateReportModal';
 import { HttpAdminReportRepository } from '../../infrastructure/repositories/HttpAdminReportRepository';
 
 const cards = [
@@ -19,8 +20,8 @@ const cards = [
   },
   {
     id: 'portfolios',
-    title: 'Reporte de Portafolios',
-    description: 'Genera un PDF con el listado de todos los portafolios creados, filtrando por estado y visibilidad.',
+    title: 'Reporte de uso de plantillas',
+    description: 'Genera un PDF con las plantillas más utilizadas por los usuarios, filtrando por fecha y estado.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
@@ -43,6 +44,7 @@ const cards = [
 export function ReportsPage() {
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [skillModalOpen, setSkillModalOpen] = useState(false);
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const repo = new HttpAdminReportRepository();
 
   return (
@@ -61,6 +63,7 @@ export function ReportsPage() {
               onClick={() => {
                 if (card.id === 'users') setUserModalOpen(true);
                 if (card.id === 'skills') setSkillModalOpen(true);
+                if (card.id === 'portfolios') setTemplateModalOpen(true);
               }}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/20 text-white font-semibold hover:bg-white/5 transition-colors"
             >
@@ -86,6 +89,12 @@ export function ReportsPage() {
       <SkillReportModal 
         isOpen={skillModalOpen} 
         onClose={() => setSkillModalOpen(false)}
+        repository={repo}
+      />
+
+      <TemplateReportModal
+        isOpen={templateModalOpen}
+        onClose={() => setTemplateModalOpen(false)}
         repository={repo}
       />
     </div>
