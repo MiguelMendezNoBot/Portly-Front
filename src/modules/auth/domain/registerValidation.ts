@@ -4,6 +4,7 @@ const emailFormat = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
 
 export interface RegisterFormFields {
   email: string;
+  username: string;
   nombre: string;
   apellido: string;
   profesion: string;
@@ -14,6 +15,7 @@ export interface RegisterFormFields {
 
 export interface RegisterFormErrors {
   email?: string;
+  username?: string;
   nombre?: string;
   apellido?: string;
   profesion?: string;
@@ -25,6 +27,14 @@ export interface RegisterFormErrors {
 export function validateEmail(value: string): string | undefined {
   if (!value.trim()) return 'Campo inválido';
   if (!emailFormat.test(value)) return 'Formato incorrecto';
+  return undefined;
+}
+
+export function validateUsername(value: string): string | undefined {
+  const usernameRegex = /^[a-zA-Z0-9_]+$/;
+  if (!value.trim()) return 'El nombre de usuario es obligatorio';
+  if (value.trim().length < 3 || value.trim().length > 30) return 'Entre 3 y 30 caracteres';
+  if (!usernameRegex.test(value.trim())) return 'Solo letras, números y guión bajo (_)';
   return undefined;
 }
 
@@ -66,6 +76,7 @@ export function validateStep1(fields: Pick<RegisterFormFields, 'email'>): { erro
 
 export function validateStep3(fields: RegisterFormFields): { errors: RegisterFormErrors; isValid: boolean } {
   const errors: RegisterFormErrors = {
+    username: validateUsername(fields.username),
     nombre: validateNameField(fields.nombre),
     apellido: validateNameField(fields.apellido),
     password: validatePassword(fields.password),

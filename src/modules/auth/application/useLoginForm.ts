@@ -10,18 +10,18 @@ import {
 } from '../../../infrastructure/storage/storage';
 
 interface FormFields {
-  email: string;
+  identifier: string;  // puede ser email o nombre de usuario
   password: string;
 }
 
 interface FormErrors {
-  email?: string;
+  identifier?: string;
   password?: string;
 }
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
-  const [fields, setFields] = useState<FormFields>({ email: '', password: '' });
+  const [fields, setFields] = useState<FormFields>({ identifier: '', password: '' });
   const [errors, setErrors] = useState<FormErrors>({});
   const { toast, showToast } = useToast();
 

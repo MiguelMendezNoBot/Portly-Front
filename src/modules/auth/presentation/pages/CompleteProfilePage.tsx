@@ -5,13 +5,16 @@ import { saveToken } from '../../../../infrastructure/storage/storage';
 import { PROFESIONES } from '../constants/register.constants';
 
 const MAX_CHARS = 500;
+const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
 
 interface FormErrors {
+  username?: string;
   profesion?: string;
   resena?: string;
 }
 
 export const CompleteProfilePage = () => {
+  const [username, setUsername] = useState('');
   const [profesion, setProfesion] = useState('');
   const [resena, setResena] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -20,6 +23,15 @@ export const CompleteProfilePage = () => {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
+
+    if (!username.trim()) {
+      newErrors.username = 'El nombre de usuario es obligatorio';
+    } else if (username.trim().length < 3 || username.trim().length > 30) {
+      newErrors.username = 'Entre 3 y 30 caracteres';
+    } else if (!USERNAME_REGEX.test(username.trim())) {
+      newErrors.username = 'Solo letras, números y guión bajo (_)';
+    }
+
     if (!profesion) {
       newErrors.profesion = 'Seleccione una profesion';
     }
@@ -38,7 +50,7 @@ export const CompleteProfilePage = () => {
     setLoading(true);
     setServerError('');
     try {
-      const response = await completeOAuthProfile({ profesion, resena });
+      const response = await completeOAuthProfile({ username: username.trim().toLowerCase(), profesion, resena });
       saveToken(response.token);
       window.location.replace('/');
     } catch (err: unknown) {
@@ -76,6 +88,29 @@ export const CompleteProfilePage = () => {
                 {serverError}
               </div>
             )}
+
+            {/* Nombre de Usuario */}
+            <div className="flex flex-col gap-1 mb-2">
+              <label className="text-black text-[13.5px] font-semibold mt-3">
+                Nombre de Usuario
+              </label>
+              <input
+                type="text"
+                placeholder="ej: juan_perez"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                className={`w-full text-xs px-2 pt-2 pb-1 border rounded-xl outline-none bg-white ${
+                  errors.username ? 'border-red-400' : 'border-gray-400'
+                } text-black`}
+              />
+              {errors.username && (
+                <span className="text-red-500 text-[11px]">{errors.username}</span>
+              )}
+              <p className="text-gray-400 text-[10px] leading-snug">
+                Solo letras, números y guión bajo (_). Entre 3 y 30 caracteres.
+              </p>
+            </div>
 
             {/* Profesión */}
             <div className="flex flex-col gap-1 mb-2">

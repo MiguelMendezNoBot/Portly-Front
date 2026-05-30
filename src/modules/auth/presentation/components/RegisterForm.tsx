@@ -257,6 +257,14 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 error={errors.apellido}
               />
               <Input
+                label="Nombre de Usuario"
+                type="text"
+                placeholder="ej: juan_perez"
+                value={fields.username}
+                onChange={handleChange('username')}
+                error={errors.username}
+              />
+              <Input
                 label="Contraseña"
                 type="password"
                 value={fields.password}
