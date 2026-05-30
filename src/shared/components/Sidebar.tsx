@@ -160,9 +160,16 @@ const navItems = [
 interface SidebarProps {
   userName: string;
   avatarUrl?: string;
+  estado?: string;
+  onAppealClick?: () => void;
 }
 
-export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
+export default function Sidebar({
+  userName,
+  avatarUrl,
+  estado,
+  onAppealClick,
+}: SidebarProps) {
   const initials = userName
     .split(' ')
     .map((w) => w[0])
@@ -212,13 +219,35 @@ export default function Sidebar({ userName, avatarUrl }: SidebarProps) {
                 {isActive && (
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-src-7c6bec rounded-r-full" />
                 )}
-                <span className={isActive ? 'text-src-7c6bec' : ''}>{icon}</span>
+                <span className={isActive ? 'text-src-7c6bec' : ''}>
+                  {icon}
+                </span>
                 <span className={isActive ? 'font-medium' : ''}>{label}</span>
               </>
             )}
           </NavLink>
         ))}
       </nav>
+      {estado === 'restringido' && (
+        <button
+          onClick={onAppealClick}
+          className="mt-auto mx-2 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm flex items-center gap-2 hover:bg-yellow-500/20 transition-colors"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          Cuenta restringida
+        </button>
+      )}
     </aside>
   );
 }

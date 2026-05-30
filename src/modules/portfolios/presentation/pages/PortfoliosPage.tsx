@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTemplates } from '../../application/useTemplates';
 import { usePortfolios } from '../../application/usePortfolios';
 import PortfolioList from '../components/PortfolioList';
@@ -8,6 +8,7 @@ import PublishSuccessModal from '../components/PublishSuccessModal';
 import { ConfirmModal } from '../../../../shared/components/ConfirmModal';
 import type { Portfolio } from '../../domain/entities/Portfolio';
 import ViewPortfolioListModal from '../components/ViewPortfolioListModal';
+import { httpClient } from '../../../../infrastructure/http/httpClient';
 
 // Toast local simple
 function useLocalToast() {
@@ -256,6 +257,8 @@ export default function PortfoliosPage() {
   const [portfolioToDelete, setPortfolioToDelete] = useState<Portfolio | null>(
     null
   );
+  const [userStatus, setUserStatus] = useState<string | null>(null); // 'activo', 'restringido', etc.
+  const [loadingStatus, setLoadingStatus] = useState(true);
   const [portfolioToShare, setPortfolioToShare] = useState<Portfolio | null>(
     null
   );
@@ -455,6 +458,25 @@ export default function PortfoliosPage() {
             : privatizePhase
               ? 'privatize'
               : null;
+  useEffect(() => {
+    let cancelled = false;
+    httpClient
+      .getAuth<{ estado?: string }>('/api/profile', 'Error al verificar estado')
+      .then((data) => {
+        if (!cancelled) {
+          setUserStatus(data.estado ?? 'activo'); // fallback si no viene
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setUserStatus('activo');
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingStatus(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -499,70 +521,103 @@ export default function PortfoliosPage() {
 
             {/* Publicar */}
             {hasPrivatePortfolios && (
-              <button
-                onClick={() => {
-                  if (publishPhase) {
-                    handleCancelPublishMode();
-                  } else {
-                    handleEnterPublishMode();
+              <div className="relative group overflow-visible">
+                <button
+                  onClick={() => {
+                    if (userStatus === 'restringido') return;
+                    if (publishPhase) {
+                      handleCancelPublishMode();
+                    } else {
+                      handleEnterPublishMode();
+                    }
+                  }}
+                  disabled={userStatus === 'restringido' || loadingStatus}
+                  title={
+                    userStatus === 'restringido'
+                      ? '⚠️ Cuenta restringida, revise su correo electrónico para más información'
+                      : undefined
                   }
-                }}
-                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                  publishPhase
-                    ? 'bg-[#7c6bec]/15 border-[#7c6bec]/40 text-[#C9BEFF]'
-                    : 'border-white/10 text-[#9ca3af] hover:text-[#C9BEFF] hover:border-[#7c6bec]/30'
-                }`}
-              >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    userStatus === 'restringido'
+                      ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed opacity-50'
+                      : publishPhase
+                        ? 'bg-[#7c6bec]/15 border-[#7c6bec]/40 text-[#C9BEFF]'
+                        : 'border-white/10 text-[#9ca3af] hover:text-[#C9BEFF] hover:border-[#7c6bec]/30'
+                  }`}
                 >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="2" y1="12" x2="22" y2="12" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
-                Publicar
-              </button>
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                  Publicar
+                </button>
+                {userStatus === 'restringido' && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-red-900 text-red-100 text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[9999] pointer-events-none">
+                    ⚠️ Cuenta restringida, revise su correo electrónico para más
+                    información
+                  </div>
+                )}
+              </div>
             )}
 
             {hasPublicPortfolios && (
-              <button
-                onClick={() => {
-                  if (privatizePhase) {
-                    handleCancelPrivatizeMode();
-                  } else {
-                    handleEnterPrivatizeMode();
+              <div className="relative group overflow-visible">
+                <button
+                  onClick={() => {
+                    if (userStatus === 'restringido') return;
+                    if (privatizePhase) {
+                      handleCancelPrivatizeMode();
+                    } else {
+                      handleEnterPrivatizeMode();
+                    }
+                  }}
+                  disabled={userStatus === 'restringido' || loadingStatus}
+                  title={
+                    userStatus === 'restringido'
+                      ? '⚠️ Cuenta restringida, revise su correo electrónico para más información'
+                      : undefined
                   }
-                }}
-                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
-                  privatizePhase
-                    ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
-                    : 'border-white/10 text-[#9ca3af] hover:text-orange-400 hover:border-orange-500/30'
-                }`}
-              >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${
+                    userStatus === 'restringido'
+                      ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed opacity-50'
+                      : privatizePhase
+                        ? 'bg-orange-500/15 border-orange-500/40 text-orange-400'
+                        : 'border-white/10 text-[#9ca3af] hover:text-orange-400 hover:border-orange-500/30'
+                  }`}
                 >
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-                Despublicar
-              </button>
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  Despublicar
+                </button>
+                {userStatus === 'restringido' && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-red-900 text-red-100 text-xs rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[9999] pointer-events-none">
+                    ⚠️ Cuenta restringida, revise su correo electrónico para más
+                    información
+                  </div>
+                )}
+              </div>
             )}
-
             {/* Visualizar Listado */}
             {portfolios.length > 0 && (
               <button

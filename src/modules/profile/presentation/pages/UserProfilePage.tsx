@@ -9,6 +9,7 @@ import ChangePasswordForm from '../components/ChangePasswordForm';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import BotonInicio from '../../../../shared/components/BotonInicio';
+import AppealModal from '../components/AppealModal';
 
 function SaveIcon() {
   return (
@@ -203,12 +204,12 @@ function PillContentMobile({
 export function UserProfilePage() {
   const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
-  const { form, dirty, setField } =
-    useProfileForm(profile);
+  const { form, dirty, setField } = useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [appealOpen, setAppealOpen] = useState(false);
 
   async function handleSave() {
     try {
@@ -295,7 +296,12 @@ export function UserProfilePage() {
 
         <div className="flex flex-1 min-h-0 pb-5">
           <div className="hidden md:flex border-r-2 border-gray-800 shrink-0">
-            <Sidebar userName={fullName} avatarUrl={profile.avatarUrl} />
+            <Sidebar
+              userName={fullName}
+              avatarUrl={profile.avatarUrl}
+              estado={profile.estado}
+              onAppealClick={() => setAppealOpen(true)}
+            />{' '}
           </div>
           <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden scrollbar-thin px-5">
             <div className="w-full flex items-center justify-center py-5">
@@ -327,7 +333,14 @@ export function UserProfilePage() {
                     onClick={() => setChangePasswordOpen(true)}
                     className="self-start flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-white/5 border border-white/10 hover:bg-white/10 text-src-a7aab9 hover:text-white text-sm font-medium transition-all cursor-pointer"
                   >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="3" y="11" width="18" height="11" rx="2" />
                       <path d="M7 11V7a5 5 0 0110 0v4" />
                     </svg>
@@ -402,6 +415,16 @@ export function UserProfilePage() {
           </>
         )}
       </div>
+      <AppealModal
+        isOpen={appealOpen || profile.estado === 'suspendido'}
+        onClose={() => {
+          if (profile.estado === 'restringido') setAppealOpen(false);
+          // Si es suspendido, no se cierra
+        }}
+        userEmail={profile.email}
+        canClose={profile.estado !== 'suspendido'}
+        estado={profile.estado}
+      />
     </div>
   );
 }

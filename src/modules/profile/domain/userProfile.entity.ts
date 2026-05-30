@@ -9,6 +9,7 @@ export interface UserProfileEntity {
   phoneCode?: string;
   nationality?: string;
   avatarUrl?: string;
+  estado: string;
   visibility: {
     showEmail: boolean;
     showProfession: boolean;

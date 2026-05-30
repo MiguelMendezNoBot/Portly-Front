@@ -48,23 +48,54 @@ export function mapBackendToUserProfile(
     nationality: data.pais ? String(data.pais) : '',
     avatarUrl: data.enlaceFoto ? String(data.enlaceFoto) : undefined,
     visibility: {
-      showEmail:      data.mostrarCorreo              !== undefined ? Boolean(data.mostrarCorreo)              : true,
-      showProfession: data.mostrarProfesion           !== undefined ? Boolean(data.mostrarProfesion)           : true,
-      showBio:        data.mostrarBiografia           !== undefined ? Boolean(data.mostrarBiografia)           : true,
-      showPhone:      data.mostrarTelefono != null ? Boolean(data.mostrarTelefono) : true,
-      showNationality:data.mostrarPais    != null ? Boolean(data.mostrarPais)    : true,
-      showLinkedin:   data.mostrarLinkedin != null ? Boolean(data.mostrarLinkedin) : true,
-      showGithub:     data.mostrarGithub  != null ? Boolean(data.mostrarGithub)  : true,
-      showInstagram:  data.mostrarInstagram           !== undefined ? Boolean(data.mostrarInstagram)           : true,
-      showFacebook:   data.mostrarFacebook            !== undefined ? Boolean(data.mostrarFacebook)            : true,
-      showYoutube:    data.mostrarYoutube             !== undefined ? Boolean(data.mostrarYoutube)             : true,
-      showTechSkills: data.mostrarHabilidadesTecnicas !== undefined ? Boolean(data.mostrarHabilidadesTecnicas) : true,
-      showSoftSkills: data.mostrarHabilidadesBlandas  !== undefined ? Boolean(data.mostrarHabilidadesBlandas)  : true,
-      showExperience: data.mostrarTrayectoria         !== undefined ? Boolean(data.mostrarTrayectoria)         : true,
-      showEducation:  data.mostrarFormacion           !== undefined ? Boolean(data.mostrarFormacion)           : true,
+      showEmail:
+        data.mostrarCorreo !== undefined ? Boolean(data.mostrarCorreo) : true,
+      showProfession:
+        data.mostrarProfesion !== undefined
+          ? Boolean(data.mostrarProfesion)
+          : true,
+      showBio:
+        data.mostrarBiografia !== undefined
+          ? Boolean(data.mostrarBiografia)
+          : true,
+      showPhone:
+        data.mostrarTelefono != null ? Boolean(data.mostrarTelefono) : true,
+      showNationality:
+        data.mostrarPais != null ? Boolean(data.mostrarPais) : true,
+      showLinkedin:
+        data.mostrarLinkedin != null ? Boolean(data.mostrarLinkedin) : true,
+      showGithub:
+        data.mostrarGithub != null ? Boolean(data.mostrarGithub) : true,
+      showInstagram:
+        data.mostrarInstagram !== undefined
+          ? Boolean(data.mostrarInstagram)
+          : true,
+      showFacebook:
+        data.mostrarFacebook !== undefined
+          ? Boolean(data.mostrarFacebook)
+          : true,
+      showYoutube:
+        data.mostrarYoutube !== undefined ? Boolean(data.mostrarYoutube) : true,
+      showTechSkills:
+        data.mostrarHabilidadesTecnicas !== undefined
+          ? Boolean(data.mostrarHabilidadesTecnicas)
+          : true,
+      showSoftSkills:
+        data.mostrarHabilidadesBlandas !== undefined
+          ? Boolean(data.mostrarHabilidadesBlandas)
+          : true,
+      showExperience:
+        data.mostrarTrayectoria !== undefined
+          ? Boolean(data.mostrarTrayectoria)
+          : true,
+      showEducation:
+        data.mostrarFormacion !== undefined
+          ? Boolean(data.mostrarFormacion)
+          : true,
     },
     socialLinks,
     connectedProviders,
+    estado: String(data.estado ?? 'activo'),
   };
 }
 
@@ -80,20 +111,20 @@ export function mapUpdateDtoToBackend(
     telefono: dto.phone,
     pais: dto.nationality,
     ...(dto.visibility !== undefined && {
-      mostrarCorreo:              dto.visibility.showEmail,
-      mostrarProfesion:           dto.visibility.showProfession,
-      mostrarBiografia:           dto.visibility.showBio,
-      mostrarTelefono:            dto.visibility.showPhone,
-      mostrarPais:                dto.visibility.showNationality,
-      mostrarLinkedin:            dto.visibility.showLinkedin,
-      mostrarGithub:              dto.visibility.showGithub,
-      mostrarInstagram:           dto.visibility.showInstagram,
-      mostrarFacebook:            dto.visibility.showFacebook,
-      mostrarYoutube:             dto.visibility.showYoutube,
+      mostrarCorreo: dto.visibility.showEmail,
+      mostrarProfesion: dto.visibility.showProfession,
+      mostrarBiografia: dto.visibility.showBio,
+      mostrarTelefono: dto.visibility.showPhone,
+      mostrarPais: dto.visibility.showNationality,
+      mostrarLinkedin: dto.visibility.showLinkedin,
+      mostrarGithub: dto.visibility.showGithub,
+      mostrarInstagram: dto.visibility.showInstagram,
+      mostrarFacebook: dto.visibility.showFacebook,
+      mostrarYoutube: dto.visibility.showYoutube,
       mostrarHabilidadesTecnicas: dto.visibility.showTechSkills,
-      mostrarHabilidadesBlandas:  dto.visibility.showSoftSkills,
-      mostrarTrayectoria:         dto.visibility.showExperience,
-      mostrarFormacion:           dto.visibility.showEducation,
+      mostrarHabilidadesBlandas: dto.visibility.showSoftSkills,
+      mostrarTrayectoria: dto.visibility.showExperience,
+      mostrarFormacion: dto.visibility.showEducation,
     }),
   };
 }

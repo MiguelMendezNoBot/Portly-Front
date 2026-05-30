@@ -4,6 +4,8 @@ import { useAuth } from '../../../modules/home/presentation/hooks/useAuth';
 import { useUserProfile } from '../../../modules/profile/application/useUserProfile';
 import Sidebar from '../Sidebar';
 import { PortlyLogoBig } from '../AppShell';
+import AppealModal from '../../../modules/profile/presentation/components/AppealModal';
+import { httpClient } from '../../../infrastructure/http/httpClient';
 
 // Metadatos de rutas
 const routeMeta: Record<string, { title: string; subtitle?: string }> = {
@@ -17,7 +19,8 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   },
   '/portfolios': {
     title: 'Mis portafolios',
-    subtitle: 'Puedes visualizar tus portafolios creados, editarlos y crear nuevos',
+    subtitle:
+      'Puedes visualizar tus portafolios creados, editarlos y crear nuevos',
   },
   '/explorar': {
     title: 'Explorar',
@@ -29,7 +32,8 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   },
   '/perfil-profesional': {
     title: 'Perfil Profesional',
-    subtitle: 'Define tu titular y descripción profesional para tus portafolios',
+    subtitle:
+      'Define tu titular y descripción profesional para tus portafolios',
   },
   '/visibility': {
     title: 'Visibilidad',
@@ -51,11 +55,30 @@ export default function AuthenticatedLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [appealOpen, setAppealOpen] = useState(false);
+  const [userEstado, setUserEstado] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   const currentMeta = routeMeta[location.pathname] || {
     title: 'Portly',
     subtitle: '',
   };
+
+  // Obtener estado del usuario directamente del backend
+  useEffect(() => {
+    httpClient
+      .getAuth<{ estado?: string; email?: string }>(
+        '/api/profile',
+        'Error al verificar estado'
+      )
+      .then((data) => {
+        setUserEstado(data.estado ?? 'activo');
+        setUserEmail(data.email ?? '');
+      })
+      .catch(() => {
+        setUserEstado('activo');
+      });
+  }, []);
 
   // Cerrar drawer al cambiar de ruta
   useEffect(() => {
@@ -74,8 +97,12 @@ export default function AuthenticatedLayout() {
     return null;
   }
 
-  const fullName = profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Usuario');
+  const fullName = profile
+    ? `${profile.firstName} ${profile.lastName}`
+    : user.displayName || 'Usuario';
   const avatarUrl = profile?.avatarUrl;
+  const estado = userEstado ?? profile?.estado ?? 'activo';
+  const email = userEmail || profile?.email || '';
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
@@ -136,7 +163,12 @@ export default function AuthenticatedLayout() {
         <div className="flex flex-1 min-h-0 pb-5">
           {/* Sidebar fijo en desktop */}
           <div className="hidden md:flex border-r-2 border-gray-800 shrink-0">
-            <Sidebar userName={fullName} avatarUrl={avatarUrl} />
+            <Sidebar
+              userName={fullName}
+              avatarUrl={avatarUrl}
+              estado={estado}
+              onAppealClick={() => setAppealOpen(true)}
+            />
           </div>
 
           {/* Área de contenido con scroll */}
@@ -186,12 +218,28 @@ export default function AuthenticatedLayout() {
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto">
-                <Sidebar userName={fullName} avatarUrl={avatarUrl} />
+                <Sidebar
+                  userName={fullName}
+                  avatarUrl={avatarUrl}
+                  estado={estado}
+                  onAppealClick={() => setAppealOpen(true)}
+                />
               </div>
             </div>
           </>
         )}
       </div>
+
+      {/* AppealModal - se muestra siempre que haya estado cargado */}
+      <AppealModal
+        isOpen={appealOpen || estado === 'suspendido'}
+        onClose={() => {
+          if (estado !== 'suspendido') setAppealOpen(false);
+        }}
+        userEmail={email}
+        canClose={estado !== 'suspendido'}
+        estado={estado}
+      />
     </div>
   );
 }
