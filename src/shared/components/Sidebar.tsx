@@ -138,7 +138,7 @@ const icons = {
 };
 
 const navItems = [
-  { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
+  { to: '/profile', label: 'Informacion de cuenta', icon: icons.user },
   { to: '/portfolios', label: 'Mis portafolios', icon: icons.folder },
   { to: '/analytics', label: 'Analiticas', icon: icons.chart },
   {
