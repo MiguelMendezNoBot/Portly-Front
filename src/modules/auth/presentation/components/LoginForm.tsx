@@ -16,7 +16,7 @@ export function LoginForm() {
   const { fields, errors, toast, handleChange, handleSubmit } = useLoginForm();
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const handleEmailKeyDown = (e: React.KeyboardEvent) => {
+  const handleIdentifierKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       passwordInputRef.current?.focus();
@@ -82,19 +82,20 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div>
           <label className="block text-sm font-bold mb-1">
-            Correo Electronico
+            Nombre de Usuario o Correo Electrónico
           </label>
           <input
-            type="email"
-            placeholder="nombre@dominio.com"
+            type="text"
+            placeholder="usuario o nombre@dominio.com"
             className="w-full border border-gray-300 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            value={fields.email}
-            onChange={handleChange('email')}
-            onKeyDown={handleEmailKeyDown}
+            value={fields.identifier}
+            onChange={handleChange('identifier')}
+            onKeyDown={handleIdentifierKeyDown}
+            autoComplete="username"
             required
           />
-          {errors.email && (
-            <span className="text-red-500 text-[11px]">{errors.email}</span>
+          {errors.identifier && (
+            <span className="text-red-500 text-[11px]">{errors.identifier}</span>
           )}
         </div>
 
