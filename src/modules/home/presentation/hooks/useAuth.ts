@@ -20,13 +20,21 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
 
   if (!token) return { user: null, logout: () => {} };
 
+  const payload = decodeJwtPayload(token);
   const email = localStorage.getItem('email') || decodeJwtEmail(token) || '';
 
-  const displayName = email
-    ? emailToDisplayName(email).toUpperCase()
-    : 'USUARIO';
+  // Prioridad: username del JWT → fallback a derivar del email
+  // Usuarios sin username (registros anteriores) siguen funcionando con el fallback
+  const jwtUsername = typeof payload?.username === 'string' && payload.username.trim()
+    ? payload.username.trim()
+    : null;
 
-  const payload = decodeJwtPayload(token);
+  const displayName = jwtUsername
+    ? jwtUsername.toUpperCase()
+    : email
+      ? emailToDisplayName(email).toUpperCase()
+      : 'USUARIO';
+
   const perfilCompleto = payload?.perfilCompleto !== false;
   const rol = typeof payload?.rol === 'string' ? payload.rol.toUpperCase() : 'USER';
 
