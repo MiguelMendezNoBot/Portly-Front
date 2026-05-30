@@ -22,7 +22,7 @@ export async function executeLoginUseCase(
     return { success: false, errors };
   }
   const response = await repo.login({
-    correoElectronico: fields.email.trim(),
+    identifier: fields.identifier.trim(),
     contraseña: fields.password,
   });
   return { success: true, response };

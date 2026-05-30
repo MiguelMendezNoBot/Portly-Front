@@ -1,16 +1,16 @@
 export interface LoginFormFields {
-  email: string;
+  identifier: string;  // puede ser email o nombre de usuario
   password: string;
 }
 
 export interface LoginFormErrors {
-  email?: string;
+  identifier?: string;
   password?: string;
 }
 
 export function validateLoginFields(fields: LoginFormFields): LoginFormErrors {
   return {
-    email: !fields.email.trim() ? 'El correo es obligatorio' : undefined,
+    identifier: !fields.identifier.trim() ? 'El campo es obligatorio' : undefined,
     password: !fields.password ? 'La contraseña es obligatoria' : undefined,
   };
 }
