@@ -16,6 +16,10 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     title: 'Denuncias',
     subtitle: 'Revisión de contenido reportado',
   },
+  '/admin/apelaciones': {
+    title: 'Apelaciones',
+    subtitle: 'Solicitudes de reactivación de cuentas',
+  },
   '/admin/suspendidos': {
     title: 'Suspendidos',
     subtitle: 'Cuentas con acceso restringido',
@@ -64,7 +68,14 @@ export function AdminLayout() {
             onClick={() => setSidebarOpen(true)}
             className="w-11 h-11 rounded-full bg-src-9fa2ff flex items-center justify-center text-src-1c1154 shadow-lg"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
@@ -114,13 +125,22 @@ export function AdminLayout() {
             />
             <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-src-0f111a z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
-                <span className="text-white font-bold text-base tracking-wide">Linx Soft Admin</span>
+                <span className="text-white font-bold text-base tracking-wide">
+                  Linx Soft Admin
+                </span>
                 <button
                   type="button"
                   onClick={() => setSidebarOpen(false)}
                   className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>

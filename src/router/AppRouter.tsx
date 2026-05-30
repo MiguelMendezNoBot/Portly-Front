@@ -29,6 +29,7 @@ import { UsersPage } from '../modules/admin/presentation/pages/UsersPage';
 import { ComplaintPage } from '../modules/admin/presentation/pages/ComplaintPage';
 import { ComplaintDetailPage } from '../modules/admin/presentation/components/complaint/ComplaintDetailPage';
 import { SuspendedUsersPage } from '../modules/admin/presentation/pages/SuspendedUsersPage';
+import { AppealPage } from '../modules/admin/presentation/pages/AppealPage';
 
 const getTokenPayload = (): Record<string, unknown> | null => {
   const token = localStorage.getItem('token');
@@ -44,7 +45,8 @@ const getTokenPayload = (): Record<string, unknown> | null => {
 const ProfileCompleteRoute = ({ element }: { element: ReactElement }) => {
   const payload = getTokenPayload();
   if (!payload) return <Navigate to="/login" replace />;
-  if (payload.perfilCompleto === false) return <Navigate to="/complete-profile" replace />;
+  if (payload.perfilCompleto === false)
+    return <Navigate to="/complete-profile" replace />;
   return element;
 };
 
@@ -56,24 +58,55 @@ export const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route path="/auth/github/callback" element={<OAuthCallbackRedirectPage provider="github" />} />
-        <Route path="/auth/linkedin/callback" element={<OAuthCallbackRedirectPage provider="linkedin" />} />
+        <Route
+          path="/auth/github/callback"
+          element={<OAuthCallbackRedirectPage provider="github" />}
+        />
+        <Route
+          path="/auth/linkedin/callback"
+          element={<OAuthCallbackRedirectPage provider="linkedin" />}
+        />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-code" element={<VerifyCodePage />} />
         <Route path="/reset-password" element={<NewPasswordPage />} />
         <Route path="/complete-profile" element={<CompleteProfilePage />} />
 
-        <Route path="/profile" element={<ProfileCompleteRoute element={<UserProfilePage />} />} />
+        <Route
+          path="/profile"
+          element={<ProfileCompleteRoute element={<UserProfilePage />} />}
+        />
 
         <Route element={<AuthenticatedLayout />}>
-          <Route path="/dashboard" element={<div className="text-white p-8">dashboard</div>} />
+          <Route
+            path="/dashboard"
+            element={<div className="text-white p-8">dashboard</div>}
+          />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/portfolios" element={<PortfoliosPage />} />
-          <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
-          <Route path="/visibility" element={<ProfileCompleteRoute element={<VisibilityPage />} />} />
-          <Route path="/integrations" element={<ProfileCompleteRoute element={<IntegrationsPage />} />} />
-          <Route path="/social-links" element={<ProfileCompleteRoute element={<SocialLinksPage />} />} />
-          <Route path="/perfil-profesional" element={<ProfileCompleteRoute element={<PerfilProfesionalPage />} />} />
+          <Route
+            path="/professional-profile"
+            element={
+              <ProfileCompleteRoute element={<ProfessionalProfilePage />} />
+            }
+          />
+          <Route
+            path="/visibility"
+            element={<ProfileCompleteRoute element={<VisibilityPage />} />}
+          />
+          <Route
+            path="/integrations"
+            element={<ProfileCompleteRoute element={<IntegrationsPage />} />}
+          />
+          <Route
+            path="/social-links"
+            element={<ProfileCompleteRoute element={<SocialLinksPage />} />}
+          />
+          <Route
+            path="/perfil-profesional"
+            element={
+              <ProfileCompleteRoute element={<PerfilProfesionalPage />} />
+            }
+          />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
@@ -81,14 +114,24 @@ export const AppRouter = () => {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="usuarios" element={<UsersPage />} />
           <Route path="denuncias" element={<ComplaintPage />} />
-          <Route path="denuncias/:id/revisar" element={<ComplaintDetailPage />} />
+          <Route
+            path="denuncias/:id/revisar"
+            element={<ComplaintDetailPage />}
+          />
+          <Route path="apelaciones" element={<AppealPage />} />
           <Route path="suspendidos" element={<SuspendedUsersPage />} />
           <Route path="reportes" element={<ReportsPage />} />
-          <Route path="configuracion" element={<AdminPlaceholderPage title="Configuración" />} />
+          <Route
+            path="configuracion"
+            element={<AdminPlaceholderPage title="Configuración" />}
+          />
         </Route>
 
         <Route path="/profesionales" element={<ProfessionalsPage />} />
-        <Route path="/profesionales/:id" element={<PublicProfessionalDetailPage />} />
+        <Route
+          path="/profesionales/:id"
+          element={<PublicProfessionalDetailPage />}
+        />
 
         {/* Portafolio renderizado (Público) */}
         <Route path="/p/:portfolioId" element={<PortfolioPublicPage />} />

@@ -173,7 +173,9 @@ export function ComplaintPage() {
                       className={`ml-2 px-2 py-0.5 rounded-full text-xs font-semibold ${
                         complaint.ownerUserStatus === 'activo'
                           ? 'bg-green-500/20 text-green-400'
-                          : 'bg-red-500/20 text-red-400'
+                          : complaint.ownerUserStatus === 'restringido'
+                            ? 'bg-yellow-500/20 text-yellow-400'
+                            : 'bg-red-500/20 text-red-400'
                       }`}
                     >
                       {complaint.ownerUserStatus}

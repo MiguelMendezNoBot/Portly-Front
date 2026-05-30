@@ -1,4 +1,3 @@
-
 export interface ComplaintItem {
   id: number;
   reason: string;
@@ -22,7 +21,7 @@ export interface ComplaintGroup {
   portfolioPublicUrl: string;
   ownerUserId: string;
   ownerUserName: string;
-  ownerUserStatus: 'activo' | 'suspendido';
+  ownerUserStatus: 'activo' | 'suspendido' | 'restringido';
   status: 'pendiente' | 'revisado';
   complaints: ComplaintItem[];
   revision: Revision | null;

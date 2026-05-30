@@ -4,6 +4,7 @@ import { ComplaintGroup } from '../../../domain/entities/Complaint';
 import { HttpAdminComplaintRepository } from '../../../infrastructure/repositories/HttpAdminComplaintRepository';
 import { ReviewComplaintModal } from '../../components/complaint/ReviewComplaintModal';
 import { SuspendUserModal } from '../../components/complaint/SuspendUserModal';
+import { RestrictUserModal } from '../../components/complaint/RestrictUserModal';
 
 const repo = new HttpAdminComplaintRepository();
 
@@ -14,6 +15,7 @@ export function ComplaintDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [suspendModalOpen, setSuspendModalOpen] = useState(false);
+  const [restrictModalOpen, setRestrictModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const loadDetail = async () => {
@@ -79,7 +81,9 @@ export function ComplaintDetailPage() {
               className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                 complaint.ownerUserStatus === 'activo'
                   ? 'bg-green-500/20 text-green-400'
-                  : 'bg-red-500/20 text-red-400'
+                  : complaint.ownerUserStatus === 'restringido'
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-red-500/20 text-red-400'
               }`}
             >
               {complaint.ownerUserStatus}
@@ -156,16 +160,36 @@ export function ComplaintDetailPage() {
       </div>
 
       {/* Acciones */}
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
+        {/* Marcar como revisado */}
         {complaint.status === 'pendiente' && (
           <button
             onClick={() => setReviewModalOpen(true)}
-            className="py-3 px-6 bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg"
+            className="py-3 px-6 bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg hover:brightness-110"
           >
             MARCAR COMO REVISADO
           </button>
         )}
 
+        {/* Restringir usuario */}
+        {complaint.ownerUserStatus !== 'suspendido' &&
+          complaint.ownerUserStatus !== 'restringido' && (
+            <button
+              onClick={() => setRestrictModalOpen(true)}
+              className="py-3 px-6 border border-yellow-500/40 text-yellow-400 hover:bg-yellow-500/10 hover:border-yellow-500/60 font-bold text-xs uppercase tracking-widest rounded-2xl transition-all"
+            >
+              RESTRINGIR USUARIO
+            </button>
+          )}
+
+        {/* Ya restringido */}
+        {complaint.ownerUserStatus === 'restringido' && (
+          <span className="py-3 px-6 border border-yellow-500/20 bg-yellow-500/5 text-yellow-400/60 font-bold text-xs uppercase tracking-widest rounded-2xl">
+            USUARIO RESTRINGIDO
+          </span>
+        )}
+
+        {/* Suspender usuario */}
         {complaint.ownerUserStatus !== 'suspendido' ? (
           <button
             onClick={() => setSuspendModalOpen(true)}
@@ -184,6 +208,13 @@ export function ComplaintDetailPage() {
         isOpen={reviewModalOpen}
         onClose={() => setReviewModalOpen(false)}
         complaintId={complaint.id}
+        onSuccess={handleSuccess}
+      />
+      <RestrictUserModal
+        isOpen={restrictModalOpen}
+        onClose={() => setRestrictModalOpen(false)}
+        userId={complaint.ownerUserId}
+        userName={complaint.ownerUserName}
         onSuccess={handleSuccess}
       />
       <SuspendUserModal
