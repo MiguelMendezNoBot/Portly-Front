@@ -4,14 +4,20 @@ import { HttpAdminComplaintRepository } from '../../../infrastructure/repositori
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  userId: number;
   userName: string;
   onSuccess: () => void;
 }
 
 const repo = new HttpAdminComplaintRepository();
 
-export function SuspendUserModal({ isOpen, onClose, userId, userName, onSuccess }: Props) {
+export function SuspendUserModal({
+  isOpen,
+  onClose,
+  userId,
+  userName,
+  onSuccess,
+}: Props) {
   const [motivo, setMotivo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,11 +58,19 @@ export function SuspendUserModal({ isOpen, onClose, userId, userName, onSuccess 
           <div className="flex items-center gap-4 mb-6">
             {/* Icono de advertencia estilo DeleteSkillConfirmModal */}
             <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="none"
+              >
                 <path d="M12 2L2 20h20L12 2m0 4l7 12H5l7-12zm0 4h0v4h0v-4zm0 6h0v2h0v-2z" />
               </svg>
             </div>
-            <h2 className="text-white text-2xl font-bold">Suspender a {userName}</h2>
+            <h2 className="text-white text-2xl font-bold">
+              Suspender a {userName}
+            </h2>
           </div>
 
           <div className="space-y-4">

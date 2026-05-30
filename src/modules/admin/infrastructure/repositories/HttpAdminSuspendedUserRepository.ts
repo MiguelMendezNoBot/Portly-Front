@@ -2,19 +2,21 @@
 
 import { SuspendedUser } from '../../domain/entities/SuspendedUser';
 
-const BASE = 'http://localhost:8080/api/admin';
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/admin';
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
   return {
     'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };
 
 export class HttpAdminSuspendedUserRepository {
   async getAll(): Promise<SuspendedUser[]> {
-    const res = await fetch(`${BASE}/usuarios-suspendidos`, { headers: getHeaders() });
+    const res = await fetch(`${BASE}/usuarios-suspendidos`, {
+      headers: getHeaders(),
+    });
     if (!res.ok) throw new Error('Error al obtener usuarios suspendidos');
     return res.json();
   }

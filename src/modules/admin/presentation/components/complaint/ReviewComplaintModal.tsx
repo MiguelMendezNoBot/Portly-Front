@@ -4,13 +4,18 @@ import { HttpAdminComplaintRepository } from '../../../infrastructure/repositori
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  complaintIds: number[];
+  complaintId: number;
   onSuccess: () => void;
 }
 
 const repo = new HttpAdminComplaintRepository();
 
-export function ReviewComplaintModal({ isOpen, onClose, complaintIds, onSuccess }: Props) {
+export function ReviewComplaintModal({
+  isOpen,
+  onClose,
+  complaintId,
+  onSuccess,
+}: Props) {
   const [resultado, setResultado] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,16 +28,14 @@ export function ReviewComplaintModal({ isOpen, onClose, complaintIds, onSuccess 
     setIsSubmitting(true);
     setError(null);
     try {
-      await Promise.all(
-        complaintIds.map(id => repo.updateStatus(id, {
-          status: 'revisado',
-          revision: {
-            resultado,
-            fecha: new Date().toISOString(),
-            adminId: 'admin1', // In a real app, from auth token
-          },
-        }))
-      );
+      await repo.updateStatus(complaintId, {
+        status: 'revisado',
+        revision: {
+          resultado,
+          fecha: new Date().toISOString(),
+          adminId: 'admin1',
+        },
+      });
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -50,11 +53,20 @@ export function ReviewComplaintModal({ isOpen, onClose, complaintIds, onSuccess 
         <div className="p-8 pb-0">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-12 rounded-full bg-[#6b72ff]/10 flex items-center justify-center text-[#6b72ff]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-white text-2xl font-bold">Resultado de revisión</h2>
+            <h2 className="text-white text-2xl font-bold">
+              Resultado de revisión
+            </h2>
           </div>
 
           <div className="space-y-4">

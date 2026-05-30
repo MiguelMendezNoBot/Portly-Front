@@ -3,12 +3,18 @@ import { useState } from 'react';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  userId: number;
   userName: string;
-  onReactivate: (userId: string, motivo: string) => Promise<void>;
+  onReactivate: (userId: number, motivo: string) => Promise<void>;
 }
 
-export function ReactivateUserModal({ isOpen, onClose, userId, userName, onReactivate }: Props) {
+export function ReactivateUserModal({
+  isOpen,
+  onClose,
+  userId,
+  userName,
+  onReactivate,
+}: Props) {
   const [motivo, setMotivo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,11 +44,20 @@ export function ReactivateUserModal({ isOpen, onClose, userId, userName, onReact
         <div className="p-8 pb-0">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-400">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-white text-2xl font-bold">Reactivar cuenta de {userName}</h2>
+            <h2 className="text-white text-2xl font-bold">
+              Reactivar cuenta de {userName}
+            </h2>
           </div>
 
           <div className="space-y-4">
