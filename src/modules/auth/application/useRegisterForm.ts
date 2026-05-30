@@ -8,6 +8,7 @@ import { saveToken, saveUsuarioId, saveEmail } from '../../../infrastructure/sto
 
 export interface RegisterFields {
   email: string;
+  username: string;
   nombre: string;
   apellido: string;
   profesion: string;
@@ -20,6 +21,7 @@ export const useRegisterForm = () => {
   const navigate = useNavigate();
   const [fields, setFields] = useState<RegisterFields>({
     email: '',
+    username: '',
     nombre: '',
     apellido: '',
     profesion: '',
@@ -82,6 +84,7 @@ export const useRegisterForm = () => {
     setLoading(true);
     try {
       const data = await authHttpRepository.register({
+        username: fields.username.trim().toLowerCase(),
         nombre: fields.nombre,
         apellido: fields.apellido,
         profesion: fields.profesion,
