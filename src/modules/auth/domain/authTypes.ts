@@ -1,4 +1,5 @@
 export interface RegisterData {
+  username: string;
   nombre: string;
   apellido: string;
   profesion: string;
@@ -9,7 +10,7 @@ export interface RegisterData {
 }
 
 export interface LoginData {
-  correoElectronico: string;
+  identifier: string;  // puede ser email o nombre de usuario
   contraseña: string;
 }
 
