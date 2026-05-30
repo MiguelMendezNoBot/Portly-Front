@@ -11,6 +11,8 @@ import { HomePage } from '../modules/home/presentation/pages/HomePage';
 import { UserProfilePage } from '../modules/profile/presentation/pages/UserProfilePage';
 import { VisibilityPage } from '../modules/profile/presentation/pages/VisibilityPage';
 import { IntegrationsPage } from '../modules/profile/presentation/pages/IntegrationsPage';
+import { SocialLinksPage } from '../modules/profile/presentation/pages/SocialLinksPage';
+import { ProfessionalProfilePage as PerfilProfesionalPage } from '../modules/profile/presentation/pages/ProfessionalProfilePage';
 import { CompleteProfilePage } from '../modules/auth/presentation/pages/CompleteProfilePage';
 import AuthenticatedLayout from '../shared/components/layouts/AuthenticatedLayout';
 import ProfessionalProfilePage from '../modules/professional/presentation/pages/ProfessionalProfilePage';
@@ -18,7 +20,6 @@ import ProfessionalsPage from '../modules/professionals/presentation/pages/Profe
 import PublicProfessionalDetailPage from '../modules/professionals/presentation/pages/PublicProfessionalDetailPage';
 import PortfoliosPage from '../modules/portfolios/presentation/pages/PortfoliosPage';
 import PortfolioPublicPage from '../modules/portfolios/presentation/pages/PortfolioPublicPage';
-import ExplorePage from '../modules/explore/presentation/pages/ExplorePage';
 import AnalyticsPage from '../modules/analytics/presentation/pages/AnalyticsPage';
 import { AdminLayout } from '../modules/admin/presentation/layouts/AdminLayout';
 import { ReportsPage } from '../modules/admin/presentation/pages/ReportsPage';
@@ -71,6 +72,8 @@ export const AppRouter = () => {
           <Route path="/professional-profile" element={<ProfileCompleteRoute element={<ProfessionalProfilePage />} />} />
           <Route path="/visibility" element={<ProfileCompleteRoute element={<VisibilityPage />} />} />
           <Route path="/integrations" element={<ProfileCompleteRoute element={<IntegrationsPage />} />} />
+          <Route path="/social-links" element={<ProfileCompleteRoute element={<SocialLinksPage />} />} />
+          <Route path="/perfil-profesional" element={<ProfileCompleteRoute element={<PerfilProfesionalPage />} />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

@@ -40,6 +40,22 @@ const icons = {
       <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
     </svg>
   ),
+  share: (
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  ),
   grid: (
     <svg
       width="18"
@@ -122,16 +138,21 @@ const icons = {
 };
 
 const navItems = [
-  { to: '/home', label: 'Inicio', icon: icons.home },
-  { to: '/dashboard', label: 'Tablero', icon: icons.grid },
+  { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
   { to: '/portfolios', label: 'Mis portafolios', icon: icons.folder },
   { to: '/analytics', label: 'Analiticas', icon: icons.chart },
   {
     to: '/professional-profile',
-    label: 'Perfil profesional',
+    label: 'Mi Trayectoria',
+    icon: icons.compass,
+  },
+  {
+    to: '/perfil-profesional',
+    label: 'Perfil Profesional',
     icon: icons.badge,
   },
-  { to: '/profile', label: 'Perfil de usuario', icon: icons.user },
+
+  { to: '/social-links', label: 'Redes Sociales', icon: icons.share },
   { to: '/visibility', label: 'Visibilidad', icon: icons.eye },
   { to: '/integrations', label: 'Integraciones', icon: icons.link },
 ];

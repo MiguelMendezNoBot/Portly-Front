@@ -4,7 +4,6 @@ import { useAuth } from '../../../modules/home/presentation/hooks/useAuth';
 import { useUserProfile } from '../../../modules/profile/application/useUserProfile';
 import Sidebar from '../Sidebar';
 import { PortlyLogoBig } from '../AppShell';
-import BotonInicio from '../BotonInicio';
 
 // Metadatos de rutas
 const routeMeta: Record<string, { title: string; subtitle?: string }> = {
@@ -25,9 +24,12 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     subtitle: 'Descubre portafolios públicos de profesionales',
   },
   '/professional-profile': {
-    title: 'Perfil profesional',
-    subtitle:
-      'Puedes editar tu trayectoria laboral y académica además de publicar tus proyectos',
+    title: 'Mi Trayectoria',
+    subtitle: 'Edita tu trayectoria laboral, académica y publica tus proyectos',
+  },
+  '/perfil-profesional': {
+    title: 'Perfil Profesional',
+    subtitle: 'Define tu titular y descripción profesional para tus portafolios',
   },
   '/visibility': {
     title: 'Visibilidad',
@@ -36,6 +38,10 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   '/integrations': {
     title: 'Integraciones',
     subtitle: 'Vincula tus cuentas externas para enriquecer tu perfil',
+  },
+  '/social-links': {
+    title: 'Redes Sociales',
+    subtitle: 'Administra los enlaces a tus redes sociales y plataformas',
   },
 };
 
@@ -142,8 +148,10 @@ export default function AuthenticatedLayout() {
         {/* Drawer móvil para Sidebar */}
         {sidebarOpen && (
           <>
-            <div
-              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
+            <button
+              type="button"
+              aria-label="Cerrar menú"
+              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm w-full"
               onClick={() => setSidebarOpen(false)}
             />
             <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-src-0f111a z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">

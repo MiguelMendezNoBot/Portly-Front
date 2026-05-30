@@ -1,15 +1,10 @@
 import { useState } from 'react';
-import type {
-  UserProfileEntity,
-  UpdateUserProfileDTO,
-} from '../../domain/userProfile.entity';
 import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
 import ProfilePreviewModal from '../components/ProfilePreviewModal';
-import GeneralInfoForm from '../components/GeneralInfoForm';
-import SocialLinksForm from '../components/SocialLinksForm';
+import AccountInfoForm from '../components/AccountInfoForm';
 import Sidebar from '../../../../shared/components/Sidebar';
 import { PortlyLogoBig } from '../../../../shared/components/AppShell';
 import BotonInicio from '../../../../shared/components/BotonInicio';
@@ -207,67 +202,13 @@ function PillContentMobile({
 export function UserProfilePage() {
   const { profile, loading, saving, uploadAvatar, saveProfile } =
     useUserProfile();
-  const { form, dirty, setField, setSocialLink } =
+  const { form, dirty, setField } =
     useProfileForm(profile);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [socialErrors, setSocialErrors] = useState<
-    Partial<Record<keyof UserProfileEntity['socialLinks'], string>>
-  >({});
-
-  function validateSocialLinks(links: typeof form.socialLinks | undefined) {
-    const errors: Partial<
-      Record<keyof UserProfileEntity['socialLinks'], string>
-    > = {};
-    if (!links) return errors;
-
-    for (const [key, value] of Object.entries(links)) {
-      const val = value?.trim();
-      if (!val) continue;
-
-      // Allow strings starting with @ directly
-      if (val.startsWith('@')) continue;
-
-      try {
-        const urlObj = new URL(val);
-        const { hostname } = urlObj;
-
-        // Verify specific domains for known platforms
-        if (key === 'instagram' && !hostname.includes('instagram.com')) {
-          errors[key] = 'Debe ser un enlace de Instagram o iniciar con "@"';
-        } else if (
-          key === 'facebook' &&
-          !hostname.includes('facebook') &&
-          !hostname.includes('fb.com')
-        ) {
-          errors[key] = 'Debe ser un enlace de Facebook o iniciar con "@"';
-        } else if (
-          key === 'youtube' &&
-          !hostname.includes('youtube.com') &&
-          !hostname.includes('youtu.be')
-        ) {
-          errors[key] = 'Debe ser un enlace de YouTube o iniciar con "@"';
-        }
-      } catch {
-        errors[key as keyof UserProfileEntity['socialLinks']] =
-          'Debe ser una URL válida o iniciar con "@"';
-      }
-    }
-    return errors;
-  }
 
   async function handleSave() {
-    const errors = validateSocialLinks(form.socialLinks);
-    if (Object.keys(errors).length > 0) {
-      setSocialErrors(errors);
-      const socialBlock = document.getElementById('social-links-section');
-      if (socialBlock)
-        socialBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    setSocialErrors({});
-
     try {
       await saveProfile(form);
     } catch {
@@ -374,22 +315,11 @@ export function UserProfilePage() {
                   </button>
                 </div>
                 <div className="flex flex-col gap-8 w-full md:w-[583px]">
-                  <GeneralInfoForm
+                  <AccountInfoForm
                     form={form}
                     profile={profile}
-                    onFieldChange={(key, value) =>
-                      setField(key as keyof UpdateUserProfileDTO, value)
-                    }
+                    onFieldChange={(key, value) => setField(key, value)}
                   />
-                  <div id="social-links-section">
-                    <SocialLinksForm
-                      links={form.socialLinks ?? profile.socialLinks}
-                      onChange={setSocialLink}
-                      errors={socialErrors}
-                    />
-                  </div>
-
-
                 </div>
               </div>
             </div>
@@ -406,8 +336,10 @@ export function UserProfilePage() {
 
         {sidebarOpen && (
           <>
-            <div
-              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm"
+            <button
+              type="button"
+              aria-label="Cerrar menú"
+              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm w-full"
               onClick={() => setSidebarOpen(false)}
             />
             <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-[#0F131F] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
