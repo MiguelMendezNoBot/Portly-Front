@@ -448,7 +448,7 @@ function ExpertiseSection({
               e.currentTarget.style.transform = 'none';
             }}
           >
-            <div style={{ marginBottom: 16, width: 32, height: 32 }}>
+            <div className="la-red-tech-icon" style={{ marginBottom: 16, width: 32, height: 32 }}>
               <TechIcon name={s.name} />
             </div>
             <p
@@ -1138,6 +1138,10 @@ export default function LaRedProfesionalLayout({
         @keyframes laRedScroll {
           0%, 100% { transform: translateY(0); opacity: 1; }
           50% { transform: translateY(8px); opacity: 0.3; }
+        }
+        .la-red-tech-icon svg {
+          width: 100% !important;
+          height: 100% !important;
         }
       `}</style>
 
