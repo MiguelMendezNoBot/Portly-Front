@@ -25,6 +25,8 @@ import { SOFT_SKILLS_CATALOG } from '../../../professional/presentation/componen
 import { TechIcon } from '../../../professional/presentation/components/Skills/icons/TechIcon';
 import detectiveImage from '../../../../assets/image.png';
 import { ReportPortfolioModal } from '../components/ReportPortfolioModal';
+import FirmaMinimaLayout from '../components/FirmaMinimaLayout';
+import LaRedProfesionalLayout from '../components/LaRedProfesionalLayout';
 // ─── Mobile context ───────────────────────────────────────────────────────────
 const MobileCtx = createContext(false);
 const useIsMobile = () => useContext(MobileCtx);
@@ -116,6 +118,34 @@ const THEMES: Record<string, Theme> = {
     badge: '#eff6ff',
     badgeText: '#1e40af',
     navBg: 'rgba(240,245,255,0.95)',
+  },
+  'firma-minima': {
+    bg: '#0a192f',
+    surface: '#112240',
+    border: 'rgba(100,255,218,0.15)',
+    text: '#ccd6f6',
+    textSub: '#a8b2d1',
+    textMuted: '#8892b0',
+    accent: '#64ffda',
+    accentText: '#64ffda',
+    accentBg: 'rgba(100,255,218,0.1)',
+    badge: 'rgba(100,255,218,0.1)',
+    badgeText: '#64ffda',
+    navBg: 'rgba(10,25,47,0.95)',
+  },
+  'la-red-profesional': {
+    bg: '#050816',
+    surface: '#0f0f1a',
+    border: 'rgba(255,255,255,0.08)',
+    text: '#ffffff',
+    textSub: '#e2e8f0',
+    textMuted: '#94a3b8',
+    accent: '#7c3aed',
+    accentText: '#a78bfa',
+    accentBg: 'rgba(124,58,237,0.15)',
+    badge: 'rgba(124,58,237,0.2)',
+    badgeText: '#a78bfa',
+    navBg: 'rgba(5,8,22,0.95)',
   },
 };
 
@@ -2568,6 +2598,103 @@ export default function PortfolioPublicPage() {
 
   const isPrivate = data.visibilidad === 'PRIVADO';
 
+  const reportButton =
+    user?.rol !== 'ADMIN' && !data?.hasPendingReport ? (
+      <button
+        onClick={() => setReportModalOpen(true)}
+        title="Reportar portafolio"
+        style={{
+          position: 'fixed',
+          bottom: isMobile ? 24 : 32,
+          right: isMobile ? 24 : 32,
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: '#ef4444',
+          color: '#ffffff',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 1000,
+          transition: 'transform 0.2s, box-shadow 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+          e.currentTarget.style.boxShadow =
+            '0 6px 16px rgba(239, 68, 68, 0.5)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow =
+            '0 4px 12px rgba(239, 68, 68, 0.4)';
+        }}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+          <line x1="4" y1="22" x2="4" y2="15" />
+        </svg>
+      </button>
+    ) : null;
+
+  const reportModal = (
+    <ReportPortfolioModal
+      isOpen={reportModalOpen}
+      onClose={() => setReportModalOpen(false)}
+      portfolioId={data?.id ?? 0}
+      portfolioTitle={
+        data?.usuario?.nombre
+          ? `${data.usuario.nombre} ${data.usuario.apellido}`
+          : ''
+      }
+    />
+  );
+
+  if (schemeKey === 'firma-minima') {
+    return (
+      <FirmaMinimaLayout
+        data={data}
+        isPrivate={isPrivate}
+        font={font}
+        visibleSections={visibleSections}
+        isMobile={isMobile}
+        onProjectClick={handleProjectClick}
+        onExperienceClick={handleExperienceClick}
+        onSocialClick={handleSocialClick}
+        reportButton={reportButton}
+        reportModal={reportModal}
+      />
+    );
+  }
+
+  if (schemeKey === 'la-red-profesional') {
+    return (
+      <LaRedProfesionalLayout
+        data={data}
+        isPrivate={isPrivate}
+        font={font}
+        visibleSections={visibleSections}
+        isMobile={isMobile}
+        onProjectClick={handleProjectClick}
+        onExperienceClick={handleExperienceClick}
+        onSocialClick={handleSocialClick}
+        reportButton={reportButton}
+        reportModal={reportModal}
+      />
+    );
+  }
+
   return (
     <MobileCtx.Provider value={isMobile}>
       <div
@@ -2671,55 +2798,9 @@ export default function PortfolioPublicPage() {
           </p>
         </footer>
 
-        {/* Floating Report Button */}
-        {user?.rol !== 'ADMIN' && !data?.hasPendingReport && (
-          <button
-            onClick={() => setReportModalOpen(true)}
-            title="Reportar portafolio"
-            style={{
-              position: 'fixed',
-              bottom: isMobile ? 24 : 32,
-              right: isMobile ? 24 : 32,
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
-              background: '#ef4444',
-              color: '#ffffff',
-              border: 'none',
-              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              zIndex: 1000,
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-              <line x1="4" y1="22" x2="4" y2="15" />
-            </svg>
-          </button>
-        )}
+        {reportButton}
       </div>
-      <ReportPortfolioModal
-        isOpen={reportModalOpen}
-        onClose={() => setReportModalOpen(false)}
-        portfolioId={data?.id ?? 0}
-        portfolioTitle={
-          data?.usuario?.nombre
-            ? `${data.usuario.nombre} ${data.usuario.apellido}`
-            : ''
-        }
-      />
+      {reportModal}
     </MobileCtx.Provider>
   );
 }
