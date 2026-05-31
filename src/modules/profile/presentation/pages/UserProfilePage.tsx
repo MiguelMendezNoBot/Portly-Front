@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
@@ -202,7 +202,7 @@ function PillContentMobile({
 }
 
 export function UserProfilePage() {
-  const { profile, loading, saving, uploadAvatar, saveProfile } =
+  const { profile, loading, saving, uploadAvatar, saveProfile, refetch } =
     useUserProfile();
   const { form, dirty, setField } = useProfileForm(profile);
   const navigate = useNavigate();
@@ -211,6 +211,14 @@ export function UserProfilePage() {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [appealOpen, setAppealOpen] = useState(false);
   const [hasClosedAppealOnce, setHasClosedAppealOnce] = useState(false);
+  const [showSuspendedPopup, setShowSuspendedPopup] = useState(false);
+
+  // Mostrar popup emergente al cargar si la cuenta está suspendida
+  useEffect(() => {
+    if (profile?.estado === 'suspendido') {
+      setShowSuspendedPopup(true);
+    }
+  }, [profile?.estado]);
 
   async function handleSave() {
     try {
@@ -416,18 +424,56 @@ export function UserProfilePage() {
           </>
         )}
       </div>
+      {/* Popup emergente para usuarios suspendidos al visitar su perfil */}
+      {showSuspendedPopup && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-md">
+          <div className="bg-[#0F131F] border border-red-500/20 rounded-[2rem] shadow-2xl w-[90%] max-w-sm p-8 animate-fade-in flex flex-col items-center gap-5 text-center">
+            <div className="w-16 h-16 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-red-400">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-white text-lg font-bold mb-1">Cuenta Suspendida</h3>
+              <p className="text-[#6b7280] text-sm leading-relaxed">
+                Tu cuenta ha sido suspendida. Solo puedes ver tu perfil, cerrar sesión o enviar una apelación.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <button
+                onClick={() => {
+                  setShowSuspendedPopup(false);
+                  navigate('/');
+                }}
+                className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#7c6bec] to-[#9fa2ff] text-white font-bold text-sm hover:brightness-110 active:scale-95 transition-all"
+              >
+                Volver al inicio
+              </button>
+              <button
+                onClick={() => {
+                  setShowSuspendedPopup(false);
+                  setAppealOpen(true);
+                }}
+                className="w-full py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold transition-all active:scale-95"
+              >
+                Enviar apelación
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <AppealModal
-        isOpen={appealOpen || profile.estado === 'suspendido' || (profile.estado === 'restringido' && !hasClosedAppealOnce)}
+        isOpen={appealOpen}
         onClose={() => {
-          if (profile.estado === 'restringido') {
-            setHasClosedAppealOnce(true);
-          }
           setAppealOpen(false);
         }}
         userEmail={profile.email}
-        canClose={profile.estado !== 'suspendido'}
+        canClose={true}
         estado={profile.estado}
         motivoSuspension={profile.motivoSuspension}
+        apelacionPendiente={profile.apelacionPendiente}
+        onAppealSubmitted={refetch}
       />
     </div>
   );

@@ -7,6 +7,69 @@ import { PortlyLogoBig } from '../AppShell';
 import AppealModal from '../../../modules/profile/presentation/components/AppealModal';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 
+// Pantalla de bloqueo para cuentas suspendidas (sin header ni sidebar)
+function SuspendedLockScreen({
+  motivoSuspension,
+  onAppeal,
+  onLogout,
+}: {
+  motivoSuspension: string | null;
+  onAppeal: () => void;
+  onLogout: () => void;
+}) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Fondo decorativo sutil */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-red-500/6 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center gap-7 max-w-md w-full text-center">
+        {/* Ícono de suspensión */}
+        <div className="w-24 h-24 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.12)]">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-red-400">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+          </svg>
+        </div>
+
+        {/* Mensaje principal */}
+        <div className="flex flex-col gap-2">
+          <h1 className="text-white text-3xl font-bold tracking-tight">Cuenta Suspendida</h1>
+          <p className="text-[#6b7280] text-sm leading-relaxed max-w-sm">
+            Tu cuenta ha sido suspendida y no puedes acceder a ninguna sección de la plataforma.
+            Si crees que es un error, puedes enviar una apelación.
+          </p>
+        </div>
+
+        {/* Motivo de suspensión */}
+        {motivoSuspension && (
+          <div className="w-full bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-left">
+            <span className="text-red-400 text-xs font-bold uppercase tracking-wider block mb-1">Motivo de la suspensión</span>
+            <p className="text-white text-sm leading-relaxed">{motivoSuspension}</p>
+          </div>
+        )}
+
+        {/* Acciones */}
+        <div className="flex flex-col gap-3 w-full">
+          <button
+            onClick={onAppeal}
+            className="w-full py-3 rounded-full bg-gradient-to-r from-[#7c6bec] to-[#9fa2ff] text-white font-bold text-sm transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(124,107,236,0.3)]"
+          >
+            Enviar apelación
+          </button>
+          <button
+            onClick={onLogout}
+            className="w-full py-3 rounded-full border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold text-sm transition-all active:scale-95"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Metadatos de rutas
 const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   '/dashboard': {
@@ -50,7 +113,7 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
 };
 
 export default function AuthenticatedLayout() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { profile } = useUserProfile();
   const location = useLocation();
   const navigate = useNavigate();
@@ -60,6 +123,8 @@ export default function AuthenticatedLayout() {
   const [userEmail, setUserEmail] = useState<string>('');
   const [motivoSuspension, setMotivoSuspension] = useState<string | null>(null);
   const [hasClosedAppealOnce, setHasClosedAppealOnce] = useState(false);
+  const [apelacionPendiente, setApelacionPendiente] = useState(false);
+  const [statusLoaded, setStatusLoaded] = useState(false);
 
   const currentMeta = routeMeta[location.pathname] || {
     title: 'Portly',
@@ -69,7 +134,7 @@ export default function AuthenticatedLayout() {
   // Obtener estado del usuario directamente del backend
   useEffect(() => {
     httpClient
-      .getAuth<{ estado?: string; email?: string; motivoSuspension?: string }>(
+      .getAuth<{ estado?: string; email?: string; motivoSuspension?: string; apelacionPendiente?: boolean }>(
         '/api/profile',
         'Error al verificar estado'
       )
@@ -77,9 +142,13 @@ export default function AuthenticatedLayout() {
         setUserEstado(data.estado ?? 'activo');
         setUserEmail(data.email ?? '');
         setMotivoSuspension(data.motivoSuspension ?? null);
+        setApelacionPendiente(data.apelacionPendiente ?? false);
       })
       .catch(() => {
         setUserEstado('activo');
+      })
+      .finally(() => {
+        setStatusLoaded(true);
       });
   }, []);
 
@@ -106,6 +175,33 @@ export default function AuthenticatedLayout() {
   const avatarUrl = profile?.avatarUrl;
   const estado = userEstado ?? profile?.estado ?? 'activo';
   const email = userEmail || profile?.email || '';
+  const sessionKey = email ? `hasSeenRestrictedModal_${email}` : null;
+  const hasSeenSession = sessionKey ? sessionStorage.getItem(sessionKey) === 'true' : false;
+
+  // Shell del app para usuario suspendido — sin header, sin sidebar, solo el contenido de suspensión
+  if (statusLoaded && estado === 'suspendido') {
+    return (
+      <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-0f111a rounded-[2rem] shadow-2xl overflow-hidden flex items-center justify-center">
+          <SuspendedLockScreen
+            motivoSuspension={motivoSuspension}
+            onAppeal={() => setAppealOpen(true)}
+            onLogout={logout}
+          />
+        </div>
+        <AppealModal
+          isOpen={appealOpen}
+          onClose={() => setAppealOpen(false)}
+          userEmail={email}
+          canClose={true}
+          estado={estado}
+          motivoSuspension={motivoSuspension}
+          apelacionPendiente={apelacionPendiente}
+          onAppealSubmitted={() => setApelacionPendiente(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center">
@@ -233,19 +329,26 @@ export default function AuthenticatedLayout() {
         )}
       </div>
 
-      {/* AppealModal - se muestra siempre que haya estado cargado */}
+      {/* AppealModal - para cuentas restringidas (la suspendida ya se maneja en el bloqueo) */}
       <AppealModal
-        isOpen={appealOpen || estado === 'suspendido' || (estado === 'restringido' && !hasClosedAppealOnce)}
+        isOpen={appealOpen || (estado === 'restringido' && !hasClosedAppealOnce && !hasSeenSession)}
         onClose={() => {
           if (estado === 'restringido') {
             setHasClosedAppealOnce(true);
+            if (sessionKey) {
+              sessionStorage.setItem(sessionKey, 'true');
+            }
           }
           setAppealOpen(false);
         }}
         userEmail={email}
-        canClose={estado !== 'suspendido'}
+        canClose={true}
         estado={estado}
         motivoSuspension={motivoSuspension}
+        apelacionPendiente={apelacionPendiente}
+        onAppealSubmitted={() => {
+          setApelacionPendiente(true);
+        }}
       />
     </div>
   );
