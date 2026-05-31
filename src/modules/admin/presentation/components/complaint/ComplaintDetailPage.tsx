@@ -16,6 +16,9 @@ export function ComplaintDetailPage() {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [suspendModalOpen, setSuspendModalOpen] = useState(false);
   const [restrictModalOpen, setRestrictModalOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [historyData, setHistoryData] = useState<ComplaintGroup[] | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const navigate = useNavigate();
 
   const loadDetail = async () => {
@@ -37,6 +40,28 @@ export function ComplaintDetailPage() {
 
   const handleSuccess = () => {
     loadDetail();
+    if (isHistoryOpen && complaint) {
+      loadHistory(complaint.ownerUserId);
+    }
+  };
+
+  const loadHistory = async (userId: string) => {
+    setIsLoadingHistory(true);
+    try {
+      const data = await repo.getUserComplaintHistory(userId);
+      setHistoryData(data);
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const toggleHistory = () => {
+    if (!isHistoryOpen && !historyData && complaint) {
+      loadHistory(complaint.ownerUserId);
+    }
+    setIsHistoryOpen(!isHistoryOpen);
   };
 
   if (isLoading) {
@@ -69,16 +94,20 @@ export function ComplaintDetailPage() {
         Volver
       </button>
 
+      <div className="flex flex-col xl:flex-row gap-6 items-start">
+        {/* Panel izquierdo principal */}
+        <div className="flex-1 w-full min-w-0">
+
       <div className="bg-[#2D3449] p-6 rounded-2xl border border-white/5 mb-6">
         <h2 className="text-white text-2xl font-bold mb-2">
           {complaint.portfolioTitle}
         </h2>
         <div className="flex flex-wrap gap-4 text-sm">
-          <div>
+          <div className="flex items-center flex-wrap gap-2">
             <span className="text-[#9ca3af]">Propietario: </span>
             <span className="text-white">{complaint.ownerUserName}</span>
             <span
-              className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+              className={`px-2 py-0.5 rounded-full text-xs ${
                 complaint.ownerUserStatus === 'activo'
                   ? 'bg-green-500/20 text-green-400'
                   : complaint.ownerUserStatus === 'restringido'
@@ -88,6 +117,20 @@ export function ComplaintDetailPage() {
             >
               {complaint.ownerUserStatus}
             </span>
+            <button
+              onClick={toggleHistory}
+              className={`flex items-center gap-1.5 px-3 py-1 ml-2 rounded-lg text-xs font-semibold transition-all border ${
+                isHistoryOpen
+                  ? 'bg-[#7c6bec]/20 border-[#7c6bec]/40 text-[#C9BEFF]'
+                  : 'bg-[#1a1c29] border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20'
+              }`}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Historial
+            </button>
           </div>
           <div>
             <span className="text-[#9ca3af]">Portafolio: </span>
@@ -151,9 +194,21 @@ export function ComplaintDetailPage() {
               {c.description && (
                 <p className="text-[#9ca3af] text-xs mt-1">{c.description}</p>
               )}
-              <p className="text-[#6b7280] text-xs mt-1">
-                Reportado por: {c.reportedBy}
-              </p>
+              {/* Denunciante: avatar + nombre */}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-6 h-6 rounded-full bg-[#7c6bec]/20 overflow-hidden flex items-center justify-center shrink-0 border border-white/5">
+                  {c.reporterAvatar ? (
+                    <img src={c.reporterAvatar} alt={c.reporterName || 'Usuario'} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[#9fa2ff] text-[9px] font-bold">
+                      {(c.reporterName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[#6b7280] text-xs">
+                  {c.reporterName || 'Usuario desconocido'}
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -202,6 +257,61 @@ export function ComplaintDetailPage() {
             USUARIO SUSPENDIDO
           </span>
         )}
+      </div>
+    </div>
+      
+      {/* Panel de historial lateral */}
+      {isHistoryOpen && (
+        <div className="w-full xl:w-96 shrink-0 bg-[#2D3449] p-6 rounded-2xl border border-white/5 animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-white text-lg font-bold flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#7c6bec]">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              Historial del usuario
+            </h3>
+            <button onClick={() => setIsHistoryOpen(false)} className="p-2 rounded-xl hover:bg-white/5 text-[#9ca3af] hover:text-white transition-all">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          
+          {isLoadingHistory ? (
+            <div className="text-[#9ca3af] text-sm py-4">Cargando historial...</div>
+          ) : historyData && historyData.length > 0 ? (
+            <div className="space-y-4">
+              {historyData.map((h) => (
+                <div key={h.id} className="bg-[#1a1c29] p-4 rounded-xl border border-white/5">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-white text-sm font-bold">{h.portfolioTitle}</h4>
+                      <Link to={h.portfolioPublicUrl} target="_blank" className="text-[#a8e8ff] text-xs underline">
+                        Ver portafolio
+                      </Link>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${h.status === 'pendiente' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                      {h.status}
+                    </span>
+                  </div>
+                  <p className="text-[#6b7280] text-xs mt-2">
+                    {h.complaints.length} denuncia(s) recibida(s)
+                  </p>
+                  {h.revision && (
+                    <div className="mt-2 p-2 bg-blue-500/10 rounded-lg">
+                      <p className="text-[#9ca3af] text-xs"><span className="text-white font-medium">Revisión:</span> {h.revision.resultado}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-[#9ca3af] text-sm py-4">Este usuario no tiene otras denuncias.</div>
+          )}
+        </div>
+      )}
       </div>
 
       <ReviewComplaintModal

@@ -98,9 +98,21 @@ function DetailPanel({ complaint }: { complaint: ComplaintGroup }) {
               {c.description && (
                 <p className="text-[#9ca3af] text-xs mt-1">{c.description}</p>
               )}
-              <p className="text-[#6b7280] text-xs mt-1">
-                Reportado por: {c.reportedBy}
-              </p>
+              {/* Denunciante: avatar + nombre */}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-6 h-6 rounded-full bg-[#7c6bec]/20 overflow-hidden flex items-center justify-center shrink-0">
+                  {c.reporterAvatar ? (
+                    <img src={c.reporterAvatar} alt={c.reporterName || 'Usuario'} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[#9fa2ff] text-[9px] font-bold">
+                      {(c.reporterName || 'U').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[#6b7280] text-xs">
+                  {c.reporterName || 'Usuario desconocido'}
+                </span>
+              </div>
             </div>
           ))}
         </div>
