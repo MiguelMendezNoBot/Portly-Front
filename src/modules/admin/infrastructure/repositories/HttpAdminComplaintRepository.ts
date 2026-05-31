@@ -67,4 +67,21 @@ export class HttpAdminComplaintRepository {
     // Dejamos el método vacío para no romper interfaces si existen, o simplemente un return vacío.
     return Promise.resolve();
   }
+  async restrictUser(data: {
+    userId: string;
+    motivo: string;
+    adminId: string;
+  }): Promise<any> {
+    const res = await fetch(`${BASE_URL}/usuarios/${data.userId}/restringir`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ motivo: data.motivo }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Error al restringir al usuario');
+    }
+
+    return res.json();
+  }
 }
