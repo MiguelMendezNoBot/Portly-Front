@@ -78,13 +78,21 @@ const TemplateThumbnail = ({
 
 /** Placeholder visual basado en el esquema de la plantilla */
 const TemplatePlaceholder = ({ template }: { template: Template }) => {
-  const isDark = template.schema.colorScheme !== 'light';
+  const isDark =
+    template.schema.colorScheme !== 'light' &&
+    template.schema.colorScheme !== 'corporate';
   const accent =
     template.schema.colorScheme === 'colorful'
       ? '#f97316'
       : template.schema.colorScheme === 'dark'
-      ? '#7c6bec'
-      : '#3b82f6';
+        ? '#7c6bec'
+        : template.schema.colorScheme === 'firma-minima'
+          ? '#64ffda'
+          : template.schema.colorScheme === 'brutalist'
+            ? '#ffde00'
+            : template.schema.colorScheme === 'corporate'
+              ? '#2563eb'
+              : '#3b82f6';
 
   return (
     <div
