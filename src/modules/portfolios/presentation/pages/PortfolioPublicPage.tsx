@@ -5,7 +5,7 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { usePortfolioPublic } from '../../application/usePortfolioPublic';
 import PreviewBanner from '../components/PreviewBanner';
 import { useAuth } from '../../../home/presentation/hooks/useAuth';
@@ -2540,7 +2540,9 @@ function ErrorState({ error }: { error: string }) {
 
 export default function PortfolioPublicPage() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
-  const { data, loading, error } = usePortfolioPublic(portfolioId);
+  const { data, loading, error, refetch } = usePortfolioPublic(portfolioId);
+  const [searchParams] = useSearchParams();
+  const fromExplore = searchParams.get('from') === 'explore';
   const isIframe = window.self !== window.top;
   const { trackProjectClick, trackSectionClick } = usePortfolioTracking(
     isIframe ? undefined : data?.id
@@ -2598,60 +2600,111 @@ export default function PortfolioPublicPage() {
 
   const isPrivate = data.visibilidad === 'PRIVADO';
 
-  const reportButton =
-    user?.rol !== 'ADMIN' && !data?.hasPendingReport ? (
-      <button
-        onClick={() => setReportModalOpen(true)}
-        title="Reportar portafolio"
-        style={{
-          position: 'fixed',
-          bottom: isMobile ? 24 : 32,
-          right: isMobile ? 24 : 32,
-          width: 56,
-          height: 56,
-          borderRadius: '50%',
-          background: '#ef4444',
-          color: '#ffffff',
-          border: 'none',
-          boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          zIndex: 1000,
-          transition: 'transform 0.2s, box-shadow 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.05)';
-          e.currentTarget.style.boxShadow =
-            '0 6px 16px rgba(239, 68, 68, 0.5)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow =
-            '0 4px 12px rgba(239, 68, 68, 0.4)';
-        }}
+  const isOwner =
+    user?.email &&
+    data?.usuario?.email &&
+    user.email.toLowerCase() === data.usuario.email.toLowerCase();
+
+  const canReport = user?.rol !== 'ADMIN' && fromExplore && !isOwner;
+
+  const canShowReportButton = canReport && !data?.hasPendingReport;
+
+  const reportButton = canShowReportButton ? (
+    <button
+      onClick={() => setReportModalOpen(true)}
+      title="Reportar portafolio"
+      style={{
+        position: 'fixed',
+        bottom: isMobile ? 24 : 32,
+        right: isMobile ? 24 : 32,
+        width: 56,
+        height: 56,
+        borderRadius: '50%',
+        background: '#ef4444',
+        color: '#ffffff',
+        border: 'none',
+        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        zIndex: 1000,
+        transition: 'transform 0.2s, box-shadow 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.05)';
+        e.currentTarget.style.boxShadow =
+          '0 6px 16px rgba(239, 68, 68, 0.5)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.boxShadow =
+          '0 4px 12px rgba(239, 68, 68, 0.4)';
+      }}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-          <line x1="4" y1="22" x2="4" y2="15" />
-        </svg>
-      </button>
-    ) : null;
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+        <line x1="4" y1="22" x2="4" y2="15" />
+      </svg>
+    </button>
+  ) : null;
+
+  const reportedBanner = canReport && data?.hasPendingReport ? (
+    <div
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '12px 24px',
+        background: '#1e1b4b',
+        borderBottom: '2px solid #818cf8',
+        color: '#e0e7ff',
+        fontSize: '14px',
+        fontWeight: 600,
+        fontFamily: 'system-ui, sans-serif',
+        textAlign: 'center',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+      }}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ color: '#818cf8', flexShrink: 0 }}
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+      <span>Ya has denunciado este portafolio. Nuestro equipo está revisando el contenido.</span>
+    </div>
+  ) : null;
 
   const reportModal = (
     <ReportPortfolioModal
       isOpen={reportModalOpen}
-      onClose={() => setReportModalOpen(false)}
+      onClose={() => {
+        setReportModalOpen(false);
+        refetch();
+      }}
       portfolioId={data?.id ?? 0}
       portfolioTitle={
         data?.usuario?.nombre
@@ -2674,6 +2727,7 @@ export default function PortfolioPublicPage() {
         onSocialClick={handleSocialClick}
         reportButton={reportButton}
         reportModal={reportModal}
+        reportedBanner={reportedBanner}
       />
     );
   }
@@ -2691,6 +2745,7 @@ export default function PortfolioPublicPage() {
         onSocialClick={handleSocialClick}
         reportButton={reportButton}
         reportModal={reportModal}
+        reportedBanner={reportedBanner}
       />
     );
   }
@@ -2706,6 +2761,7 @@ export default function PortfolioPublicPage() {
         }}
       >
         {isPrivate && <PreviewBanner />}
+        {reportedBanner}
 
         <link
           rel="stylesheet"

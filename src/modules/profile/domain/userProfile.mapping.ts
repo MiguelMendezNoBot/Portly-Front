@@ -96,6 +96,7 @@ export function mapBackendToUserProfile(
     socialLinks,
     connectedProviders,
     estado: String(data.estado ?? 'activo'),
+    motivoSuspension: data.motivoSuspension ? String(data.motivoSuspension) : undefined,
   };
 }
 

@@ -8,6 +8,7 @@ interface AppealModalProps {
   userEmail: string;
   canClose: boolean; // true para "restringido", false para "suspendido"
   estado: string;
+  motivoSuspension?: string | null;
 }
 
 export default function AppealModal({
@@ -16,6 +17,7 @@ export default function AppealModal({
   userEmail,
   canClose,
   estado,
+  motivoSuspension,
 }: AppealModalProps) {
   const [motivo, setMotivo] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -111,6 +113,17 @@ export default function AppealModal({
                 ? 'Tu cuenta ha sido suspendida. Para apelar esta decisión, por favor explica tu situación a continuación.'
                 : 'Tu cuenta ha sido restringida. Algunas funciones están limitadas. Puedes solicitar una revisión explicando tu caso.'}
             </p>
+
+            {motivoSuspension && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-6 text-left">
+                <span className="text-red-400 text-xs font-bold uppercase tracking-wider block mb-1">
+                  Motivo de la {estado === 'suspendido' ? 'suspensión' : 'restricción'}:
+                </span>
+                <p className="text-white text-sm leading-relaxed">
+                  {motivoSuspension}
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>

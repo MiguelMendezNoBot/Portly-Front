@@ -1054,6 +1054,7 @@ export interface LaRedProfesionalLayoutProps {
   onSocialClick?: (name: string) => void;
   reportButton?: React.ReactNode;
   reportModal?: React.ReactNode;
+  reportedBanner?: React.ReactNode;
 }
 
 export default function LaRedProfesionalLayout({
@@ -1067,6 +1068,7 @@ export default function LaRedProfesionalLayout({
   onSocialClick,
   reportButton,
   reportModal,
+  reportedBanner,
 }: LaRedProfesionalLayoutProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [cursorMode, setCursorMode] = useState<CursorMode>('default');
@@ -1126,6 +1128,11 @@ export default function LaRedProfesionalLayout({
       {isPrivate && (
         <div style={{ flexShrink: 0 }}>
           <PreviewBanner />
+        </div>
+      )}
+      {reportedBanner && (
+        <div style={{ flexShrink: 0 }}>
+          {reportedBanner}
         </div>
       )}
 

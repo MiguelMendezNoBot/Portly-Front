@@ -10,6 +10,7 @@ export interface UserProfileEntity {
   nationality?: string;
   avatarUrl?: string;
   estado: string;
+  motivoSuspension?: string;
   visibility: {
     showEmail: boolean;
     showProfession: boolean;

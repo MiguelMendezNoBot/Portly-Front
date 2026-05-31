@@ -22,6 +22,7 @@ export function ReportPortfolioModal({ isOpen, onClose, portfolioId, portfolioTi
   const [motivo, setMotivo] = useState('');
   const [description, setDescription] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const { submit, isSubmitting, error: serverError } = useReportPortfolio();
   const { user } = useAuth();
   const { profile } = useUserProfile();
@@ -43,17 +44,48 @@ export function ReportPortfolioModal({ isOpen, onClose, portfolioId, portfolioTi
         portfolioId,
         reason: motivo,
         description: description || undefined,
-        reportedBy: user ? String(user.id) : 'visitante_anonimo',
+        reportedBy: user ? user.id : 'visitante_anonimo',
         reporterName: reportedByName,
         reporterAvatar: reportedByAvatar,
       });
-      onClose();
+      setIsSubmitted(true);
     } catch {
       // error se maneja en hook
     }
   };
 
   if (!isOpen) return null;
+
+  if (isSubmitted) {
+    return (
+      <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+        <div className="bg-[#0f111a] w-full max-w-md rounded-[32px] border border-white/10 shadow-2xl overflow-hidden p-8">
+          <div className="flex flex-col items-center text-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 mb-2">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h2 className="text-white text-2xl font-bold">Denuncia Realizada</h2>
+            <p className="text-[#a7aab9] text-sm leading-relaxed">
+              La denuncia se realizó con éxito. Nuestro equipo revisará el contenido reportado a la brevedad.
+            </p>
+            <button
+              onClick={() => {
+                setIsSubmitted(false);
+                setMotivo('');
+                setDescription('');
+                onClose();
+              }}
+              className="mt-6 w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg cursor-pointer"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">

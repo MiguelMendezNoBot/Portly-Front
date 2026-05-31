@@ -992,6 +992,7 @@ export interface FirmaMinimaLayoutProps {
   onSocialClick?: (name: string) => void;
   reportButton?: React.ReactNode;
   reportModal?: React.ReactNode;
+  reportedBanner?: React.ReactNode;
 }
 
 export default function FirmaMinimaLayout({
@@ -1005,6 +1006,7 @@ export default function FirmaMinimaLayout({
   onSocialClick,
   reportButton,
   reportModal,
+  reportedBanner,
 }: FirmaMinimaLayoutProps) {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [activeId, setActiveId] = useState('');
@@ -1101,6 +1103,7 @@ export default function FirmaMinimaLayout({
       }}
     >
       {isPrivate && <PreviewBanner />}
+      {reportedBanner}
 
       <link
         rel="stylesheet"
