@@ -50,7 +50,7 @@ function InlinePortfolioViewer({
 
       <div className="flex-1 w-full h-full overflow-hidden">
         <iframe
-          src={`/p/${portfolioId}`}
+          src={`/p/${portfolioId}?from=explore`}
           className="w-full h-full border-0"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         />

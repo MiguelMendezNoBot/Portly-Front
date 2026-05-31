@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 import type { PortfolioPublicData } from '../domain/entities/PortfolioPublicData';
 
@@ -7,7 +7,7 @@ export function usePortfolioPublic(portfolioId: string | undefined) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchPortfolio = useCallback(() => {
     if (!portfolioId) return;
     setLoading(true);
     setError(null);
@@ -22,5 +22,9 @@ export function usePortfolioPublic(portfolioId: string | undefined) {
       .finally(() => setLoading(false));
   }, [portfolioId]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchPortfolio();
+  }, [fetchPortfolio]);
+
+  return { data, loading, error, refetch: fetchPortfolio };
 }

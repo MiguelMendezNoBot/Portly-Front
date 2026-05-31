@@ -210,6 +210,7 @@ export function UserProfilePage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [appealOpen, setAppealOpen] = useState(false);
+  const [hasClosedAppealOnce, setHasClosedAppealOnce] = useState(false);
 
   async function handleSave() {
     try {
@@ -416,14 +417,17 @@ export function UserProfilePage() {
         )}
       </div>
       <AppealModal
-        isOpen={appealOpen || profile.estado === 'suspendido'}
+        isOpen={appealOpen || profile.estado === 'suspendido' || (profile.estado === 'restringido' && !hasClosedAppealOnce)}
         onClose={() => {
-          if (profile.estado === 'restringido') setAppealOpen(false);
-          // Si es suspendido, no se cierra
+          if (profile.estado === 'restringido') {
+            setHasClosedAppealOnce(true);
+          }
+          setAppealOpen(false);
         }}
         userEmail={profile.email}
         canClose={profile.estado !== 'suspendido'}
         estado={profile.estado}
+        motivoSuspension={profile.motivoSuspension}
       />
     </div>
   );

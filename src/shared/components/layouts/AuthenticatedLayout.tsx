@@ -58,6 +58,8 @@ export default function AuthenticatedLayout() {
   const [appealOpen, setAppealOpen] = useState(false);
   const [userEstado, setUserEstado] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
+  const [motivoSuspension, setMotivoSuspension] = useState<string | null>(null);
+  const [hasClosedAppealOnce, setHasClosedAppealOnce] = useState(false);
 
   const currentMeta = routeMeta[location.pathname] || {
     title: 'Portly',
@@ -67,13 +69,14 @@ export default function AuthenticatedLayout() {
   // Obtener estado del usuario directamente del backend
   useEffect(() => {
     httpClient
-      .getAuth<{ estado?: string; email?: string }>(
+      .getAuth<{ estado?: string; email?: string; motivoSuspension?: string }>(
         '/api/profile',
         'Error al verificar estado'
       )
       .then((data) => {
         setUserEstado(data.estado ?? 'activo');
         setUserEmail(data.email ?? '');
+        setMotivoSuspension(data.motivoSuspension ?? null);
       })
       .catch(() => {
         setUserEstado('activo');
@@ -232,13 +235,17 @@ export default function AuthenticatedLayout() {
 
       {/* AppealModal - se muestra siempre que haya estado cargado */}
       <AppealModal
-        isOpen={appealOpen || estado === 'suspendido'}
+        isOpen={appealOpen || estado === 'suspendido' || (estado === 'restringido' && !hasClosedAppealOnce)}
         onClose={() => {
-          if (estado !== 'suspendido') setAppealOpen(false);
+          if (estado === 'restringido') {
+            setHasClosedAppealOnce(true);
+          }
+          setAppealOpen(false);
         }}
         userEmail={email}
         canClose={estado !== 'suspendido'}
         estado={estado}
+        motivoSuspension={motivoSuspension}
       />
     </div>
   );
