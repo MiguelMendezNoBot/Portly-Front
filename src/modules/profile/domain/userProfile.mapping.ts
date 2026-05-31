@@ -97,6 +97,9 @@ export function mapBackendToUserProfile(
     connectedProviders,
     estado: String(data.estado ?? 'activo'),
     motivoSuspension: data.motivoSuspension ? String(data.motivoSuspension) : undefined,
+    apelacionPendiente: data.apelacionPendiente !== undefined ? Boolean(data.apelacionPendiente) : false,
+    apelacionAprobada: data.apelacionAprobada !== undefined ? Boolean(data.apelacionAprobada) : false,
+    idApelacionAprobada: data.idApelacionAprobada !== undefined && data.idApelacionAprobada !== null ? Number(data.idApelacionAprobada) : undefined,
   };
 }
 

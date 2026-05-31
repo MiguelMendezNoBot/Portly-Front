@@ -262,6 +262,10 @@ export default function PortfoliosPage() {
   const [portfolioToShare, setPortfolioToShare] = useState<Portfolio | null>(
     null
   );
+  const [apelacionAprobada, setApelacionAprobada] = useState(false);
+  const [idApelacionAprobada, setIdApelacionAprobada] = useState<number | null>(null);
+  const [userEmail, setUserEmail] = useState('');
+  const [showReactivationModal, setShowReactivationModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Create flow
@@ -461,10 +465,13 @@ export default function PortfoliosPage() {
   useEffect(() => {
     let cancelled = false;
     httpClient
-      .getAuth<{ estado?: string }>('/api/profile', 'Error al verificar estado')
+      .getAuth<{ estado?: string; email?: string; apelacionAprobada?: boolean; idApelacionAprobada?: number }>('/api/profile', 'Error al verificar estado')
       .then((data) => {
         if (!cancelled) {
-          setUserStatus(data.estado ?? 'activo'); // fallback si no viene
+          setUserStatus(data.estado ?? 'activo');
+          setUserEmail(data.email ?? '');
+          setApelacionAprobada(data.apelacionAprobada ?? false);
+          setIdApelacionAprobada(data.idApelacionAprobada ?? null);
         }
       })
       .catch(() => {
@@ -477,6 +484,24 @@ export default function PortfoliosPage() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (userStatus === 'activo' && apelacionAprobada && userEmail) {
+      const suffix = idApelacionAprobada ? `_${idApelacionAprobada}` : '';
+      const key = `hasSeenReactivationMessage_${userEmail}${suffix}`;
+      if (localStorage.getItem(key) !== 'true') {
+        setShowReactivationModal(true);
+      }
+    }
+  }, [userStatus, apelacionAprobada, userEmail, idApelacionAprobada]);
+
+  const handleCloseReactivationModal = () => {
+    if (userEmail) {
+      const suffix = idApelacionAprobada ? `_${idApelacionAprobada}` : '';
+      localStorage.setItem(`hasSeenReactivationMessage_${userEmail}${suffix}`, 'true');
+    }
+    setShowReactivationModal(false);
+  };
 
   return (
     <div className="relative h-full flex flex-col pt-1 pb-2 animate-fade-in">
@@ -1121,6 +1146,46 @@ export default function PortfoliosPage() {
         onClose={() => setIsListModalOpen(false)}
         portfolios={portfoliosWithPreviews}
       />
+
+      {showReactivationModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050505]/80 backdrop-blur-md px-4">
+          <div className="bg-[#11111b] border border-white/10 rounded-3xl shadow-[0_0_40px_rgba(124,107,236,0.2)] w-full max-w-md p-8 animate-fade-in text-center relative overflow-hidden">
+            {/* Decoración */}
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#7c6bec]/15 to-transparent pointer-events-none" />
+
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6 text-emerald-400">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+
+            <h3 className="text-white text-2xl font-bold mb-4 tracking-tight">
+              ¡Cuenta reactivada!
+            </h3>
+            <p className="text-[#9ca3af] text-sm leading-relaxed mb-6">
+              Tu cuenta ha sido reactivada con éxito. Por motivos de seguridad y cumplimiento normativo, tus portafolios han sido configurados temporalmente como <strong>privados</strong>.
+            </p>
+            <p className="text-[#C9BEFF] text-xs font-semibold mb-8 uppercase tracking-wider bg-[#7c6bec]/10 py-3 px-4 rounded-xl border border-[#7c6bec]/20">
+              Por favor, revisa tus portafolios y vuelve a publicarlos si así lo deseas.
+            </p>
+
+            <button
+              onClick={handleCloseReactivationModal}
+              className="w-full bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-3.5 px-6 rounded-full font-extrabold text-sm transition-all shadow-[0_0_20px_rgba(108,99,255,0.3)] active:scale-95 uppercase tracking-widest cursor-pointer"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

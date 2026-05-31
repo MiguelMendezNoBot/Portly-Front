@@ -1,6 +1,7 @@
 // src/modules/profile/presentation/components/AppealModal.tsx
 import { useState } from 'react';
 import { httpClient } from '../../../../infrastructure/http/httpClient';
+import { useAuth } from '../../../../modules/home/presentation/hooks/useAuth';
 
 interface AppealModalProps {
   isOpen: boolean;
@@ -9,6 +10,8 @@ interface AppealModalProps {
   canClose: boolean; // true para "restringido", false para "suspendido"
   estado: string;
   motivoSuspension?: string | null;
+  apelacionPendiente?: boolean;
+  onAppealSubmitted?: () => void;
 }
 
 export default function AppealModal({
@@ -18,7 +21,10 @@ export default function AppealModal({
   canClose,
   estado,
   motivoSuspension,
+  apelacionPendiente,
+  onAppealSubmitted,
 }: AppealModalProps) {
+  const { logout } = useAuth();
   const [motivo, setMotivo] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
@@ -39,6 +45,9 @@ export default function AppealModal({
         'Error al enviar la apelación'
       );
       setEnviado(true);
+      if (onAppealSubmitted) {
+        onAppealSubmitted();
+      }
     } catch (err) {
       console.error('Error al enviar apelación:', err);
     } finally {
@@ -52,7 +61,45 @@ export default function AppealModal({
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
 
       <div className="relative z-10 bg-[#0F131F] border border-white/10 rounded-[2rem] shadow-2xl w-[90%] max-w-md p-8 animate-fade-in">
-        {enviado ? (
+        {apelacionPendiente ? (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-yellow-400"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <h3 className="text-white text-xl font-bold">Apelación en trámite</h3>
+            <p className="text-src-6b7280 text-sm">
+              Ya has enviado una solicitud de revisión para esta cuenta. Estamos revisando tu caso y te contactaremos a la brevedad.
+            </p>
+            {canClose && (
+              <button
+                onClick={onClose}
+                className="mt-2 px-6 py-2 rounded-full bg-src-7c6bec text-white font-semibold hover:bg-src-6b5edb transition-colors"
+              >
+                Cerrar
+              </button>
+            )}
+            {estado === 'suspendido' && (
+              <button
+                onClick={logout}
+                className="mt-2 w-full py-2.5 rounded-full border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold transition-colors cursor-pointer"
+              >
+                Cerrar sesión
+              </button>
+            )}
+          </div>
+        ) : enviado ? (
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center">
               <svg
@@ -77,6 +124,14 @@ export default function AppealModal({
                 className="mt-2 px-6 py-2 rounded-full bg-src-7c6bec text-white font-semibold hover:bg-src-6b5edb transition-colors"
               >
                 Cerrar
+              </button>
+            )}
+            {estado === 'suspendido' && (
+              <button
+                onClick={logout}
+                className="mt-2 w-full py-2.5 rounded-full border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold transition-colors cursor-pointer"
+              >
+                Cerrar sesión
               </button>
             )}
           </div>
@@ -147,6 +202,15 @@ export default function AppealModal({
               >
                 {enviando ? 'Enviando...' : 'Enviar apelación'}
               </button>
+              {estado === 'suspendido' && (
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="w-full py-3 rounded-full border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold transition-colors cursor-pointer"
+                >
+                  Cerrar sesión
+                </button>
+              )}
             </form>
           </>
         )}
