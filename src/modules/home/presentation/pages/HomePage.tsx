@@ -3,10 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { UserTab } from '../components/UserTab';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
+import { BenefitsStrip } from '../components/BenefitsStrip';
+import { ContrastSection } from '../components/ContrastSection';
+import { FeaturesSection } from '../components/FeaturesSection';
 import ExplorePage from '../../../explore/presentation/pages/ExplorePage';
 import PestanaEsquina from '../../../../shared/components/CornerTab';
 import { useToast } from '../../../../shared/hooks/useToast';
 import { useAuth } from '../hooks/useAuth';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 import { httpClient } from '../../../../infrastructure/http/httpClient';
 import AppealModal from '../../../profile/presentation/components/AppealModal';
 
@@ -14,6 +18,7 @@ export const HomePage = () => {
   const { toast, showToast } = useToast();
   const { user, logout } = useAuth();
   const toastShown = useRef(false);
+  useScrollReveal();
   const location = useLocation();
 
   // Leer del cache de sesión para mostrar inmediatamente sin flash
@@ -171,9 +176,48 @@ export const HomePage = () => {
         <div className="flex-1 overflow-y-auto overflow-x-hidden pt-20 sm:pt-0 scrollbar-thin [scrollbar-gutter:stable]">
           <div className="max-w-7xl mx-auto w-full">
             <Navbar />
-            <div className="px-8 pb-10">
-              {isExplore ? <ExplorePage /> : <HeroSection />}
-            </div>
+            {isExplore ? (
+              <div className="px-8 pb-10">
+                <ExplorePage />
+              </div>
+            ) : user ? (
+              <div className="px-8 pb-10">
+                <HeroSection />
+              </div>
+            ) : (
+              /* ── Landing page para visitantes no logueados ── */
+              <div className="w-full">
+                <HeroSection />
+                <BenefitsStrip />
+                <ContrastSection />
+                <FeaturesSection />
+                {/* CTA final */}
+                <section className="relative py-24 px-6 text-center overflow-hidden">
+                  <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] rounded-full bg-[#7c6bec]/8 blur-3xl" />
+                  </div>
+                  <div className="reveal relative max-w-xl mx-auto">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4 leading-tight">
+                      Tu portafolio profesional{' '}
+                      <span className="text-shimmer">te está esperando</span>
+                    </h2>
+                    <p className="text-[#9ca3af] text-lg mb-8">
+                      Crea tu portafolio con plantilla, organiza tu experiencia y hazte visible ante quienes importan.
+                    </p>
+                    <button
+                      onClick={() => window.location.href = '/register'}
+                      className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-[#7c6bec] text-white font-bold text-base tracking-wide shadow-[0_4px_28px_rgba(124,107,236,0.5)] hover:shadow-[0_8px_40px_rgba(124,107,236,0.65)] hover:-translate-y-1 transition-all duration-300 active:scale-[0.97]"
+                    >
+                      CREAR MI PORTAFOLIO GRATIS
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    <p className="mt-4 text-[#5a6278] text-sm">Sin tarjeta de crédito. Sin suscripciones.</p>
+                  </div>
+                </section>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
         id: p.idPortafolio || p.id,
         nombre: p.nombre,
         visibilidad: p.visibilidad,
-        urlPublica: p.urlPublica,
+        urlPublica: p.publicUrl,
         createdAt: p.fechaCreacion,
       }));
       setUserPortfolios(mapped);

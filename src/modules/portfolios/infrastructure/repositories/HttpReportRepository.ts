@@ -1,10 +1,10 @@
-import { ReportSubmission } from "../../domain/entities/ReportSubmission";
+import { ReportSubmission } from '../../domain/entities/ReportSubmission';
 
-const BASE_URL = 'http://localhost:8080/api/public';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export class HttpReportRepository {
   async submitReport(report: ReportSubmission): Promise<void> {
-    const res = await fetch(`${BASE_URL}/reportar`, {
+    const res = await fetch(`${BASE_URL}/api/public/reportar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(report),
