@@ -385,7 +385,9 @@ export default function ViewPortfolioListModal({
   onClose,
   portfolios,
 }: ViewPortfolioListModalProps) {
-  const [visibilityFilter, setVisibilityFilter] = useState<'ALL' | 'PUBLICO' | 'PRIVADO'>('ALL');
+  const [visibilityFilter, setVisibilityFilter] = useState<
+    'ALL' | 'PUBLICO' | 'PRIVADO'
+  >('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(
     null
@@ -497,7 +499,9 @@ export default function ViewPortfolioListModal({
           <div className="px-6 pt-5 pb-3 flex items-end gap-3 flex-shrink-0">
             {/* Input de Búsqueda */}
             <div className="flex-1 flex flex-col gap-1.5">
-              <label className="text-[9px] uppercase font-bold tracking-wider text-[#5a6278]">Buscar</label>
+              <label className="text-[9px] uppercase font-bold tracking-wider text-[#5a6278]">
+                Buscar
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
@@ -527,7 +531,9 @@ export default function ViewPortfolioListModal({
 
             {/* Select de Visibilidad */}
             <div className="w-32 flex flex-col gap-1.5 shrink-0">
-              <label className="text-[9px] uppercase font-bold tracking-wider text-[#5a6278]">Visibilidad</label>
+              <label className="text-[9px] uppercase font-bold tracking-wider text-[#5a6278]">
+                Visibilidad
+              </label>
               <select
                 value={visibilityFilter}
                 onChange={(e) => setVisibilityFilter(e.target.value as any)}
@@ -706,7 +712,7 @@ export default function ViewPortfolioListModal({
           <div className="flex flex-col flex-1 border-t md:border-t-0 md:border-l border-white/5 overflow-hidden rounded-b-[24px] md:rounded-b-none md:rounded-r-[24px] min-w-0 animate-fade-in">
             {/* Header detalle */}
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/5 flex-shrink-0">
-              <div className="flex items-center gap-2 text-[#C9BEFF]">
+              <div className="flex items-center gap-2 text-[#C9BEFF] min-w-0">
                 <svg
                   width="14"
                   height="14"
@@ -720,29 +726,45 @@ export default function ViewPortfolioListModal({
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
-                <span className="text-xs font-bold uppercase tracking-wider">
+                <span className="text-xs font-bold uppercase tracking-wider truncate">
                   {selectedPortfolio?.nombre}
                 </span>
               </div>
-              <button
-                onClick={() => setSelectedPortfolioId(null)}
-                className="p-1.5 rounded-lg border border-white/5 text-[#9ca3af] hover:text-white hover:border-white/15 transition-all"
-                aria-label="Cerrar detalle"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <div className="flex items-center gap-3">
+                {((selectedPortfolio as any)?.publicUrl ||
+                  (selectedPortfolio as any)?.urlPublica) && (
+                  <a
+                    href={
+                      (selectedPortfolio as any).publicUrl ||
+                      (selectedPortfolio as any).urlPublica
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-[#7c6bec] hover:text-[#a092ec] underline truncate transition-colors font-medium"
+                  >
+                    Ver portafolio
+                  </a>
+                )}
+                <button
+                  onClick={() => setSelectedPortfolioId(null)}
+                  className="p-1.5 rounded-lg border border-white/5 text-[#9ca3af] hover:text-white hover:border-white/15 transition-all"
+                  aria-label="Cerrar detalle"
                 >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Contenido del detalle */}
