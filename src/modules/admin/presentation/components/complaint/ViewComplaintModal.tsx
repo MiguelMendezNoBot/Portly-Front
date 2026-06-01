@@ -70,7 +70,7 @@ function DetailPanel({ complaint }: { complaint: ComplaintGroup }) {
             {complaint.revision.resultado}
           </p>
           <p className="text-[#6b7280] text-xs mt-1">
-            Revisado por {complaint.revision.adminId} el{' '}
+            Revisado el{' '}
             {new Date(complaint.revision.fecha).toLocaleString('es-BO')}
           </p>
         </div>

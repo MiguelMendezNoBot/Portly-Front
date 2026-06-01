@@ -37,7 +37,7 @@ export function SuspendedUsersPage() {
     if (!selectedUser) return;
     setIsReactivating(true);
     try {
-      await reactivateUser(selectedUser.userId);
+      await reactivateUser(selectedUser.userId.toString());
       setSelectedUser(null);
       setMode(null);
     } catch (err: any) {
@@ -168,8 +168,7 @@ export function SuspendedUsersPage() {
                   <p className="text-[#9ca3af] text-sm mt-1">{user.motivo}</p>
                   <p className="text-[#6b7280] text-xs mt-1">
                     Suspendido el{' '}
-                    {new Date(user.fechaSuspension).toLocaleDateString('es-BO')}{' '}
-                    por {user.adminId}
+                    {new Date(user.fechaSuspension).toLocaleDateString('es-BO')}
                   </p>
                 </div>
               </div>
