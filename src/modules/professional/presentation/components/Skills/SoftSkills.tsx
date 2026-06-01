@@ -65,74 +65,76 @@ export const SoftSkills = () => {
     <>
       <section className="lg:col-span-4 bg-[#171B28] rounded-3xl p-6 border border-white/5 h-fit self-start space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h2 className="text-white text-3xl font-bold tracking-tight">
-              Habilidades blandas
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-white text-3xl font-bold tracking-tight">
+                Habilidades blandas
+              </h2>
+              {!loading && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#6c63ff]/20 text-[#a598ff] mt-1">
+                  {skills.length} Activas
+                </span>
+              )}
+            </div>
             <p className="text-[#9ca3af] text-sm mt-1">
               Rasgos de personalidad y comunicación.
             </p>
           </div>
-          {loading ? null : (
-            <div className="text-[#C9BEFF] text-xs">
-              {skills.length} Activas
-            </div>
-          )}
-        </div>
 
-        {/* Barra de acciones */}
-        <div className="flex items-center gap-2 self-start sm:self-auto flex-shrink-0">
-          <button
-            onClick={() => {
-              setMode(null);
-              setIsModalOpen(true);
-            }}
-            className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Agregar
-          </button>
+          {/* Barra de acciones */}
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto flex-shrink-0">
+            <button
+              onClick={() => {
+                setMode(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-4 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm whitespace-nowrap"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Agregar
+            </button>
 
-          {skills.length > 0 && (
-            <>
-              {/* Visualizar */}
-              <button
-                onClick={() => setIsViewModalOpen(true)}
-                className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            {skills.length > 0 && (
+              <>
+                {/* Visualizar */}
+                <button
+                  onClick={() => setIsViewModalOpen(true)}
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border border-white/10 text-[#9ca3af] hover:text-white hover:border-white/20"
                 >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                Visualizar
-              </button>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Visualizar
+                </button>
 
-              <button
-                onClick={() => setMode(prev => (prev === 'delete' ? null : 'delete'))}
-                className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${mode === 'delete'
-                    ? 'bg-red-500/15 border-red-500/40 text-red-400'
-                    : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
-                  }`}
-              >
-                <TrashIcon />
-                Eliminar
-              </button>
-            </>
-          )}
-        </div>
+                <button
+                  onClick={() => setMode(prev => (prev === 'delete' ? null : 'delete'))}
+                  className={`flex items-center gap-2 py-2.5 px-4 rounded-full font-semibold transition-all active:scale-95 text-sm whitespace-nowrap border ${mode === 'delete'
+                      ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                      : 'border-white/10 text-[#9ca3af] hover:text-red-400 hover:border-red-500/20'
+                    }`}
+                >
+                  <TrashIcon />
+                  Eliminar
+                </button>
+              </>
+            )}
+          </div>
+        </header>
 
         {/* Indicador de modo activo */}
         {mode === 'delete' && skills.length > 0 && (
