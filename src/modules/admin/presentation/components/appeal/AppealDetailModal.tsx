@@ -1,8 +1,8 @@
-// src/modules/admin/presentation/components/appeal/AppealDetailModal.tsx
-
 import { useState } from 'react';
 import { Appeal } from '../../../domain/entities/Appeal';
 import { HttpAppealRepository } from '../../../infrastructure/repositories/HttpAppealRepository';
+import { httpClient } from '../../../../../infrastructure/http/httpClient';
+import ViewPortfolioListModal from '../../../../portfolios/presentation/components/ViewPortfolioListModal';
 
 interface Props {
   appeal: Appeal;
@@ -15,6 +15,32 @@ const repo = new HttpAppealRepository();
 export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [showPortfolios, setShowPortfolios] = useState(false);
+  const [userPortfolios, setUserPortfolios] = useState<any[]>([]);
+  const [loadingPortfolios, setLoadingPortfolios] = useState(false);
+
+  const fetchUserPortfolios = async () => {
+    setLoadingPortfolios(true);
+    try {
+      const data = await httpClient.getAuth<any[]>(
+        `/api/admin/users/${appeal.userId}/portfolios`,
+        'Error al obtener los portafolios'
+      );
+      const mapped = data.map((p: any) => ({
+        id: p.idPortafolio || p.id,
+        nombre: p.nombre,
+        visibilidad: p.visibilidad,
+        urlPublica: p.urlPublica,
+        createdAt: p.fechaCreacion,
+      }));
+      setUserPortfolios(mapped);
+      setShowPortfolios(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingPortfolios(false);
+    }
+  };
 
   const handleApprove = async () => {
     setIsApproving(true);
@@ -105,6 +131,35 @@ export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
             </div>
 
             <div>
+              <button
+                type="button"
+                onClick={fetchUserPortfolios}
+                disabled={loadingPortfolios}
+                className="w-full mt-1 py-3 bg-[#7c6bec]/10 hover:bg-[#7c6bec]/25 border border-[#7c6bec]/25 hover:border-[#7c6bec]/40 text-[#C9BEFF] text-xs font-bold uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {loadingPortfolios ? (
+                  <div className="w-4 h-4 border-2 border-[#C9BEFF] border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V7z" />
+                    </svg>
+                    Ver Portafolios del Usuario
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#5a6278]">
                 Motivo de apelación
               </span>
@@ -153,6 +208,14 @@ export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
           Cerrar
         </button>
       </div>
+
+      {showPortfolios && (
+        <ViewPortfolioListModal
+          isOpen={showPortfolios}
+          onClose={() => setShowPortfolios(false)}
+          portfolios={userPortfolios}
+        />
+      )}
     </div>
   );
 }

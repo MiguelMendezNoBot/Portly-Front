@@ -36,13 +36,23 @@ const LargePreview = ({
   template: Template;
   data: ProfessionalData;
 }) => {
-  const isDark = template.schema.colorScheme !== 'light';
+  const isDark =
+    template.schema.colorScheme !== 'light' &&
+    template.schema.colorScheme !== 'corporate';
   const accent =
     template.schema.colorScheme === 'colorful'
       ? '#f97316'
       : template.schema.colorScheme === 'dark'
         ? '#7c6bec'
-        : '#3b82f6';
+        : template.schema.colorScheme === 'firma-minima'
+          ? '#64ffda'
+          : template.schema.colorScheme === 'la-red-profesional'
+            ? '#7c3aed'
+            : template.schema.colorScheme === 'brutalist'
+            ? '#ffde00'
+            : template.schema.colorScheme === 'corporate'
+              ? '#2563eb'
+              : '#3b82f6';
 
   const userName = data.user
     ? `${data.user.firstName} ${data.user.lastName}`

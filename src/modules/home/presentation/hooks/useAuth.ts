@@ -1,6 +1,7 @@
 import { decodeJwtEmail, emailToDisplayName } from '../../domain/sessionUser';
 
 interface AuthUser {
+  id: string;
   displayName: string;
   email: string;
   perfilCompleto: boolean;
@@ -37,8 +38,9 @@ export function useAuth(): { user: AuthUser | null; logout: () => void } {
 
   const perfilCompleto = payload?.perfilCompleto !== false;
   const rol = typeof payload?.rol === 'string' ? payload.rol.toUpperCase() : 'USER';
+  const id = localStorage.getItem('usuarioId') || '';
 
-  const user: AuthUser = { displayName, email, perfilCompleto, rol };
+  const user: AuthUser = { id, displayName, email, perfilCompleto, rol };
 
   const logout = () => {
     localStorage.removeItem('token');
