@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { httpClient } from '../../../../infrastructure/http/httpClient';
+import {
+  getAccountStatusLabel,
+  isActiveAccount,
+  isBlockedAccount,
+} from '../../domain/userAccountStatus';
 
 interface AdminUserResponse {
   idUsuario: string;
@@ -8,6 +13,7 @@ interface AdminUserResponse {
   fechaCreacion: string;
   estado: string;
   hasPublicPortfolio: boolean;
+  suspensionActiva?: boolean;
 }
 
 export function UsersPage() {
@@ -61,7 +67,8 @@ export function UsersPage() {
           nombreCompleto: 'Ana Gutiérrez',
           fechaCreacion: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
           estado: 'suspendido',
-          hasPublicPortfolio: false
+          hasPublicPortfolio: false,
+          suspensionActiva: true,
         },
         {
           idUsuario: '4',
@@ -77,7 +84,8 @@ export function UsersPage() {
           nombreCompleto: 'Marcos Vera',
           fechaCreacion: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
           estado: 'suspendido',
-          hasPublicPortfolio: true
+          hasPublicPortfolio: true,
+          suspensionActiva: true,
         },
         {
           idUsuario: '6',
@@ -114,10 +122,7 @@ export function UsersPage() {
     return diffDays >= 0 && diffDays <= 7;
   }).length;
 
-  const suspendedUsers = users.filter((u) => {
-    const est = (u.estado || '').toLowerCase();
-    return est === 'suspendido' || est === 'suspendida';
-  }).length;
+  const suspendedUsers = users.filter(isBlockedAccount).length;
   const withPortfolio = users.filter((u) => u.hasPublicPortfolio).length;
   const pctPortfolio = totalUsers > 0 ? Math.round((withPortfolio / totalUsers) * 100) : 0;
 
@@ -136,15 +141,9 @@ export function UsersPage() {
 
   // Status chip filter
   if (activeFilter === 'Activos') {
-    filtered = filtered.filter((u) => {
-      const est = (u.estado || '').toLowerCase();
-      return est === 'activo' || est === 'activa';
-    });
+    filtered = filtered.filter(isActiveAccount);
   } else if (activeFilter === 'Suspendidos') {
-    filtered = filtered.filter((u) => {
-      const est = (u.estado || '').toLowerCase();
-      return est === 'suspendido' || est === 'suspendida';
-    });
+    filtered = filtered.filter(isBlockedAccount);
   }
 
   // Sorting by fechaCreacion
@@ -154,18 +153,15 @@ export function UsersPage() {
     return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
   });
 
-  // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, activeFilter, sortOrder]);
 
-  // Paginated subset
   const totalItems = filtered.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedUsers = filtered.slice(startIndex, startIndex + itemsPerPage);
 
-  // Helper functions for avatars
   const getInitials = (name?: string) => {
     const safeName = name || 'Usuario';
     const parts = safeName.trim().split(/\s+/);
@@ -198,7 +194,6 @@ export function UsersPage() {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return 'N/A';
     const months = ['may', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-    // Let's use Spanish month names manually to ensure it's lowercase and short as per mockup
     const esMonths = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     const day = date.getDate();
     const month = esMonths[date.getMonth()];
@@ -237,7 +232,6 @@ export function UsersPage() {
 
   return (
     <div className="py-6">
-      {/* 4 Cards Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in">
         {/* Total Users */}
         <div className="bg-white/5 border border-white/10 rounded-[20px] p-5 flex items-center justify-between hover:border-white/20 transition-all">
@@ -275,7 +269,7 @@ export function UsersPage() {
           <div>
             <p className="text-src-9ca3af text-xs font-semibold uppercase tracking-wider">Suspendidos</p>
             <h3 className="text-white text-3xl font-extrabold mt-1.5">{suspendedUsers}</h3>
-            <p className="text-src-6b7280 text-[11px] mt-1 font-medium">Cuentas bloqueadas</p>
+            <p className="text-src-6b7280 text-[11px] mt-1 font-medium">Cuentas suspendidas</p>
           </div>
           <div className="w-11 h-11 rounded-xl bg-red-500/15 text-red-400 flex items-center justify-center">
             <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
@@ -393,7 +387,8 @@ export function UsersPage() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {paginatedUsers.map((user) => {
-                    const isActive = (user.estado || '').toLowerCase() === 'activo' || (user.estado || '').toLowerCase() === 'activa';
+                    const isActive = isActiveAccount(user);
+                    const statusLabel = getAccountStatusLabel(user);
                     const avatarColor = getAvatarColor(user.nombreCompleto);
                     const initials = getInitials(user.nombreCompleto);
                     const isNew = isNewUser(user.fechaCreacion);
@@ -435,7 +430,7 @@ export function UsersPage() {
                             }`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-400' : 'bg-red-400'}`} />
-                            {isActive ? 'Activo' : 'Suspendido'}
+                            {statusLabel}
                           </span>
                         </td>
                       </tr>

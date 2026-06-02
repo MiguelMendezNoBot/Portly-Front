@@ -1,8 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
+import { httpClient } from '../../../infrastructure/http/httpClient';
 import { DashboardStats } from '../domain/entities/DashboardStats';
+import { countBlockedAccounts } from '../domain/userAccountStatus';
 import { HttpAdminDashboardRepository } from '../infrastructure/repositories/HttpAdminDashboardRepository';
 
 const repository = new HttpAdminDashboardRepository();
+
+interface AdminUserForStats {
+  estado?: string;
+  suspensionActiva?: boolean;
+}
 
 export function useAdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -13,8 +20,17 @@ export function useAdminDashboard() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await repository.getDashboardStats();
-      setStats(data);
+      const [data, users] = await Promise.all([
+        repository.getDashboardStats(),
+        httpClient
+          .getAuth<AdminUserForStats[]>('/api/admin/users')
+          .catch(() => null),
+      ]);
+
+      const cuentasSuspendidas =
+        users !== null ? countBlockedAccounts(users) : data.cuentasSuspendidas;
+
+      setStats({ ...data, cuentasSuspendidas });
     } catch {
       setError('No se pudo cargar el dashboard');
     } finally {

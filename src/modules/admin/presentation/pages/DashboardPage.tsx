@@ -151,7 +151,7 @@ export function DashboardPage() {
           iconColor="text-red-400"
           label="Cuentas suspendidas"
           value={stats.cuentasSuspendidas}
-          sublabel="Actualmente suspendidas"
+          sublabel="Suspendidas"
         />
       </div>
 
