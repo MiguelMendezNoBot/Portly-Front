@@ -49,13 +49,15 @@ interface StatCardProps {
 
 function StatCard({ icon, iconBg, iconColor, label, value, sublabel }: StatCardProps) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[20px] p-5 hover:border-white/20 transition-all">
-      <div className={`w-10 h-10 rounded-xl ${iconBg} ${iconColor} flex items-center justify-center mb-3`}>
+    <div className="bg-white/5 border border-white/10 rounded-[20px] p-5 flex items-center justify-between hover:border-white/20 transition-all">
+      <div>
+        <p className="text-src-9ca3af text-xs font-semibold uppercase tracking-wider">{label}</p>
+        <h3 className="text-white text-3xl font-extrabold mt-1.5">{value}</h3>
+        <p className="text-src-6b7280 text-[11px] mt-1 font-medium">{sublabel}</p>
+      </div>
+      <div className={`w-11 h-11 rounded-xl ${iconBg} ${iconColor} flex items-center justify-center shrink-0`}>
         {icon}
       </div>
-      <p className="text-src-9ca3af text-sm leading-snug">{label}</p>
-      <p className="text-white text-4xl font-extrabold mt-2 leading-none">{value}</p>
-      <p className="text-src-6b7280 text-xs mt-2">{sublabel}</p>
     </div>
   );
 }
@@ -133,7 +135,7 @@ export function DashboardPage() {
           icon={<IconPortafolios />}
           iconBg="bg-cyan-500/15"
           iconColor="text-cyan-400"
-          label="Portafolios públicos esta semana"
+          label="Portafolios publicados esta semana"
           value={stats.portafoliosPublicosSemana}
           sublabel="Últimos 7 días"
         />
@@ -151,7 +153,7 @@ export function DashboardPage() {
           iconColor="text-red-400"
           label="Cuentas suspendidas"
           value={stats.cuentasSuspendidas}
-          sublabel="Actualmente suspendidas"
+          sublabel="Suspendidas"
         />
       </div>
 

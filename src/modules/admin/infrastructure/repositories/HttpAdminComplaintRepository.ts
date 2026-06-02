@@ -31,6 +31,12 @@ export class HttpAdminComplaintRepository {
     return res.json();
   }
 
+  async getUserComplaintHistory(userId: string): Promise<ComplaintGroup[]> {
+    const res = await fetch(`${BASE_URL}/denuncias/usuario/${userId}/historial`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Error al obtener el historial de denuncias');
+    return res.json();
+  }
+
   async updateStatus(
     id: number,
     data: { status: string; revision?: Revision }

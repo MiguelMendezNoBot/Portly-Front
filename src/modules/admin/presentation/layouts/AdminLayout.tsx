@@ -5,7 +5,7 @@ import { AdminSidebar } from '../components/AdminSidebar';
 
 const routeMeta: Record<string, { title: string; subtitle?: string }> = {
   '/admin/dashboard': {
-    title: 'Dashboard',
+    title: 'Analíticas',
     subtitle: 'Vista general del sistema',
   },
   '/admin/usuarios': {
