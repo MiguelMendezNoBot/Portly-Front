@@ -23,7 +23,7 @@ export function UsersPage() {
 
   // Filtering, search, and sorting states
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<'Todos' | 'Activos' | 'Suspendidos'>('Todos');
+  const [activeFilter, setActiveFilter] = useState<'Todos' | 'Activos' | 'Suspendidos' | 'Restringidos'>('Todos');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [sortButtonText, setSortButtonText] = useState<'Descendente' | 'Ascendente'>('Descendente');
 
@@ -123,6 +123,10 @@ export function UsersPage() {
   }).length;
 
   const suspendedUsers = users.filter(isBlockedAccount).length;
+  const restrictedUsers = users.filter((u) => {
+    const est = (u.estado || '').toLowerCase();
+    return est === 'restringido' || est === 'restringida';
+  }).length;
   const withPortfolio = users.filter((u) => u.hasPublicPortfolio).length;
   const pctPortfolio = totalUsers > 0 ? Math.round((withPortfolio / totalUsers) * 100) : 0;
 
@@ -144,6 +148,11 @@ export function UsersPage() {
     filtered = filtered.filter(isActiveAccount);
   } else if (activeFilter === 'Suspendidos') {
     filtered = filtered.filter(isBlockedAccount);
+  } else if (activeFilter === 'Restringidos') {
+    filtered = filtered.filter((u) => {
+      const est = (u.estado || '').toLowerCase();
+      return est === 'restringido' || est === 'restringida';
+    });
   }
 
   // Sorting by fechaCreacion
@@ -250,16 +259,16 @@ export function UsersPage() {
           </div>
         </div>
 
-        {/* New Users */}
+        {/* Restricted Users */}
         <div className="bg-white/5 border border-white/10 rounded-[20px] p-5 flex items-center justify-between hover:border-white/20 transition-all">
           <div>
-            <p className="text-src-9ca3af text-xs font-semibold uppercase tracking-wider">Nuevos esta semana</p>
-            <h3 className="text-white text-3xl font-extrabold mt-1.5">{newThisWeek}</h3>
-            <p className="text-src-6b7280 text-[11px] mt-1 font-medium">Últimos 7 días</p>
+            <p className="text-src-9ca3af text-xs font-semibold uppercase tracking-wider">Restringidos</p>
+            <h3 className="text-white text-3xl font-extrabold mt-1.5">{restrictedUsers}</h3>
+            <p className="text-src-6b7280 text-[11px] mt-1 font-medium">Cuentas restringidas</p>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-green-500/15 text-green-400 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
             <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
             </svg>
           </div>
         </div>
@@ -314,7 +323,7 @@ export function UsersPage() {
 
           {/* Chips */}
           <div className="flex flex-wrap items-center gap-2">
-            {(['Todos', 'Activos', 'Suspendidos'] as const).map((filter) => (
+            {(['Todos', 'Activos', 'Suspendidos', 'Restringidos'] as const).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
