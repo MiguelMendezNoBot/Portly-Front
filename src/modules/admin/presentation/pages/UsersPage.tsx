@@ -24,8 +24,8 @@ export function UsersPage() {
   // Filtering, search, and sorting states
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'Todos' | 'Activos' | 'Suspendidos' | 'Restringidos'>('Todos');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [sortButtonText, setSortButtonText] = useState<'Descendente' | 'Ascendente'>('Descendente');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortButtonText, setSortButtonText] = useState<'Descendente' | 'Ascendente'>('Ascendente');
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -354,11 +354,11 @@ export function UsersPage() {
         <div className="flex justify-end pt-2 border-t border-white/5">
           <button
             onClick={() => {
-              if (sortButtonText === 'Descendente') {
-                setSortButtonText('Ascendente');
+              if (sortButtonText === 'Ascendente') {
+                setSortButtonText('Descendente');
                 setSortOrder('desc');
               } else {
-                setSortButtonText('Descendente');
+                setSortButtonText('Ascendente');
                 setSortOrder('asc');
               }
             }}
