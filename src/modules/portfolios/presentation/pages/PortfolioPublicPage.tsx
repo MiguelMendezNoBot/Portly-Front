@@ -2612,7 +2612,7 @@ export default function PortfolioPublicPage() {
   const reportButton = canShowReportButton ? (
     <button
       onClick={() => setReportModalOpen(true)}
-      title="Reportar portafolio"
+      title="Denunciar portafolio"
       style={{
         position: 'fixed',
         bottom: isMobile ? 24 : 32,
@@ -2633,13 +2633,11 @@ export default function PortfolioPublicPage() {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'scale(1.05)';
-        e.currentTarget.style.boxShadow =
-          '0 6px 16px rgba(239, 68, 68, 0.5)';
+        e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.5)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'scale(1)';
-        e.currentTarget.style.boxShadow =
-          '0 4px 12px rgba(239, 68, 68, 0.4)';
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
       }}
     >
       <svg
@@ -2658,45 +2656,49 @@ export default function PortfolioPublicPage() {
     </button>
   ) : null;
 
-  const reportedBanner = canReport && data?.hasPendingReport ? (
-    <div
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '8px',
-        padding: '12px 24px',
-        background: '#1e1b4b',
-        borderBottom: '2px solid #818cf8',
-        color: '#e0e7ff',
-        fontSize: '14px',
-        fontWeight: 600,
-        fontFamily: 'system-ui, sans-serif',
-        textAlign: 'center',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-      }}
-    >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ color: '#818cf8', flexShrink: 0 }}
+  const reportedBanner =
+    canReport && data?.hasPendingReport ? (
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          padding: '12px 24px',
+          background: '#1e1b4b',
+          borderBottom: '2px solid #818cf8',
+          color: '#e0e7ff',
+          fontSize: '14px',
+          fontWeight: 600,
+          fontFamily: 'system-ui, sans-serif',
+          textAlign: 'center',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+        }}
       >
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="16" x2="12" y2="12" />
-        <line x1="12" y1="8" x2="12.01" y2="8" />
-      </svg>
-      <span>Ya has denunciado este portafolio. Nuestro equipo está revisando el contenido.</span>
-    </div>
-  ) : null;
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ color: '#818cf8', flexShrink: 0 }}
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span>
+          Ya has denunciado este portafolio. Nuestro equipo está revisando el
+          contenido.
+        </span>
+      </div>
+    ) : null;
 
   const reportModal = (
     <ReportPortfolioModal
