@@ -109,7 +109,11 @@ const navCategories = [
     title: 'MODERACIÓN',
     items: [
       { to: '/admin/denuncias', label: 'Denuncias', icon: icons.flag },
-      { to: '/admin/apelaciones', label: 'Apelaciones', icon: icons.appeal },
+      {
+        to: '/admin/apelaciones',
+        label: 'Solicitudes',
+        icon: icons.appeal,
+      },
       { to: '/admin/suspendidos', label: 'Suspendidos', icon: icons.ban },
     ],
   },

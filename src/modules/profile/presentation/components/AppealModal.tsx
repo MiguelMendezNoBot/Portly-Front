@@ -42,14 +42,14 @@ export default function AppealModal({
           motivo,
           tipoEstado: estado,
         },
-        'Error al enviar la apelación'
+        'Error al enviar la solicitud'
       );
       setEnviado(true);
       if (onAppealSubmitted) {
         onAppealSubmitted();
       }
     } catch (err) {
-      console.error('Error al enviar apelación:', err);
+      console.error('Error al enviar solicitud:', err);
     } finally {
       setEnviando(false);
     }
@@ -78,9 +78,12 @@ export default function AppealModal({
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            <h3 className="text-white text-xl font-bold">Apelación en trámite</h3>
+            <h3 className="text-white text-xl font-bold">
+              Solicitud en trámite
+            </h3>
             <p className="text-src-6b7280 text-sm">
-              Ya has enviado una solicitud de revisión para esta cuenta. Estamos revisando tu caso y te contactaremos a la brevedad.
+              Ya has enviado una solicitud de revisión para esta cuenta. Estamos
+              revisando tu caso y te contactaremos a la brevedad.
             </p>
             {canClose && (
               <button
@@ -114,7 +117,7 @@ export default function AppealModal({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <h3 className="text-white text-xl font-bold">Apelación enviada</h3>
+            <h3 className="text-white text-xl font-bold">Solicitud enviada</h3>
             <p className="text-src-6b7280 text-sm">
               Revisaremos tu caso y te contactaremos por correo electrónico.
             </p>
@@ -166,13 +169,14 @@ export default function AppealModal({
             <p className="text-src-6b7280 text-sm mb-6">
               {estado === 'suspendido'
                 ? 'Tu cuenta ha sido suspendida. Para apelar esta decisión, por favor explica tu situación a continuación.'
-                : 'Tu cuenta ha sido restringida. Algunas funciones están limitadas. Puedes solicitar una revisión explicando tu caso.'}
+                : 'Tu cuenta ha sido restringida. Algunas funciones están limitadas. Puedes solicitar una reactivacion explicando tu caso.'}
             </p>
 
             {motivoSuspension && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-6 text-left">
                 <span className="text-red-400 text-xs font-bold uppercase tracking-wider block mb-1">
-                  Motivo de la {estado === 'suspendido' ? 'suspensión' : 'restricción'}:
+                  Motivo de la{' '}
+                  {estado === 'suspendido' ? 'suspensión' : 'restricción'}:
                 </span>
                 <p className="text-white text-sm leading-relaxed">
                   {motivoSuspension}
@@ -183,7 +187,7 @@ export default function AppealModal({
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
                 <label className="text-white text-sm block mb-2">
-                  Motivo de la apelación
+                  Motivo de la solicitud
                 </label>
                 <textarea
                   value={motivo}
@@ -200,7 +204,7 @@ export default function AppealModal({
                 disabled={enviando || !motivo.trim()}
                 className="w-full py-3 rounded-full bg-src-7c6bec hover:bg-src-6b5edb text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {enviando ? 'Enviando...' : 'Enviar apelación'}
+                {enviando ? 'Enviando...' : 'Enviar solicitud'}
               </button>
               {estado === 'suspendido' && (
                 <button

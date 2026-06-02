@@ -22,11 +22,17 @@ export const HomePage = () => {
   const location = useLocation();
 
   // Leer del cache de sesión para mostrar inmediatamente sin flash
-  const cachedEstado = user ? sessionStorage.getItem(`userEstado_${user.email}`) : null;
-  const cachedMotivo = user ? sessionStorage.getItem(`userMotivo_${user.email}`) : null;
+  const cachedEstado = user
+    ? sessionStorage.getItem(`userEstado_${user.email}`)
+    : null;
+  const cachedMotivo = user
+    ? sessionStorage.getItem(`userMotivo_${user.email}`)
+    : null;
 
   const [userEstado, setUserEstado] = useState<string | null>(cachedEstado);
-  const [motivoSuspension, setMotivoSuspension] = useState<string | null>(cachedMotivo);
+  const [motivoSuspension, setMotivoSuspension] = useState<string | null>(
+    cachedMotivo
+  );
   const [userEmail, setUserEmail] = useState(user?.email ?? '');
   const [apelacionPendiente, setApelacionPendiente] = useState(false);
   const [appealOpen, setAppealOpen] = useState(false);
@@ -39,10 +45,12 @@ export const HomePage = () => {
   useEffect(() => {
     if (!user) return;
     httpClient
-      .getAuth<{ estado?: string; email?: string; motivoSuspension?: string; apelacionPendiente?: boolean }>(
-        '/api/profile',
-        'Error al verificar estado'
-      )
+      .getAuth<{
+        estado?: string;
+        email?: string;
+        motivoSuspension?: string;
+        apelacionPendiente?: boolean;
+      }>('/api/profile', 'Error al verificar estado')
       .then((data) => {
         const estado = data.estado ?? 'activo';
         const motivo = data.motivoSuspension ?? null;
@@ -92,7 +100,15 @@ export const HomePage = () => {
           <div className="relative z-10 flex flex-col items-center gap-7 max-w-md w-full text-center px-6">
             {/* Ícono de suspensión */}
             <div className="w-24 h-24 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.12)]">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-red-400">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-red-400"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
               </svg>
@@ -100,18 +116,25 @@ export const HomePage = () => {
 
             {/* Mensaje principal */}
             <div className="flex flex-col gap-2">
-              <h1 className="text-white text-3xl font-bold tracking-tight">Cuenta Suspendida</h1>
+              <h1 className="text-white text-3xl font-bold tracking-tight">
+                Cuenta Suspendida
+              </h1>
               <p className="text-[#6b7280] text-sm leading-relaxed max-w-sm">
-                Tu cuenta ha sido suspendida y no puedes acceder a ninguna sección de la plataforma.
-                Si crees que es un error, puedes enviar una apelación.
+                Tu cuenta ha sido suspendida y no puedes acceder a ninguna
+                sección de la plataforma. Si crees que es un error, puedes
+                enviar una solicitud de reactivación.
               </p>
             </div>
 
             {/* Motivo de suspensión */}
             {motivoSuspension && (
               <div className="w-full bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-left">
-                <span className="text-red-400 text-xs font-bold uppercase tracking-wider block mb-1">Motivo de la suspensión</span>
-                <p className="text-white text-sm leading-relaxed">{motivoSuspension}</p>
+                <span className="text-red-400 text-xs font-bold uppercase tracking-wider block mb-1">
+                  Motivo de la suspensión
+                </span>
+                <p className="text-white text-sm leading-relaxed">
+                  {motivoSuspension}
+                </p>
               </div>
             )}
 
@@ -121,7 +144,7 @@ export const HomePage = () => {
                 onClick={() => setAppealOpen(true)}
                 className="w-full py-3 rounded-full bg-gradient-to-r from-[#7c6bec] to-[#9fa2ff] text-white font-bold text-sm transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(124,107,236,0.3)]"
               >
-                Enviar apelación
+                Enviar solicitud de reactivación
               </button>
               <button
                 onClick={logout}
@@ -151,7 +174,6 @@ export const HomePage = () => {
   return (
     <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden flex items-center justify-center font-sans">
       <div className="relative w-full h-[calc(100vh-2.5rem)] bg-src-0d152b rounded-[2rem] shadow-2xl overflow-hidden flex flex-col">
-
         {/* Toast de logout - posicionado arriba al centro */}
         {toast && (
           <div
@@ -202,18 +224,30 @@ export const HomePage = () => {
                       <span className="text-shimmer">te está esperando</span>
                     </h2>
                     <p className="text-[#9ca3af] text-lg mb-8">
-                      Crea tu portafolio con plantilla, organiza tu experiencia y hazte visible ante quienes importan.
+                      Crea tu portafolio con plantilla, organiza tu experiencia
+                      y hazte visible ante quienes importan.
                     </p>
                     <button
-                      onClick={() => window.location.href = '/register'}
+                      onClick={() => (window.location.href = '/register')}
                       className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-[#7c6bec] text-white font-bold text-base tracking-wide shadow-[0_4px_28px_rgba(124,107,236,0.5)] hover:shadow-[0_8px_40px_rgba(124,107,236,0.65)] hover:-translate-y-1 transition-all duration-300 active:scale-[0.97]"
                     >
                       CREAR MI PORTAFOLIO GRATIS
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M5 12h14M12 5l7 7-7 7" />
                       </svg>
                     </button>
-                    <p className="mt-4 text-[#5a6278] text-sm">Sin tarjeta de crédito. Sin suscripciones.</p>
+                    <p className="mt-4 text-[#5a6278] text-sm">
+                      Sin tarjeta de crédito. Sin suscripciones.
+                    </p>
                   </div>
                 </section>
               </div>
@@ -224,4 +258,3 @@ export const HomePage = () => {
     </div>
   );
 };
-

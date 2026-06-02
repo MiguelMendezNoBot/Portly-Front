@@ -429,15 +429,26 @@ export function UserProfilePage() {
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-md">
           <div className="bg-[#0F131F] border border-red-500/20 rounded-[2rem] shadow-2xl w-[90%] max-w-sm p-8 animate-fade-in flex flex-col items-center gap-5 text-center">
             <div className="w-16 h-16 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-red-400">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-red-400"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
               </svg>
             </div>
             <div>
-              <h3 className="text-white text-lg font-bold mb-1">Cuenta Suspendida</h3>
+              <h3 className="text-white text-lg font-bold mb-1">
+                Cuenta Suspendida
+              </h3>
               <p className="text-[#6b7280] text-sm leading-relaxed">
-                Tu cuenta ha sido suspendida. Solo puedes ver tu perfil, cerrar sesión o enviar una apelación.
+                Tu cuenta ha sido suspendida. Solo puedes ver tu perfil, cerrar
+                sesión o enviar una solicitud de reactivacion.
               </p>
             </div>
             <div className="flex flex-col gap-2 w-full">
@@ -457,7 +468,7 @@ export function UserProfilePage() {
                 }}
                 className="w-full py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white text-sm font-semibold transition-all active:scale-95"
               >
-                Enviar apelación
+                Enviar solicitud
               </button>
             </div>
           </div>
