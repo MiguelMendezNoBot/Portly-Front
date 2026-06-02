@@ -101,7 +101,7 @@ const navCategories = [
   {
     title: 'GENERAL',
     items: [
-      { to: '/admin/dashboard', label: 'Dashboard', icon: icons.dashboard },
+      { to: '/admin/dashboard', label: 'Analíticas', icon: icons.dashboard },
       { to: '/admin/usuarios', label: 'Usuarios', icon: icons.users },
     ],
   },

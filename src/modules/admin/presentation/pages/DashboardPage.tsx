@@ -135,7 +135,7 @@ export function DashboardPage() {
           icon={<IconPortafolios />}
           iconBg="bg-cyan-500/15"
           iconColor="text-cyan-400"
-          label="Portafolios públicos esta semana"
+          label="Portafolios publicados esta semana"
           value={stats.portafoliosPublicosSemana}
           sublabel="Últimos 7 días"
         />
