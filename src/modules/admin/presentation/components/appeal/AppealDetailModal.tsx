@@ -114,7 +114,7 @@ export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#5a6278]">
-                  Apelación
+                  Estado solicitud
                 </span>
                 <p
                   className={`text-sm font-medium ${
@@ -161,7 +161,7 @@ export function AppealDetailModal({ appeal, onClose, onUpdate }: Props) {
 
             <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#5a6278]">
-                Motivo de apelación
+                Motivo de solicitud
               </span>
               <p className="text-white text-sm mt-1 bg-[#1a1c29] p-4 rounded-xl border border-white/5 whitespace-pre-wrap">
                 {appeal.motivo}

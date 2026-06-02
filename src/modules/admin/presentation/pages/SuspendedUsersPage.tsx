@@ -185,7 +185,7 @@ export function SuspendedUsersPage() {
           onClose={() => setSelectedUser(null)}
           onConfirm={confirmReactivate}
           title="¿Reactivar cuenta?"
-          description={`La cuenta de "${selectedUser.userName}" será reactivada y podrá acceder nuevamente a la plataforma.`}
+          description={`La cuenta de "${selectedUser.userName}" será reactivada y podrá usar nuevamente a la plataforma.`}
           confirmText="REACTIVAR"
           cancelText="CANCELAR"
           confirmColor="green"

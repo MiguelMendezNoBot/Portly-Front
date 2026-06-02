@@ -17,7 +17,7 @@ const routeMeta: Record<string, { title: string; subtitle?: string }> = {
     subtitle: 'Revisión de contenido reportado',
   },
   '/admin/apelaciones': {
-    title: 'Apelaciones',
+    title: 'Solicitudes',
     subtitle: 'Solicitudes de reactivación de cuentas',
   },
   '/admin/suspendidos': {

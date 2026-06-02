@@ -2,7 +2,8 @@
 
 import { Appeal } from '../../domain/entities/Appeal';
 
-const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/admin';
+const BASE_URL =
+  (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api/admin';
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
@@ -25,7 +26,7 @@ export class HttpAppealRepository {
     const res = await fetch(`${BASE_URL}/apelaciones/${id}`, {
       headers: getHeaders(),
     });
-    if (!res.ok) throw new Error('Error al obtener detalle de apelación');
+    if (!res.ok) throw new Error('Error al obtener detalle de solicitud');
     return res.json();
   }
 
@@ -35,7 +36,7 @@ export class HttpAppealRepository {
       headers: getHeaders(),
       body: JSON.stringify({ adminId }),
     });
-    if (!res.ok) throw new Error('Error al aprobar apelación');
+    if (!res.ok) throw new Error('Error al aprobar solicitud');
     return res.json();
   }
 
@@ -45,7 +46,7 @@ export class HttpAppealRepository {
       headers: getHeaders(),
       body: JSON.stringify({ adminId }),
     });
-    if (!res.ok) throw new Error('Error al rechazar apelación');
+    if (!res.ok) throw new Error('Error al rechazar solicitud');
     return res.json();
   }
 }
