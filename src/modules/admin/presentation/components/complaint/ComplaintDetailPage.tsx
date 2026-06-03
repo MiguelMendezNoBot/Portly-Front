@@ -257,14 +257,16 @@ export function ComplaintDetailPage() {
             )}
 
             {/* Suspender usuario */}
-            {complaint.ownerUserStatus !== 'suspendido' ? (
+            {complaint.ownerUserStatus !== 'suspendido' && 
+             complaint.ownerUserStatus !== 'restringido' && (
               <button
                 onClick={() => setSuspendModalOpen(true)}
                 className="py-3 px-6 border border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500/60 font-bold text-xs uppercase tracking-widest rounded-2xl transition-all"
               >
                 SUSPENDER USUARIO
               </button>
-            ) : (
+            )}
+            {complaint.ownerUserStatus === 'suspendido' && (
               <span className="py-3 px-6 border border-red-500/20 bg-red-500/5 text-red-400/60 font-bold text-xs uppercase tracking-widest rounded-2xl">
                 USUARIO SUSPENDIDO
               </span>
