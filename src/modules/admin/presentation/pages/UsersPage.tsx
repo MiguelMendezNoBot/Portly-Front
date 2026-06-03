@@ -4,6 +4,8 @@ import {
   getAccountStatusLabel,
   isActiveAccount,
   isBlockedAccount,
+  isSuspendedAccount,
+  isRestrictedAccount
 } from '../../domain/userAccountStatus';
 
 interface AdminUserResponse {
@@ -122,11 +124,8 @@ export function UsersPage() {
     return diffDays >= 0 && diffDays <= 7;
   }).length;
 
-  const suspendedUsers = users.filter(isBlockedAccount).length;
-  const restrictedUsers = users.filter((u) => {
-    const est = (u.estado || '').toLowerCase();
-    return est === 'restringido' || est === 'restringida';
-  }).length;
+  const suspendedUsers = users.filter(isSuspendedAccount).length;
+  const restrictedUsers = users.filter(isRestrictedAccount).length;
   const withPortfolio = users.filter((u) => u.hasPublicPortfolio).length;
   const pctPortfolio = totalUsers > 0 ? Math.round((withPortfolio / totalUsers) * 100) : 0;
 
@@ -147,12 +146,9 @@ export function UsersPage() {
   if (activeFilter === 'Activos') {
     filtered = filtered.filter(isActiveAccount);
   } else if (activeFilter === 'Suspendidos') {
-    filtered = filtered.filter(isBlockedAccount);
+    filtered = filtered.filter(isSuspendedAccount);
   } else if (activeFilter === 'Restringidos') {
-    filtered = filtered.filter((u) => {
-      const est = (u.estado || '').toLowerCase();
-      return est === 'restringido' || est === 'restringida';
-    });
+    filtered = filtered.filter(isRestrictedAccount);
   }
 
   // Sorting by fechaCreacion

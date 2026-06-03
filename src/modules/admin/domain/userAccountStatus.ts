@@ -1,43 +1,40 @@
-/** Cuenta con suspensión/restricción activa (alineado con /api/admin/usuarios-suspendidos). */
+/** Helpers para determinar el estado de cuenta ignorando suspensionActiva. */
+export function isSuspendedAccount(user: {
+  estado?: string;
+}): boolean {
+  const est = (user.estado || '').toLowerCase();
+  return est === 'suspendido' || est === 'suspendida';
+}
+
+export function isRestrictedAccount(user: {
+  estado?: string;
+}): boolean {
+  const est = (user.estado || '').toLowerCase();
+  return est === 'restringido' || est === 'restringida';
+}
+
 export function isBlockedAccount(user: {
   estado?: string;
-  suspensionActiva?: boolean;
 }): boolean {
-  if (user.suspensionActiva) return true;
-  const est = (user.estado || '').toLowerCase();
-  return (
-    est === 'suspendido' ||
-    est === 'suspendida' ||
-    est === 'restringido' ||
-    est === 'restringida'
-  );
+  return isSuspendedAccount(user) || isRestrictedAccount(user);
 }
 
 export function isActiveAccount(user: {
   estado?: string;
-  suspensionActiva?: boolean;
 }): boolean {
-  return !isBlockedAccount(user);
+  return !isSuspendedAccount(user) && !isRestrictedAccount(user);
 }
 
 export function countBlockedAccounts(
-  users: { estado?: string; suspensionActiva?: boolean }[]
+  users: { estado?: string; }[]
 ): number {
   return users.filter(isBlockedAccount).length;
 }
 
 export function getAccountStatusLabel(user: {
   estado?: string;
-  suspensionActiva?: boolean;
 }): string {
-  const est = (user.estado || '').toLowerCase();
-  if (est === 'restringido' || est === 'restringida') return 'Restringido';
-  if (
-    est === 'suspendido' ||
-    est === 'suspendida' ||
-    user.suspensionActiva
-  ) {
-    return 'Suspendido';
-  }
+  if (isRestrictedAccount(user)) return 'Restringido';
+  if (isSuspendedAccount(user)) return 'Suspendido';
   return 'Activo';
 }
