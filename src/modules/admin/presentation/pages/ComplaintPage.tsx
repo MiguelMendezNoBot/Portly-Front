@@ -131,17 +131,26 @@ export function ComplaintPage() {
 
         if (displayedComplaints.length === 0) {
           return (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-[#2D3449] p-6 rounded-2xl border border-white/5 animate-pulse"
-            >
-              <div className="h-4 bg-white/10 rounded w-2/3 mb-3" />
-              <div className="h-3 bg-white/10 rounded w-1/3" />
+            <div className="text-center p-10 bg-[#1a1c29]/30 rounded-2xl border-2 border-dashed border-white/10">
+              <div className="w-16 h-16 bg-[#1a1c29] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#4b5563"
+                  strokeWidth="1.5"
+                >
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h4 className="text-white text-lg font-bold mb-2">
+                No hay denuncias{mode === 'review' ? ' pendientes' : ''}
+              </h4>
+              <p className="text-[#9ca3af] text-sm">
+                Cuando un usuario reporte un portafolio, aparecerá aquí.
+              </p>
             </div>
-          ))}
-        </div>
           );
         }
 
