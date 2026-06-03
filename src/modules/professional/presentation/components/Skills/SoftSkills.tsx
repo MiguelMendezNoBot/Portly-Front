@@ -71,11 +71,7 @@ export const SoftSkills = () => {
               <h2 className="text-white text-3xl font-bold tracking-tight">
                 Habilidades blandas
               </h2>
-              {!loading && (
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#6c63ff]/20 text-[#a598ff] mt-1">
-                  {skills.length} Activas
-                </span>
-              )}
+
             </div>
             <p className="text-[#9ca3af] text-sm mt-1">
               Rasgos de personalidad y comunicación.
