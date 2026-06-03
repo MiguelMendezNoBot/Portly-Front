@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../../home/presentation/hooks/useAuth';
 
 const icons = {
   dashboard: (
@@ -131,6 +132,8 @@ const navCategories = [
 ];
 
 export function AdminSidebar() {
+  const { logout } = useAuth();
+
   return (
     <aside className="flex flex-col w-52 shrink-0 py-4 gap-6">
       <div className="flex items-center gap-3 px-2">
@@ -212,6 +215,18 @@ export function AdminSidebar() {
           </div>
         ))}
       </nav>
+
+      <div className="mt-auto px-2 pb-2">
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-150"
+        >
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
     </aside>
   );
 }

@@ -41,10 +41,12 @@ const getTokenPayload = (): Record<string, unknown> | null => {
   }
 };
 
-// Requiere token Y perfilCompleto = true
+// Requiere token Y perfilCompleto = true (y que NO sea admin)
 const ProfileCompleteRoute = ({ element }: { element: ReactElement }) => {
   const payload = getTokenPayload();
   if (!payload) return <Navigate to="/login" replace />;
+  if (typeof payload.rol === 'string' && payload.rol.toUpperCase() === 'ADMIN')
+    return <Navigate to="/admin/dashboard" replace />;
   if (payload.perfilCompleto === false)
     return <Navigate to="/complete-profile" replace />;
   return element;

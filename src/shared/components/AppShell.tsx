@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 export function PortlyLogo() {
@@ -42,12 +43,14 @@ export function PortlyLogo() {
 
 export function PortlyLogoBig() {
   return (
-    <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 shadow-lg">
-      <img src="/portly_logo.png" alt="Portly" className="w-8 h-8" />
-      <span className="text-src-1a1a2e font-bold text-lg tracking-wide">
-        Portly
+    <Link to="/" className="flex items-center gap-3 group">
+      <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-src-0d1830 to-black border border-white/10 flex items-center justify-center shadow-xl shrink-0 group-hover:border-src-6b72ff/50 transition-all duration-300">
+        <img src="/portly_logo.png" alt="Portly" className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
+      </div>
+      <span className="text-white font-black text-xl tracking-[0.2em] group-hover:text-src-6b72ff transition-colors">
+        PORTLY
       </span>
-    </div>
+    </Link>
   );
 }
 
