@@ -404,6 +404,7 @@ export function UsersPage() {
                 <tbody className="divide-y divide-white/5">
                   {paginatedUsers.map((user) => {
                     const isActive = isActiveAccount(user);
+                    const isRestricted = isRestrictedAccount(user);
                     const statusLabel = getAccountStatusLabel(user);
                     const avatarColor = getAvatarColor(user.nombreCompleto);
                     const initials = getInitials(user.nombreCompleto);
@@ -442,10 +443,12 @@ export function UsersPage() {
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                               isActive
                                 ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                : isRestricted
+                                  ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                  : 'bg-red-500/10 text-red-400 border border-red-500/20'
                             }`}
                           >
-                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-400' : 'bg-red-400'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-400' : isRestricted ? 'bg-yellow-400' : 'bg-red-400'}`} />
                             {statusLabel}
                           </span>
                         </td>
