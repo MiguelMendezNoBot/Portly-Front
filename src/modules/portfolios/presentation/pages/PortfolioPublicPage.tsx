@@ -2703,9 +2703,11 @@ export default function PortfolioPublicPage() {
   const reportModal = (
     <ReportPortfolioModal
       isOpen={reportModalOpen}
-      onClose={() => {
+      onClose={(success?: boolean) => {
         setReportModalOpen(false);
-        refetch();
+        if (success) {
+          refetch();
+        }
       }}
       portfolioId={data?.id ?? 0}
       portfolioTitle={

@@ -13,7 +13,7 @@ const MOTIVOS = [
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (success?: boolean) => void;
   portfolioId: string | number;
   portfolioTitle?: string;
 }
@@ -94,7 +94,7 @@ export function ReportPortfolioModal({
                 setIsSubmitted(false);
                 setMotivo('');
                 setDescription('');
-                onClose();
+                onClose(true);
               }}
               className="mt-6 w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg cursor-pointer"
             >
@@ -176,7 +176,7 @@ export function ReportPortfolioModal({
 
         <div className="p-8 flex gap-3">
           <button
-            onClick={onClose}
+            onClick={() => onClose()}
             disabled={isSubmitting}
             className="flex-1 py-4 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 rounded-2xl transition-colors"
           >
