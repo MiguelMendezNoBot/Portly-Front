@@ -15,7 +15,6 @@ interface AdminUserResponse {
   fechaCreacion: string;
   estado: string;
   hasPublicPortfolio: boolean;
-  suspensionActiva?: boolean;
 }
 
 export function UsersPage() {
@@ -70,7 +69,6 @@ export function UsersPage() {
           fechaCreacion: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
           estado: 'suspendido',
           hasPublicPortfolio: false,
-          suspensionActiva: true,
         },
         {
           idUsuario: '4',
@@ -87,7 +85,6 @@ export function UsersPage() {
           fechaCreacion: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
           estado: 'suspendido',
           hasPublicPortfolio: true,
-          suspensionActiva: true,
         },
         {
           idUsuario: '6',

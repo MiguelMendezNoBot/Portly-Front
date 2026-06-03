@@ -1,4 +1,4 @@
-/** Helpers para determinar el estado de cuenta ignorando suspensionActiva. */
+/** Helpers para determinar el estado de cuenta basándose únicamente en el campo estado. */
 export function isSuspendedAccount(user: {
   estado?: string;
 }): boolean {
@@ -29,6 +29,12 @@ export function countBlockedAccounts(
   users: { estado?: string; }[]
 ): number {
   return users.filter(isBlockedAccount).length;
+}
+
+export function countSuspendedAccounts(
+  users: { estado?: string; }[]
+): number {
+  return users.filter(isSuspendedAccount).length;
 }
 
 export function getAccountStatusLabel(user: {

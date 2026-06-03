@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { httpClient } from '../../../infrastructure/http/httpClient';
 import { DashboardStats } from '../domain/entities/DashboardStats';
-import { countBlockedAccounts } from '../domain/userAccountStatus';
+import { countSuspendedAccounts } from '../domain/userAccountStatus';
 import { HttpAdminDashboardRepository } from '../infrastructure/repositories/HttpAdminDashboardRepository';
 
 const repository = new HttpAdminDashboardRepository();
 
 interface AdminUserForStats {
   estado?: string;
-  suspensionActiva?: boolean;
 }
 
 export function useAdminDashboard() {
@@ -28,7 +27,7 @@ export function useAdminDashboard() {
       ]);
 
       const cuentasSuspendidas =
-        users !== null ? countBlockedAccounts(users) : data.cuentasSuspendidas;
+        users !== null ? countSuspendedAccounts(users) : data.cuentasSuspendidas;
 
       setStats({ ...data, cuentasSuspendidas });
     } catch {
