@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { UserTab } from '../components/UserTab';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
@@ -17,6 +17,7 @@ import AppealModal from '../../../profile/presentation/components/AppealModal';
 export const HomePage = () => {
   const { toast, showToast } = useToast();
   const { user, logout } = useAuth();
+
   const toastShown = useRef(false);
   useScrollReveal();
   const location = useLocation();
@@ -86,6 +87,8 @@ export const HomePage = () => {
       showToast('Sesión iniciada con éxito', 'success');
     }
   }, []);
+
+  if (user?.rol === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
 
   // Pantalla de bloqueo para usuario suspendido
   if (user && statusLoaded && userEstado === 'suspendido') {
