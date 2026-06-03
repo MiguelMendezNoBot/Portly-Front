@@ -16,6 +16,14 @@ export function useAdminComplaint() {
     setError(null);
     try {
       const data = await repo.getAll();
+      data.sort((a, b) => {
+        // Primero estado pendiente
+        if (a.status === 'pendiente' && b.status !== 'pendiente') return -1;
+        if (a.status !== 'pendiente' && b.status === 'pendiente') return 1;
+        
+        // Luego por cantidad de denuncias recibidas (mayor a menor)
+        return b.complaints.length - a.complaints.length;
+      });
       setComplaints(data);
     } catch (err: any) {
       setError(err.message || 'Error al cargar denuncias');
