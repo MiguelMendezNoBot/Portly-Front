@@ -38,6 +38,12 @@ export function SuspendUserModal({
         adminId: 'admin1',
         motivoCancelacion: null,
       });
+      // Enviar correo de suspensión
+      try {
+        await repo.sendSuspensionEmail(userId, motivo);
+      } catch (e) {
+        console.warn('Se suspendió al usuario pero no se pudo enviar el correo:', e);
+      }
       // Actualizar denuncias del usuario
       await repo.updateDenunciasByUser(userId, 'suspendido');
       onSuccess();

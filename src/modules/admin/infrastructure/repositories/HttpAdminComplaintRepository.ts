@@ -65,6 +65,18 @@ export class HttpAdminComplaintRepository {
     return res.json().then((data) => data.suspension);
   }
 
+  async sendSuspensionEmail(userId: string, motivo: string): Promise<void> {
+    const res = await fetch(
+      `${BASE_URL}/usuarios/${userId}/enviar-correo-suspension`,
+      {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ motivo }),
+      }
+    );
+    if (!res.ok) throw new Error('Error al enviar el correo de suspensión');
+  }
+
   async updateDenunciasByUser(
     _userId: string,
     _ownerUserStatus: string
