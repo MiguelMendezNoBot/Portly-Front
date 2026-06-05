@@ -3,6 +3,11 @@ import type { Template } from '../../domain/entities/Template';
 import TemplateGallery from './TemplateGallery';
 import TemplatePreview from './TemplatePreview';
 
+interface ProfileOption {
+  id: string;
+  etiqueta: string;
+}
+
 interface PortfolioFormModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,8 +15,13 @@ interface PortfolioFormModalProps {
   loadingTemplates: boolean;
   templatesError: string | null;
   creating: boolean;
-  onCreatePortfolio: (templateId: string, nombre: string) => Promise<void>;
+  onCreatePortfolio: (
+    templateId: string,
+    nombre: string,
+    perfilProfesionalId?: string
+  ) => Promise<void>;
   existingPortfolios: { nombre: string; templateId: string }[];
+  professionalProfiles: ProfileOption[];
 }
 
 export default function PortfolioFormModal({
@@ -23,11 +33,13 @@ export default function PortfolioFormModal({
   creating,
   onCreatePortfolio,
   existingPortfolios,
+  professionalProfiles,
 }: PortfolioFormModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null
   );
   const [portfolioName, setPortfolioName] = useState('');
+  const [selectedProfileId, setSelectedProfileId] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,6 +48,7 @@ export default function PortfolioFormModal({
         setSelectedTemplate(templates[0]);
       }
       setPortfolioName('');
+      setSelectedProfileId('');
       setError(null);
     } else {
       setSelectedTemplate(null);
@@ -63,7 +76,11 @@ export default function PortfolioFormModal({
     }
     setError(null);
     try {
-      await onCreatePortfolio(selectedTemplate.id, portfolioName);
+      await onCreatePortfolio(
+        selectedTemplate.id,
+        portfolioName,
+        selectedProfileId || undefined
+      );
       onClose();
     } catch (err) {
       // Error is handled by parent, but we can catch it to not close the modal if there's an error
@@ -124,6 +141,38 @@ export default function PortfolioFormModal({
             {error && (
               <p className="text-red-400 text-xs font-semibold mt-1">{error}</p>
             )}
+          </div>
+
+          {/* Selector de perfil profesional */}
+          <div className="shrink-0 flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-white">
+              Perfil profesional a mostrar
+            </label>
+            <div className="relative">
+              <select
+                value={selectedProfileId}
+                onChange={(e) => setSelectedProfileId(e.target.value)}
+                className="w-full bg-[#0f111a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#7c6bec]/50 transition-all appearance-none cursor-pointer"
+                style={{ backgroundImage: 'none' }}
+              >
+                <option value="">Perfil general (por defecto)</option>
+                {professionalProfiles.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.etiqueta}
+                  </option>
+                ))}
+              </select>
+              <svg
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#a7aab9]"
+                width="12" height="12" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <p className="text-[#6b7280] text-xs mt-0.5">
+              Define qué profesión, descripción y foto verá el público en este portafolio.
+            </p>
           </div>
 
           {/* Galería y Preview */}

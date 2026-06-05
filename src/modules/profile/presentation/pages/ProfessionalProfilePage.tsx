@@ -1,6 +1,7 @@
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfessionalIdentitySection from '../components/ProfessionalIdentitySection';
+import ProfessionalProfilesSection from '../components/ProfessionalProfilesSection';
 
 export function ProfessionalProfilePage() {
   const { profile, loading, saving, saveProfile } = useUserProfile();
@@ -29,15 +30,15 @@ export function ProfessionalProfilePage() {
   if (!profile) return null;
 
   return (
-    <div className="py-6 max-w-lg flex flex-col gap-6">
+    <div className="max-w-5xl mx-auto pb-20 flex flex-col gap-4">
       <ProfessionalIdentitySection form={form} onFieldChange={setField} />
 
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex items-center justify-end gap-3 px-6">
         <button
           type="button"
           onClick={handleCancel}
           disabled={!dirty}
-          className="px-5 py-2.5 rounded-[10px] text-sm font-medium text-src-6b7280 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="py-2.5 px-5 rounded-full text-sm font-semibold text-[#9ca3af] hover:text-white border border-white/10 hover:border-white/20 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
@@ -45,14 +46,16 @@ export function ProfessionalProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={saving || !dirty}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-src-7c6bec hover:bg-src-6c5ce0 text-white text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 bg-gradient-to-r from-[#bdbefe] to-[#a092ec] hover:brightness-110 text-[#0D0096] py-2.5 px-5 rounded-full font-semibold transition-all shadow-[0_0_15px_rgba(108,99,255,0.3)] active:scale-95 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving && (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-[#0D0096]/30 border-t-[#0D0096] rounded-full animate-spin" />
           )}
           Guardar cambios
         </button>
       </div>
+
+      <ProfessionalProfilesSection />
     </div>
   );
 }

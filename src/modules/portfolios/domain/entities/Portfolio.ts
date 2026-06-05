@@ -22,6 +22,7 @@ export interface CreatePortfolioDto {
   templateId: string;
   nombre: string;
   visibilidad: 'PUBLICO' | 'PRIVADO';
+  perfilProfesionalId?: string;
 }
 
 export interface UpdateVisibilidadDto {

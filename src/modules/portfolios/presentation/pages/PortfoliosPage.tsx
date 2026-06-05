@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useTemplates } from '../../application/useTemplates';
 import { usePortfolios } from '../../application/usePortfolios';
+import { useProfessionalProfiles } from '../../../profile/application/useProfessionalProfiles';
 import PortfolioList from '../components/PortfolioList';
 import PortfolioFormModal from '../components/PortfolioFormModal';
 import DeletePortfolioModal from '../components/DeletePortfolioModal';
@@ -251,6 +252,7 @@ export default function PortfoliosPage() {
     publishPortfolio,
     unpublishPortfolio,
   } = usePortfolios();
+  const { profiles: professionalProfiles } = useProfessionalProfiles();
 
   // Mode flow
   const [mode, setMode] = useState<'delete' | 'preview' | 'share' | null>(null);
@@ -317,9 +319,14 @@ export default function PortfoliosPage() {
 
   // --- Create handlers ---
   const handleCreate = useCallback(
-    async (templateId: string, nombre: string) => {
+    async (templateId: string, nombre: string, perfilProfesionalId?: string) => {
       try {
-        await createPortfolio({ templateId, nombre, visibilidad: 'PRIVADO' });
+        await createPortfolio({
+          templateId,
+          nombre,
+          visibilidad: 'PRIVADO',
+          perfilProfesionalId,
+        });
         showToast('¡Portafolio creado!', 'success');
         setIsModalOpen(false);
       } catch (err: any) {
@@ -1048,6 +1055,10 @@ export default function PortfoliosPage() {
         existingPortfolios={portfolios.map((p) => ({
           nombre: p.nombre,
           templateId: String(p.templateId),
+        }))}
+        professionalProfiles={professionalProfiles.map((p) => ({
+          id: p.id,
+          etiqueta: p.etiqueta,
         }))}
       />
 
