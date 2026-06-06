@@ -38,6 +38,7 @@ export function mapBackendToUserProfile(
 
   return {
     id: String(data.idUsuario ?? ''),
+    username: data.username ? String(data.username) : undefined,
     firstName: String(data.nombre ?? ''),
     lastName: String(data.apellido ?? ''),
     email: String(data.email ?? ''),
@@ -96,10 +97,22 @@ export function mapBackendToUserProfile(
     socialLinks,
     connectedProviders,
     estado: String(data.estado ?? 'activo'),
-    motivoSuspension: data.motivoSuspension ? String(data.motivoSuspension) : undefined,
-    apelacionPendiente: data.apelacionPendiente !== undefined ? Boolean(data.apelacionPendiente) : false,
-    apelacionAprobada: data.apelacionAprobada !== undefined ? Boolean(data.apelacionAprobada) : false,
-    idApelacionAprobada: data.idApelacionAprobada !== undefined && data.idApelacionAprobada !== null ? Number(data.idApelacionAprobada) : undefined,
+    motivoSuspension: data.motivoSuspension
+      ? String(data.motivoSuspension)
+      : undefined,
+    apelacionPendiente:
+      data.apelacionPendiente !== undefined
+        ? Boolean(data.apelacionPendiente)
+        : false,
+    apelacionAprobada:
+      data.apelacionAprobada !== undefined
+        ? Boolean(data.apelacionAprobada)
+        : false,
+    idApelacionAprobada:
+      data.idApelacionAprobada !== undefined &&
+      data.idApelacionAprobada !== null
+        ? Number(data.idApelacionAprobada)
+        : undefined,
   };
 }
 

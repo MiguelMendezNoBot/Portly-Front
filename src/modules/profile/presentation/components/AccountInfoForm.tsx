@@ -118,6 +118,14 @@ export default function AccountInfoForm({ form, profile, onFieldChange }: Accoun
         </div>
 
         <Field
+          label="Nombre de usuario"
+          value={profile.username || 'No tiene nombre de usuario'}
+          onChange={() => {}}
+          type="text"
+          disabled={true}
+        />
+
+        <Field
           label="Correo electrónico"
           value={profile.email}
           onChange={() => {}}
