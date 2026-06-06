@@ -304,7 +304,7 @@ export default function TrayectoriaSection() {
                   </h4>
                   <p className="text-[#A8E8FF] text-sm font-medium mt-1 max-w-[380px]">
                     {exp.nombreEmpresa} • {exp.fechaInicio} -{' '}
-                    {exp.actualmenteTrabajando ? 'Present' : exp.fechaFin}
+                    {exp.actualmenteTrabajando ? 'Actualidad' : exp.fechaFin}
                   </p>
                   <p className="text-[#9ca3af] text-sm mt-4 leading-relaxed pr-2">
                     {exp.descripcion}

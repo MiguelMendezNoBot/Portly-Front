@@ -6,27 +6,14 @@ import type {
 export function mapBackendToUserProfile(
   data: Record<string, unknown>
 ): UserProfileEntity {
+  const redesBackend = data.redesSociales as Record<string, string> | undefined;
   const socialLinks: UserProfileEntity['socialLinks'] = {
-    github: '',
-    linkedin: '',
-    instagram: '',
-    facebook: '',
-    youtube: '',
+    github: redesBackend?.github || '',
+    linkedin: redesBackend?.linkedin || '',
+    instagram: redesBackend?.instagram || '',
+    facebook: redesBackend?.facebook || '',
+    youtube: redesBackend?.youtube || '',
   };
-
-  const enlaces = data.enlaces;
-  if (enlaces && Array.isArray(enlaces)) {
-    for (const enlace of enlaces as {
-      plataformaProfesional?: string;
-      direccionEnlace?: string;
-    }[]) {
-      const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
-      if (plataforma in socialLinks) {
-        (socialLinks as Record<string, string>)[plataforma] =
-          enlace.direccionEnlace || '';
-      }
-    }
-  }
 
   const connectedProviders: string[] = [];
   const proveedores = data.proveedores;
