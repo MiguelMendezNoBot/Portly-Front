@@ -6,27 +6,14 @@ import type {
 export function mapBackendToUserProfile(
   data: Record<string, unknown>
 ): UserProfileEntity {
+  const redesBackend = data.redesSociales as Record<string, string> | undefined;
   const socialLinks: UserProfileEntity['socialLinks'] = {
-    github: '',
-    linkedin: '',
-    instagram: '',
-    facebook: '',
-    youtube: '',
+    github: redesBackend?.github || '',
+    linkedin: redesBackend?.linkedin || '',
+    instagram: redesBackend?.instagram || '',
+    facebook: redesBackend?.facebook || '',
+    youtube: redesBackend?.youtube || '',
   };
-
-  const enlaces = data.enlaces;
-  if (enlaces && Array.isArray(enlaces)) {
-    for (const enlace of enlaces as {
-      plataformaProfesional?: string;
-      direccionEnlace?: string;
-    }[]) {
-      const plataforma = (enlace.plataformaProfesional || '').toLowerCase();
-      if (plataforma in socialLinks) {
-        (socialLinks as Record<string, string>)[plataforma] =
-          enlace.direccionEnlace || '';
-      }
-    }
-  }
 
   const connectedProviders: string[] = [];
   const proveedores = data.proveedores;
@@ -38,6 +25,7 @@ export function mapBackendToUserProfile(
 
   return {
     id: String(data.idUsuario ?? ''),
+    username: data.username ? String(data.username) : undefined,
     firstName: String(data.nombre ?? ''),
     lastName: String(data.apellido ?? ''),
     email: String(data.email ?? ''),
@@ -96,10 +84,22 @@ export function mapBackendToUserProfile(
     socialLinks,
     connectedProviders,
     estado: String(data.estado ?? 'activo'),
-    motivoSuspension: data.motivoSuspension ? String(data.motivoSuspension) : undefined,
-    apelacionPendiente: data.apelacionPendiente !== undefined ? Boolean(data.apelacionPendiente) : false,
-    apelacionAprobada: data.apelacionAprobada !== undefined ? Boolean(data.apelacionAprobada) : false,
-    idApelacionAprobada: data.idApelacionAprobada !== undefined && data.idApelacionAprobada !== null ? Number(data.idApelacionAprobada) : undefined,
+    motivoSuspension: data.motivoSuspension
+      ? String(data.motivoSuspension)
+      : undefined,
+    apelacionPendiente:
+      data.apelacionPendiente !== undefined
+        ? Boolean(data.apelacionPendiente)
+        : false,
+    apelacionAprobada:
+      data.apelacionAprobada !== undefined
+        ? Boolean(data.apelacionAprobada)
+        : false,
+    idApelacionAprobada:
+      data.idApelacionAprobada !== undefined &&
+      data.idApelacionAprobada !== null
+        ? Number(data.idApelacionAprobada)
+        : undefined,
   };
 }
 
