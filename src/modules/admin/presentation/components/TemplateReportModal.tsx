@@ -11,6 +11,7 @@ export function TemplateReportModal({ isOpen, onClose, repository }: TemplateRep
   const [desde, setDesde] = useState('');
   const [hasta, setHasta] = useState('');
   const [estado, setEstado] = useState('Todas');
+  const [isAllTime, setIsAllTime] = useState(false);
   
   const [errorDesde, setErrorDesde] = useState('');
   const [errorHasta, setErrorHasta] = useState('');
@@ -27,25 +28,33 @@ export function TemplateReportModal({ isOpen, onClose, repository }: TemplateRep
     setErrorHasta('');
     setGeneralError('');
 
-    if (!desde) {
-      setErrorDesde('La fecha de inicio es obligatoria.');
-      isValid = false;
-    }
-    if (!hasta) {
-      setErrorHasta('La fecha de fin es obligatoria.');
-      isValid = false;
-    }
+    let finalDesde = desde;
+    let finalHasta = hasta;
 
-    if (desde && hasta && hasta < desde) {
-      setErrorHasta('La fecha de fin no puede ser menor a la fecha de inicio.');
-      isValid = false;
+    if (isAllTime) {
+      finalDesde = '2000-01-01';
+      finalHasta = today;
+    } else {
+      if (!desde) {
+        setErrorDesde('La fecha de inicio es obligatoria.');
+        isValid = false;
+      }
+      if (!hasta) {
+        setErrorHasta('La fecha de fin es obligatoria.');
+        isValid = false;
+      }
+
+      if (desde && hasta && hasta < desde) {
+        setErrorHasta('La fecha de fin no puede ser menor a la fecha de inicio.');
+        isValid = false;
+      }
     }
 
     if (!isValid) return;
 
     setIsLoading(true);
     try {
-      await repository.downloadTemplateReport({ desde, hasta, estado });
+      await repository.downloadTemplateReport({ desde: finalDesde, hasta: finalHasta, estado });
       onClose();
     } catch (error: any) {
       setGeneralError(error.message || 'Error al generar el reporte.');
@@ -76,37 +85,55 @@ export function TemplateReportModal({ isOpen, onClose, repository }: TemplateRep
 
         <div className="space-y-6">
           <div>
-            <label className="block text-white text-sm font-medium mb-2">Rango de fechas *</label>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-[#9ca3af] text-xs mb-1">Desde</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    max={today}
-                    value={desde}
-                    onChange={(e) => setDesde(e.target.value)}
-                    className="w-full bg-[#1a1c29] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#7c6bec]"
-                    placeholder="dd/mm/aaaa"
-                  />
-                </div>
-                {errorDesde && <p className="text-[#EF4444] text-xs mt-1">{errorDesde}</p>}
-              </div>
-              <div className="flex-1">
-                <label className="block text-[#9ca3af] text-xs mb-1">Hasta</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    max={today}
-                    value={hasta}
-                    onChange={(e) => setHasta(e.target.value)}
-                    className="w-full bg-[#1a1c29] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#7c6bec]"
-                    placeholder="dd/mm/aaaa"
-                  />
-                </div>
-                {errorHasta && <p className="text-[#EF4444] text-xs mt-1">{errorHasta}</p>}
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-white text-sm font-medium">Rango de fechas *</label>
+              <label className="flex items-center gap-2 text-sm text-[#9ca3af] cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isAllTime}
+                  onChange={(e) => setIsAllTime(e.target.checked)}
+                  className="rounded border-white/20 bg-white/5 text-[#7c6bec] focus:ring-[#7c6bec] focus:ring-offset-0"
+                />
+                Todo el tiempo
+              </label>
             </div>
+
+            {isAllTime ? (
+              <div className="text-sm text-[#9ca3af] bg-white/5 p-4 rounded-xl border border-white/10">
+                Se generará el reporte abarcando desde el primer registro hasta el día de hoy.
+              </div>
+            ) : (
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-[#9ca3af] text-xs mb-1">Desde</label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      max={today}
+                      value={desde}
+                      onChange={(e) => setDesde(e.target.value)}
+                      className="w-full bg-[#1a1c29] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#7c6bec]"
+                      placeholder="dd/mm/aaaa"
+                    />
+                  </div>
+                  {errorDesde && <p className="text-[#EF4444] text-xs mt-1">{errorDesde}</p>}
+                </div>
+                <div className="flex-1">
+                  <label className="block text-[#9ca3af] text-xs mb-1">Hasta</label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      max={today}
+                      value={hasta}
+                      onChange={(e) => setHasta(e.target.value)}
+                      className="w-full bg-[#1a1c29] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#7c6bec]"
+                      placeholder="dd/mm/aaaa"
+                    />
+                  </div>
+                  {errorHasta && <p className="text-[#EF4444] text-xs mt-1">{errorHasta}</p>}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
