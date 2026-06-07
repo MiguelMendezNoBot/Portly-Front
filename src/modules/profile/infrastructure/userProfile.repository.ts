@@ -18,33 +18,7 @@ export const userProfileRepository: IUserProfileRepository = {
       '/api/profile',
       'Error al cargar perfil'
     );
-    const profile = mapBackendToUserProfile(data);
-
-    if (profile.email) {
-      try {
-        const redes = await httpClient.postAuth<{
-          instagram?: string;
-          facebook?: string;
-          youtube?: string;
-          github?: string;
-          linkedin?: string;
-        }>(
-          '/api/redes-sociales/user',
-          { email: profile.email },
-          'Error al cargar redes sociales'
-        );
-
-        if (redes.instagram) profile.socialLinks.instagram = redes.instagram;
-        if (redes.facebook)  profile.socialLinks.facebook  = redes.facebook;
-        if (redes.youtube)   profile.socialLinks.youtube   = redes.youtube;
-        if (redes.github)    profile.socialLinks.github    = redes.github;
-        if (redes.linkedin)  profile.socialLinks.linkedin  = redes.linkedin;
-      } catch (err) {
-        console.error('Aviso: Redes sociales no pudieron ser cargadas', err);
-      }
-    }
-
-    return profile;
+    return mapBackendToUserProfile(data);
   },
 
   async updateProfile(dto: UpdateUserProfileDTO): Promise<UserProfileEntity> {

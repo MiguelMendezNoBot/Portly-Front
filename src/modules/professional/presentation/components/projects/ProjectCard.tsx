@@ -61,7 +61,7 @@ export default function ProjectCard({
   return (
     <div
       onClick={onClick}
-      className={`relative rounded-2xl p-6 transition-all border ${
+      className={`group relative rounded-2xl p-6 transition-all border ${
         mode === 'edit'
           ? 'bg-[#1a1c29] border-white/20 cursor-pointer hover:bg-[#2a3060] hover:border-white/30'
           : mode === 'delete'
@@ -70,12 +70,12 @@ export default function ProjectCard({
       }`}
     >
       {mode === 'edit' && (
-        <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white z-10 pointer-events-none">
+        <div className="absolute top-5 right-5 p-2 bg-white/10 rounded-lg text-white z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon />
         </div>
       )}
       {mode === 'delete' && (
-        <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400 z-10 pointer-events-none">
+        <div className="absolute top-5 right-5 p-2 bg-red-500/20 rounded-lg text-red-400 z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <TrashIcon />
         </div>
       )}

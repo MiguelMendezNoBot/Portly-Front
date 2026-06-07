@@ -31,13 +31,13 @@ export default function ProfileTabs() {
   return (
     <div className="flex flex-col gap-8">
       {/* Selector de Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-[#0F131F] rounded-2xl border border-white/5 self-start">
+      <div className="flex items-stretch gap-2 p-1.5 bg-[#0F131F] rounded-2xl border border-white/5 self-start">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'px-6 py-2.5 rounded-xl text-button transition-all duration-200',
+              'flex items-center justify-center text-center px-6 py-2.5 rounded-xl text-button transition-all duration-200',
               activeTab === tab.id
                 ? 'bg-[#182141] text-white shadow-md'
                 : 'text-src-6b7280 hover:text-white hover:bg-white/5'
