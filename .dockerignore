@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.prettierrc
+eslint.config.js
+jest.config.cjs
+postcss.config.js
+tailwind.config.js
+tsconfig.*
+vite.config.ts
+*.md
