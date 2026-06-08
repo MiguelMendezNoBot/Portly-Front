@@ -6,8 +6,8 @@ import BotonInicio from '../../../../shared/components/BotonInicio';
 export const RegisterPage = () => {
     const [step, setStep] = useState(1);
     return (
-        <div className="min-h-screen bg-white p-2 md:p-4 box-border">
-            <div className="relative w-full min-h-[calc(100vh-1rem)] md:min-h-[calc(100vh-2rem)] bg-src-0f111a rounded-[2rem] flex items-center justify-center shadow-2xl">
+        <div className="h-screen bg-white p-2 md:p-4 box-border overflow-hidden">
+            <div className="relative w-full h-[calc(100vh-1rem)] md:h-[calc(100vh-2rem)] bg-src-0f111a rounded-[2rem] flex flex-col shadow-2xl overflow-hidden">
                 <BotonInicio>
                     <Link
                         to="/"
@@ -21,7 +21,9 @@ export const RegisterPage = () => {
                         PASO {step}
                     </span>
                 </BotonInicio>
-                <RegisterForm step={step} setStep={setStep} />
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin flex items-center justify-center px-2 pt-20 pb-6 md:py-6">
+                    <RegisterForm step={step} setStep={setStep} />
+                </div>
             </div>
         </div>
     );

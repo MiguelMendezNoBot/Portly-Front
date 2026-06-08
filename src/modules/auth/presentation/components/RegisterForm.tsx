@@ -84,7 +84,7 @@ function Countdown({ onResend }: { onResend: () => void }) {
     <p className="text-gray-500 text-sm text-center mt-3">
       ¿No recibiste el código?{' '}
       {seconds > 0 ? (
-        <span className="text-src-6c63ff font-medium">
+        <span className="text-src-6c63ff/40 font-medium cursor-not-allowed">
           Reenviar en 00:{pad(seconds)}
         </span>
       ) : (
@@ -139,7 +139,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
   };
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto">
+    <div className="relative w-full max-w-4xl mx-auto my-auto">
       <div className="w-[85%] sm:w-full max-w-[25rem] mx-auto px-5 sm:px-9 py-6 bg-white rounded-[35px] relative">
         {toast && (
           <div
@@ -164,6 +164,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 label="Correo Electrónico"
                 type="email"
                 placeholder="nombre@dominio.com"
+                required
                 value={fields.email}
                 onChange={handleChange('email')}
                 error={errors.email}
@@ -244,6 +245,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 label="Nombre/s"
                 type="text"
                 placeholder="Nombre/s"
+                required
                 value={fields.nombre}
                 onChange={handleChange('nombre')}
                 error={errors.nombre}
@@ -252,6 +254,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 label="Apellidos"
                 type="text"
                 placeholder="Apellidos"
+                required
                 value={fields.apellido}
                 onChange={handleChange('apellido')}
                 error={errors.apellido}
@@ -260,6 +263,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 label="Nombre de Usuario"
                 type="text"
                 placeholder="ej: juan_perez"
+                required
                 value={fields.username}
                 onChange={handleChange('username')}
                 error={errors.username}
@@ -267,6 +271,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
               <Input
                 label="Contraseña"
                 type="password"
+                required
                 value={fields.password}
                 onChange={handleChange('password')}
                 error={errors.password}
@@ -274,6 +279,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
               <Input
                 label="Confirmar Contraseña"
                 type="password"
+                required
                 value={fields.confirmPassword}
                 onChange={handleChange('confirmPassword')}
                 error={errors.confirmPassword}
@@ -283,6 +289,7 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 select={true}
                 placeholder="Selecciona tu profesión"
                 options={PROFESIONES}
+                required
                 value={fields.profesion}
                 onChange={handleChange('profesion')}
                 error={errors.profesion}
@@ -291,13 +298,11 @@ export const RegisterForm = ({ step, setStep }: RegisterFormProps) => {
                 label="Descripción Personal"
                 textArea={true}
                 placeholder="Cuéntanos un poco sobre ti..."
+                required
                 value={fields.biografia}
                 onChange={handleChange('biografia')}
                 error={errors.biografia}
               />
-              <p className="text-right text-gray-400 text-[10px] -mt-2 mb-2">
-                Máx. 500 caracteres
-              </p>
               <button
                 onClick={goStep3}
                 disabled={loading}

@@ -519,7 +519,7 @@ const features = [
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
       </svg>
     ),
-    title: 'Sabe exactamente quién ve tu portafolio',
+    title: 'Visualiza cuántos ven tu portafolio',
     subtitle: 'Métricas reales para tomar decisiones informadas sobre tu carrera',
     description:
       'Deja de publicar en el vacío. Portly registra las visitas a tu portafolio y te muestra cuántas personas lo vieron, qué proyectos generaron más interés y cómo evoluciona tu visibilidad semana a semana.',

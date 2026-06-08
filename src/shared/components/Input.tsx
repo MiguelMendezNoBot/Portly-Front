@@ -37,13 +37,14 @@ export const Input = ({
     <div className="flex flex-col gap-1">
       <label className="text-black text-[13.5px] font-semibold mt-3">
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
       {select ? (
         <select
           value={value}
           onChange={onChange}
           required={required}
-          className={`w-full text-xs px-2 pt-2 pb-1 border rounded-xl outline-none bg-white ${error ? 'border-red-400' : 'border-gray-400'}`}
+          className={`w-full text-xs px-2 pt-2 pb-1 border rounded-xl outline-none bg-white text-black ${error ? 'border-red-400' : 'border-gray-400'}`}
         >
           <option value="">{placeholder ?? 'Selecciona una opción'}</option>
           {options.map((op) => (
@@ -57,14 +58,18 @@ export const Input = ({
           <textarea
             placeholder={placeholder}
             maxLength={500}
+            rows={5}
             value={value}
             onChange={onChange}
             className={`resize-none w-full text-[12px] px-2 py-1 border rounded-xl outline-none ${error ? 'border-red-400' : 'border-gray-400'}`}
             required={required}
           />
-          <span className="text-[10px] mt-1 text-right block">
-            {value?.length ?? 0}/500
-          </span>
+          <div className="flex items-start justify-between mt-1 gap-2">
+            {error && <span className="text-red-500 text-[11px]">{error}</span>}
+            <span className="text-[10px] text-gray-400 ml-auto shrink-0">
+              {value?.length ?? 0}/500
+            </span>
+          </div>
         </div>
       ) : (
         <div className="relative">
@@ -95,7 +100,7 @@ export const Input = ({
           )}
         </div>
       )}
-      {error && <span className="text-red-500 text-[11px]">{error}</span>}
+      {!textArea && error && <span className="text-red-500 text-[11px]">{error}</span>}
     </div>
   );
 };

@@ -10,8 +10,11 @@ export const HeroSection = () => {
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="animate-blob-pulse absolute -top-40 -right-40 w-[560px] h-[560px] rounded-full bg-[#7c6bec]/8 blur-3xl" />
         <div
-          className="animate-blob-pulse absolute -bottom-40 -left-40 w-[480px] h-[480px] rounded-full bg-[#2dd4bf]/5 blur-3xl"
-          style={{ animationDelay: '3s' }}
+          className="animate-blob-pulse absolute -bottom-40 -left-40 w-[480px] h-[480px] rounded-full blur-3xl"
+          style={{
+            animationDelay: '3s',
+            background: 'radial-gradient(circle, rgba(45,212,191,0.08) 0%, rgba(45,212,191,0.03) 45%, transparent 70%)',
+          }}
         />
         <div
           className="animate-blob-pulse absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] rounded-full bg-[#7c6bec]/4 blur-3xl"

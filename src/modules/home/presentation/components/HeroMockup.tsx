@@ -156,10 +156,10 @@ export const HeroMockup = () => {
             </div>
             <div className="bg-[#171B28] rounded-xl border border-white/5 px-4 py-3">
               <p className="text-white text-xs font-bold">Ingeniería en Sistemas</p>
-              <p className="text-[#9ca3af] text-[11px]">Universidad Nacional Autónoma</p>
+              <p className="text-[#9ca3af] text-[11px]">Universidad Mayor de San Simón</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#7c6bec]/15 text-[#C9BEFF]">Licenciatura</span>
-                <span className="text-[#5a6278] text-[10px]">Ago 2018 — En curso</span>
+                <span className="text-[#5a6278] text-[10px]">Agosto 2023 — En curso</span>
               </div>
             </div>
           </div>

@@ -286,7 +286,7 @@ export function UserProfilePage() {
           <PortlyLogoBig />
           <div>
             <h1 className="text-white text-2xl font-bold leading-tight">
-              Ajustes de perfil
+              Información de perfil
             </h1>
             <p className="text-src-6b7280 text-sm mt-0.5">
               Puedes modificar y editar algunos detalles en este apartado.
@@ -296,7 +296,7 @@ export function UserProfilePage() {
 
         <div className="md:hidden px-5 pt-16 pb-2 shrink-0">
           <h1 className="text-white text-lg font-bold leading-tight">
-            Ajustes de perfil
+            Información de perfil
           </h1>
           <p className="text-src-6b7280 text-xs mt-0.5">
             Puedes modificar y editar algunos detalles.

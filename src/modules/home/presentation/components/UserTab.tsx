@@ -79,11 +79,34 @@ const LogoutIcon = () => (
 export const UserTab = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  type DropdownState = 'closed' | 'open' | 'closing';
+  const [menuState, setMenuState] = useState<DropdownState>('closed');
+  const [passwordFormState, setPasswordFormState] = useState<DropdownState>('closed');
   const [canChangePassword, setCanChangePassword] = useState(true);
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
-    useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isOpen = menuState !== 'closed';
+
+  const closeMenu = () => {
+    setMenuState((s) => (s === 'open' ? 'closing' : s));
+  };
+  const openMenu = () => setMenuState('open');
+
+  const closePasswordForm = () => {
+    setPasswordFormState((s) => (s === 'open' ? 'closing' : s));
+  };
+  const openPasswordForm = () => setPasswordFormState('open');
+
+  useEffect(() => {
+    if (menuState !== 'closing') return;
+    const id = setTimeout(() => setMenuState('closed'), 150);
+    return () => clearTimeout(id);
+  }, [menuState]);
+
+  useEffect(() => {
+    if (passwordFormState !== 'closing') return;
+    const id = setTimeout(() => setPasswordFormState('closed'), 150);
+    return () => clearTimeout(id);
+  }, [passwordFormState]);
 
   useEffect(() => {
     if (user?.email) {
@@ -103,7 +126,7 @@ export const UserTab = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        closeMenu();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -132,7 +155,7 @@ export const UserTab = () => {
   return (
     <div className="relative" ref={menuRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => (isOpen ? closeMenu() : openMenu())}
         className="flex items-center md:gap-2 bg-violet-100 border border-violet-200 rounded-full p-1.5 md:pl-1.5 md:pr-6 md:py-1.5 hover:bg-violet-200 transition-colors cursor-pointer shrink-0"
       >
         <div className="w-8 h-8 rounded-full bg-white border border-violet-200 flex items-center justify-center text-slate-600 shrink-0">
@@ -143,12 +166,16 @@ export const UserTab = () => {
         </span>
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+0.5rem)] w-[220px] bg-src-0f111a rounded-[1.25rem] shadow-2xl py-2 flex flex-col z-50 origin-top-right transition-all">
+      {menuState !== 'closed' && (
+        <div
+          className={`absolute right-0 top-[calc(100%+0.5rem)] w-[220px] bg-src-0f111a rounded-[1.25rem] shadow-2xl py-2 flex flex-col z-50 origin-top-right ${
+            menuState === 'closing' ? 'animate-dropdown-close' : 'animate-dropdown-open'
+          }`}
+        >
           {!user.perfilCompleto ? (
             <Link
               to="/complete-profile"
-              onClick={() => setIsOpen(false)}
+              onClick={closeMenu}
               className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors"
             >
               <span className="text-src-6b72ff">
@@ -162,7 +189,7 @@ export const UserTab = () => {
             <>
               <Link
                 to="/profile"
-                onClick={() => setIsOpen(false)}
+                onClick={closeMenu}
                 className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors"
               >
                 <span className="text-src-6b72ff">
@@ -176,8 +203,8 @@ export const UserTab = () => {
               {canChangePassword && (
                 <button
                   onClick={() => {
-                    setIsOpen(false);
-                    setIsChangePasswordModalOpen(true);
+                    closeMenu();
+                    openPasswordForm();
                   }}
                   className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-white/5 transition-colors text-left w-full"
                 >
@@ -194,7 +221,7 @@ export const UserTab = () => {
 
           <button
             onClick={() => {
-              setIsOpen(false);
+              closeMenu();
               logout();
             }}
             className="flex items-center gap-3 px-5 py-2.5 text-[15px] hover:bg-red-500/10 transition-colors text-left"
@@ -209,16 +236,20 @@ export const UserTab = () => {
         </div>
       )}
 
-      {isChangePasswordModalOpen && (
+      {passwordFormState !== 'closed' && (
         <>
           <div
             className="fixed inset-0 z-40"
-            onClick={() => setIsChangePasswordModalOpen(false)}
+            onClick={closePasswordForm}
           />
-          <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 animate-fade-in origin-top-right">
+          <div
+            className={`absolute right-0 top-[calc(100%+0.5rem)] z-50 origin-top-right ${
+              passwordFormState === 'closing' ? 'animate-dropdown-close' : 'animate-dropdown-open'
+            }`}
+          >
             <ChangePasswordForm
               email={user.email}
-              onCancel={() => setIsChangePasswordModalOpen(false)}
+              onCancel={closePasswordForm}
             />
           </div>
         </>
