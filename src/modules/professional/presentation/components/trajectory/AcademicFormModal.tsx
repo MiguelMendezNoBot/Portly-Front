@@ -122,7 +122,6 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
       if (rec.idFormacionAcademica === initialData?.idFormacionAcademica) return false;
       return (
         rec.institucion.trim().toLowerCase() === request.institucion.toLowerCase() &&
-        rec.carrera.trim().toLowerCase() === request.carrera.toLowerCase() &&
         rec.nivel === request.nivel
       );
     });
@@ -401,49 +400,34 @@ export default function AcademicFormModal({ isOpen, onClose, initialData, onSave
         </div>
       </div>
 
-      {/* ── Modal de advertencia de duplicidad ── */}
+      {/* ── Modal de error de duplicidad ── */}
       {showDuplicateWarning && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0f111a] w-full max-w-sm rounded-[20px] border border-yellow-500/20 p-7 shadow-2xl">
+          <div className="bg-[#0f111a] w-full max-w-sm rounded-[20px] border border-red-500/20 p-7 shadow-2xl">
             <div className="flex items-start gap-4 mb-5">
-              <div className="w-10 h-10 rounded-full bg-yellow-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
+              <div className="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
               <div>
                 <h3 className="text-white text-base font-bold leading-snug">
-                  Formación duplicada detectada
+                  Formación duplicada
                 </h3>
                 <p className="text-[#9ca3af] text-sm mt-2 leading-relaxed">
-                  Detectamos que ya tienes una Formación con estos datos. ¿Deseas registrar esta formación igualmente?
+                  No puedes crear un mismo registro. Ya tienes una Formación con esta Institución y Nivel.
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
               <button
-                onClick={handleForceSave}
-                disabled={isLoading}
-                className="w-full py-3 rounded-full bg-gradient-to-r from-[#bdbefe] to-[#8285fe] text-[#471499] text-sm font-bold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-[#471499] border-t-transparent rounded-full animate-spin" />
-                    Guardando...
-                  </>
-                ) : (
-                  'GUARDAR DE TODAS FORMAS'
-                )}
-              </button>
-              <button
                 onClick={() => setShowDuplicateWarning(false)}
-                disabled={isLoading}
-                className="w-full py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all disabled:opacity-50"
+                className="w-full py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
               >
-                CANCELAR
+                ENTENDIDO
               </button>
             </div>
           </div>
