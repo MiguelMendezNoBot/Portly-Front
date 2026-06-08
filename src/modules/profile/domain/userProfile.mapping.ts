@@ -100,6 +100,8 @@ export function mapBackendToUserProfile(
       data.idApelacionAprobada !== null
         ? Number(data.idApelacionAprobada)
         : undefined,
+    hasPassword:
+      data.hasPassword !== undefined ? Boolean(data.hasPassword) : undefined,
   };
 }
 

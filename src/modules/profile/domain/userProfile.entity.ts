@@ -15,6 +15,7 @@ export interface UserProfileEntity {
   apelacionPendiente?: boolean;
   apelacionAprobada?: boolean;
   idApelacionAprobada?: number;
+  hasPassword?: boolean;
   visibility: {
     showEmail: boolean;
     showProfession: boolean;
