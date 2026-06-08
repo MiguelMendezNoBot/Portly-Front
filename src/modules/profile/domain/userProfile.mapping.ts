@@ -80,6 +80,10 @@ export function mapBackendToUserProfile(
         data.mostrarFormacion !== undefined
           ? Boolean(data.mostrarFormacion)
           : true,
+      showActualizacion:
+        data.mostrarActualizacionAcademica !== undefined
+          ? Boolean(data.mostrarActualizacionAcademica)
+          : true,
     },
     socialLinks,
     connectedProviders,
@@ -131,6 +135,7 @@ export function mapUpdateDtoToBackend(
       mostrarHabilidadesBlandas: dto.visibility.showSoftSkills,
       mostrarTrayectoria: dto.visibility.showExperience,
       mostrarFormacion: dto.visibility.showEducation,
+      mostrarActualizacionAcademica: dto.visibility.showActualizacion,
     }),
   };
 }
