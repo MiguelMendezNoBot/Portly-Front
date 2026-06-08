@@ -241,6 +241,7 @@ export default function ProfessionalProfilesSection() {
         onUploadPhoto={uploadPhoto}
         initialData={editing}
         isSaving={isSaving}
+        existingRecords={profiles}
       />
 
       <ConfirmModal

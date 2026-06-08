@@ -11,6 +11,7 @@ interface ProfessionalProfileFormModalProps {
   onUploadPhoto: (file: File) => Promise<string>;
   initialData?: ProfessionalProfile;
   isSaving?: boolean;
+  existingRecords?: ProfessionalProfile[];
 }
 
 const BIO_MAX = 500;
@@ -28,6 +29,7 @@ export default function ProfessionalProfileFormModal({
   onUploadPhoto,
   initialData,
   isSaving,
+  existingRecords = [],
 }: ProfessionalProfileFormModalProps) {
   const [etiqueta, setEtiqueta] = useState('');
   const [titularProfesional, setTitularProfesional] = useState('');
@@ -36,6 +38,8 @@ export default function ProfessionalProfileFormModal({
   const [uploading, setUploading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState<CreateProfessionalProfileDTO | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isEditing = !!initialData;
@@ -48,6 +52,8 @@ export default function ProfessionalProfileFormModal({
       setFotoUrl(initialData?.fotoUrl);
       setShowError(false);
       setServerError(null);
+      setShowDuplicateWarning(false);
+      setPendingRequest(null);
     }
   }, [isOpen, initialData]);
 
@@ -71,19 +77,10 @@ export default function ProfessionalProfileFormModal({
     }
   };
 
-  const handleAction = async () => {
-    if (!etiqueta.trim()) {
-      setShowError(true);
-      return;
-    }
+  const executeSave = async (request: CreateProfessionalProfileDTO) => {
     setServerError(null);
     try {
-      await onSave({
-        etiqueta: etiqueta.trim(),
-        titularProfesional: titularProfesional.trim(),
-        acercaDeMi: acercaDeMi.trim(),
-        fotoUrl,
-      });
+      await onSave(request);
       onClose();
     } catch (err: unknown) {
       const msg =
@@ -92,6 +89,45 @@ export default function ProfessionalProfileFormModal({
           : 'Error al guardar el perfil';
       setServerError(msg);
     }
+  };
+
+  const isDuplicate = (request: CreateProfessionalProfileDTO): boolean => {
+    return existingRecords.some((rec) => {
+      if (rec.id === initialData?.id) return false;
+      return (
+        rec.etiqueta.trim().toLowerCase() === request.etiqueta.toLowerCase() &&
+        (rec.titularProfesional || '').trim().toLowerCase() === (request.titularProfesional || '').toLowerCase() &&
+        (rec.acercaDeMi || '').trim().toLowerCase() === (request.acercaDeMi || '').toLowerCase()
+      );
+    });
+  };
+
+  const handleAction = async () => {
+    if (!etiqueta.trim()) {
+      setShowError(true);
+      return;
+    }
+    
+    const request = {
+      etiqueta: etiqueta.trim(),
+      titularProfesional: titularProfesional.trim(),
+      acercaDeMi: acercaDeMi.trim(),
+      fotoUrl,
+    };
+
+    if (isDuplicate(request)) {
+      setPendingRequest(request);
+      setShowDuplicateWarning(true);
+      return;
+    }
+
+    await executeSave(request);
+  };
+
+  const handleForceSave = async () => {
+    if (!pendingRequest) return;
+    setShowDuplicateWarning(false);
+    await executeSave(pendingRequest);
   };
 
   if (!isOpen) return null;
@@ -217,6 +253,40 @@ export default function ProfessionalProfileFormModal({
           </button>
         </div>
       </div>
+
+      {/* ── Modal de error de duplicidad ── */}
+      {showDuplicateWarning && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#0f111a] w-full max-w-sm rounded-[20px] border border-red-500/20 p-7 shadow-2xl">
+            <div className="flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-white text-base font-bold leading-snug">
+                  Perfil duplicado
+                </h3>
+                <p className="text-[#9ca3af] text-sm mt-2 leading-relaxed">
+                  No puedes crear un mismo registro. Ya tienes un Perfil Profesional con estos datos.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setShowDuplicateWarning(false)}
+                className="w-full py-3 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all"
+              >
+                ENTENDIDO
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
