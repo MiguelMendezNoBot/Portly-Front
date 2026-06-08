@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { UserTab } from '../components/UserTab';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
@@ -193,7 +193,15 @@ export const HomePage = () => {
           <UserTab />
         </PestanaEsquina>
 
-        {/* Mobile: botón de perfil flotante sin pestaña blanca */}
+        {/* Mobile: logo y botón de perfil flotantes a la misma altura */}
+        <Link to="/" className="md:hidden absolute top-4 left-4 z-50 flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-src-0d1830 to-black border border-white/10 flex items-center justify-center shadow-xl shrink-0">
+            <img src="/portly_logo.png" alt="Portly" className="w-6 h-6" />
+          </div>
+          <span className="text-white font-black text-base tracking-[0.2em]">
+            PORTLY
+          </span>
+        </Link>
         <div className="md:hidden absolute top-4 right-4 z-50">
           <UserTab />
         </div>

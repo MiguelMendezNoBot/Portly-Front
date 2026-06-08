@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUserProfile } from '../../application/useUserProfile';
 import { useProfileForm } from '../hooks/useProfileForm';
 import ProfileAvatar from '../components/ProfileAvatar';
@@ -206,7 +206,17 @@ export function UserProfilePage() {
     useUserProfile();
   const { form, dirty, setField } = useProfileForm(profile);
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarState, setSidebarState] = useState<'closed' | 'open' | 'closing'>('closed');
+  const sidebarOpen = sidebarState !== 'closed';
+  const openSidebar = () => setSidebarState('open');
+  const closeSidebar = () => setSidebarState((s) => (s === 'open' ? 'closing' : s));
+
+  useEffect(() => {
+    if (sidebarState !== 'closing') return;
+    const id = setTimeout(() => setSidebarState('closed'), 200);
+    return () => clearTimeout(id);
+  }, [sidebarState]);
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [appealOpen, setAppealOpen] = useState(false);
@@ -256,7 +266,7 @@ export function UserProfilePage() {
         <div className="md:hidden absolute top-4 left-0 right-0 z-20 flex items-center justify-between px-4">
           <button
             type="button"
-            onClick={() => setSidebarOpen(true)}
+            onClick={openSidebar}
             className="w-11 h-11 rounded-full bg-src-9fa2ff flex items-center justify-center text-src-1c1154 shadow-lg"
             aria-label="Abrir menú"
           >
@@ -385,12 +395,22 @@ export function UserProfilePage() {
             <button
               type="button"
               aria-label="Cerrar menú"
-              className="md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm w-full"
-              onClick={() => setSidebarOpen(false)}
+              className={`md:hidden absolute inset-0 bg-black/60 z-30 backdrop-blur-sm w-full ${
+                sidebarState === 'closing' ? 'animate-overlay-out' : 'animate-overlay-in'
+              }`}
+              onClick={closeSidebar}
             />
-            <div className="md:hidden absolute top-0 left-0 h-full w-72 bg-[#0F131F] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden">
+            <div
+              className={`md:hidden absolute top-0 left-0 h-full w-72 bg-[#0F131F] z-40 shadow-2xl flex flex-col rounded-r-[2rem] overflow-hidden ${
+                sidebarState === 'closing' ? 'animate-drawer-out' : 'animate-drawer-in'
+              }`}
+            >
               <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
+                <Link
+                  to="/"
+                  onClick={closeSidebar}
+                  className="flex items-center gap-3"
+                >
                   <img
                     src="/portly_logo.png"
                     alt="Portly"
@@ -399,10 +419,10 @@ export function UserProfilePage() {
                   <span className="text-white font-bold text-base tracking-wide">
                     Portly
                   </span>
-                </div>
+                </Link>
                 <button
                   type="button"
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={closeSidebar}
                   className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
                   aria-label="Cerrar menú"
                 >

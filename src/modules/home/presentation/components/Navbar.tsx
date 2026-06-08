@@ -11,8 +11,8 @@ export const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="flex items-center gap-4 px-8 py-4">
-      <Link to="/" className="flex items-center gap-3 group">
+    <nav className="hidden md:flex items-center gap-4 px-8 py-4">
+      <Link to="/" className="hidden md:flex items-center gap-3 group">
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-src-0d1830 to-black border border-white/10 flex items-center justify-center shadow-xl group-hover:border-src-6b72ff/50 transition-all duration-300">
           <img src="/portly_logo.png" alt="Portly" className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
         </div>
