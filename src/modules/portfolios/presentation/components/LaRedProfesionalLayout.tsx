@@ -13,6 +13,7 @@ import type {
   PortfolioPublicExperience,
   PortfolioPublicProject,
   PortfolioPublicFormacion,
+  PortfolioPublicActualizacion,
 } from '../../domain/entities/PortfolioPublicData';
 import type { TemplateSection } from '../../domain/entities/Template';
 import { TechIcon } from '../../../professional/presentation/components/Skills/icons/TechIcon';
@@ -107,6 +108,8 @@ function sectionHasContent(type: string, data: PortfolioPublicData): boolean {
       return data.experiencias.length > 0;
     case 'education':
       return data.formaciones.length > 0;
+    case 'actualizacion':
+      return (data.actualizaciones?.length ?? 0) > 0;
     case 'projects':
       return data.proyectos.length > 0;
     case 'contact':
@@ -977,6 +980,61 @@ function EducationSection({
   );
 }
 
+function ActualizacionSection({
+  items,
+  mobile,
+}: {
+  items: PortfolioPublicActualizacion[];
+  mobile: boolean;
+}) {
+  return (
+    <section id="actualizacion" style={{ padding: mobile ? '64px 20px' : '80px clamp(32px, 6vw, 96px)' }}>
+      <h2 style={{ fontSize: mobile ? 28 : 36, fontWeight: 800, margin: '0 0 32px', color: T.text }}>
+        Actualización académica
+      </h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {items.map((a, i) => (
+          <div
+            key={a.idActualizacionAcademica ?? i}
+            style={{
+              padding: 24,
+              borderRadius: 12,
+              background: T.bgCard,
+              border: `1px solid ${T.border}`,
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: T.text }}>
+                {a.titulo}
+              </h3>
+              <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'ui-monospace, monospace' }}>
+                {formatPeriod(a.fechaInicio, a.fechaFinalizacion, a.aunNoLoFinalice)}
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: 14, color: T.purpleLight }}>{a.institucion}</p>
+            {a.tipo && (
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: T.textMuted }}>{a.tipo}</p>
+            )}
+            {a.descripcion && (
+              <p style={{ margin: '12px 0 0', fontSize: 14, color: T.textMuted, lineHeight: 1.6 }}>
+                {a.descripcion}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ContactSection({
   usuario,
   mobile,
@@ -1275,6 +1333,10 @@ export default function LaRedProfesionalLayout({
 
         {sectionHasContent('education', data) && (
           <EducationSection items={data.formaciones} mobile={isMobile} />
+        )}
+
+        {sectionHasContent('actualizacion', data) && (
+          <ActualizacionSection items={data.actualizaciones ?? []} mobile={isMobile} />
         )}
 
         {sectionHasContent('contact', data) && (

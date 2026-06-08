@@ -6,6 +6,7 @@ import type {
   PortfolioPublicExperience,
   PortfolioPublicProject,
   PortfolioPublicFormacion,
+  PortfolioPublicActualizacion,
 } from '../../domain/entities/PortfolioPublicData';
 import type { TemplateSection } from '../../domain/entities/Template';
 import { TechIcon } from '../../../professional/presentation/components/Skills/icons/TechIcon';
@@ -78,6 +79,8 @@ function sectionHasContent(type: string, data: PortfolioPublicData): boolean {
       return data.experiencias.length > 0;
     case 'education':
       return data.formaciones.length > 0;
+    case 'actualizacion':
+      return (data.actualizaciones?.length ?? 0) > 0;
     case 'projects':
       return data.proyectos.length > 0;
     case 'contact':
@@ -872,6 +875,70 @@ function EducationBlock({
   );
 }
 
+function ActualizacionBlock({
+  items,
+  mobile,
+}: {
+  items: PortfolioPublicActualizacion[];
+  mobile: boolean;
+}) {
+  return (
+    <section id="actualizacion">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: mobile ? 28 : 32 }}>
+        {items.map((a, i) => (
+          <div key={a.idActualizacionAcademica ?? i} style={timelineGrid(mobile)}>
+            <div
+              style={{
+                fontSize: mobile ? 12 : 13,
+                fontWeight: 500,
+                color: C.slate,
+                paddingTop: mobile ? 0 : 4,
+                fontFamily: 'ui-monospace, monospace',
+              }}
+            >
+              {formatPeriod(a.fechaInicio, a.fechaFinalizacion, a.aunNoLoFinalice)}
+            </div>
+            <div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: mobile ? 15 : 16,
+                  fontWeight: 600,
+                  color: C.lightest,
+                  lineHeight: 1.4,
+                }}
+              >
+                {a.titulo}
+                <span style={{ color: C.slate, fontWeight: 400 }}>
+                  {' '}
+                  · {a.institucion}
+                </span>
+              </h3>
+              {a.tipo && (
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: C.green }}>
+                  {a.tipo}
+                </p>
+              )}
+              {a.descripcion && (
+                <p
+                  style={{
+                    margin: '12px 0 0',
+                    fontSize: mobile ? 14 : 15,
+                    lineHeight: 1.6,
+                    color: C.slate,
+                  }}
+                >
+                  {a.descripcion}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ContactBlock({
   usuario,
   mobile,
@@ -966,6 +1033,8 @@ function renderContentSection(
       return <SoftSkillsBlock items={data.softSkills} mobile={mobile} />;
     case 'education':
       return <EducationBlock items={data.formaciones} mobile={mobile} />;
+    case 'actualizacion':
+      return <ActualizacionBlock items={data.actualizaciones ?? []} mobile={mobile} />;
     case 'contact':
       return (
         <ContactBlock
