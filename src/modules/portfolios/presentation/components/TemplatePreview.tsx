@@ -278,26 +278,7 @@ export default function TemplatePreview({
           </div>
         </div>
 
-        {/* Secciones de la plantilla */}
-        <div className="flex flex-col gap-2">
-          <p className="text-[#4b5563] text-[10px] uppercase tracking-[0.2em] font-bold">
-            Módulos Incluidos
-          </p>
-          <div className="grid grid-cols-2 gap-1.5">
-            {[...template.schema.sections]
-              .filter((s) => s.visible)
-              .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
-              .map((s, idx) => (
-                <div
-                  key={`${s.type}-${idx}`}
-                  className="flex items-center gap-2 text-[11px] text-[#6b7280] font-medium"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#7c6bec]/40" />
-                  <span className="truncate">{s.title || s.type}</span>
-                </div>
-              ))}
-          </div>
-        </div>
+
       </div>
     </div>
   );
