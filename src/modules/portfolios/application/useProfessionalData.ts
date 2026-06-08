@@ -5,6 +5,7 @@ import type { SoftSkill } from '../../professional/domain/entities/SoftSkill';
 import type { Experience } from '../../professional/domain/entities/Experience';
 import type { Project } from '../../professional/domain/entities/Project';
 import type { FormacionAcademica } from '../../professional/domain/entities/FormacionAcademica';
+import type { ActualizacionAcademica } from '../../professional/domain/entities/ActualizacionAcademica';
 import type { UserProfileEntity } from '../../profile/domain/userProfile.entity';
 
 export interface ProfessionalData {
@@ -13,6 +14,7 @@ export interface ProfessionalData {
   experiences: Experience[];
   projects: Project[];
   formacion: FormacionAcademica[];
+  actualizaciones: ActualizacionAcademica[];
   user: UserProfileEntity | null;
 }
 
@@ -22,6 +24,7 @@ const EMPTY: ProfessionalData = {
   experiences: [],
   projects: [],
   formacion: [],
+  actualizaciones: [],
   user: null,
 };
 
@@ -34,13 +37,14 @@ export function useProfessionalData() {
     setLoading(true);
     setError(null);
     try {
-      const [skills, softSkills, experiences, projects, formacion, user] =
+      const [skills, softSkills, experiences, projects, formacion, actualizaciones, user] =
         await Promise.allSettled([
           httpClient.getAuth<Skill[]>('/api/skills', ''),
           httpClient.getAuth<SoftSkill[]>('/api/soft-skills', ''),
           httpClient.getAuth<Experience[]>('/api/profile/experiencia', ''),
           httpClient.getAuth<Project[]>('/api/profile/proyectos', ''),
           httpClient.getAuth<FormacionAcademica[]>('/api/profile/formacion', ''),
+          httpClient.getAuth<ActualizacionAcademica[]>('/api/profile/actualizacion-academica', ''),
           httpClient.getAuth<UserProfileEntity>('/api/profile', ''),
         ]);
 
@@ -50,6 +54,7 @@ export function useProfessionalData() {
         experiences: experiences.status === 'fulfilled' ? experiences.value : [],
         projects: projects.status === 'fulfilled' ? projects.value : [],
         formacion: formacion.status === 'fulfilled' ? formacion.value : [],
+        actualizaciones: actualizaciones.status === 'fulfilled' ? actualizaciones.value : [],
         user: user.status === 'fulfilled' ? user.value : null,
       });
     } catch (err: any) {

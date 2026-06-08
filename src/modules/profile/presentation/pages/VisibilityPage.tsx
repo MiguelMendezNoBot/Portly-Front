@@ -270,6 +270,12 @@ const SECTIONS: SectionDef[] = [
     itemsKey: 'educationItems',
   },
   {
+    key: 'actualizacion',
+    title: 'Actualización académica',
+    sectionBool: 'showActualizacion',
+    itemsKey: 'actualizacionItems',
+  },
+  {
     key: 'projects',
     title: 'Proyectos',
     sectionBool: 'showProjects',
@@ -321,6 +327,12 @@ export function VisibilityPage() {
       id: String(f.idFormacionAcademica),
       label: `${f.carrera} — ${f.institucion}`,
     }));
+  const actualizacionItems = profData.actualizaciones
+    .filter((a) => a.idActualizacionAcademica !== undefined)
+    .map((a) => ({
+      id: String(a.idActualizacionAcademica),
+      label: `${a.titulo} — ${a.institucion}`,
+    }));
   const projectItems = profData.projects
     .filter((p) => p.id !== undefined)
     .map((p) => ({ id: String(p.id), label: p.nombre }));
@@ -330,6 +342,7 @@ export function VisibilityPage() {
     softSkillItems,
     experienceItems,
     educationItems,
+    actualizacionItems,
     projectItems,
   };
 

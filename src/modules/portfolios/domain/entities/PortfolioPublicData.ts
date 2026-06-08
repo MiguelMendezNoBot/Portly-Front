@@ -80,6 +80,17 @@ export interface PortfolioPublicFormacion {
   descripcion?: string;
 }
 
+export interface PortfolioPublicActualizacion {
+  idActualizacionAcademica?: number;
+  institucion: string;
+  tipo: string;
+  titulo: string;
+  fechaInicio: string;
+  fechaFinalizacion: string | null;
+  aunNoLoFinalice: boolean;
+  descripcion?: string;
+}
+
 export interface PortfolioPublicData {
   id: string;
   nombre: string;
@@ -93,4 +104,5 @@ export interface PortfolioPublicData {
   experiencias: PortfolioPublicExperience[];
   proyectos: PortfolioPublicProject[];
   formaciones: PortfolioPublicFormacion[];
+  actualizaciones: PortfolioPublicActualizacion[];
 }

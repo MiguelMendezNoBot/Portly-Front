@@ -30,6 +30,7 @@ export interface UserProfileEntity {
     showSoftSkills: boolean;
     showExperience: boolean;
     showEducation: boolean;
+    showActualizacion?: boolean;
   };
   socialLinks: {
     github?: string;

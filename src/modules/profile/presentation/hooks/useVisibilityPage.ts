@@ -8,6 +8,7 @@ import type { Skill } from '../../../professional/domain/entities/Skill';
 import type { SoftSkill } from '../../../professional/domain/entities/SoftSkill';
 import type { Experience } from '../../../professional/domain/entities/Experience';
 import type { FormacionAcademica } from '../../../professional/domain/entities/FormacionAcademica';
+import type { ActualizacionAcademica } from '../../../professional/domain/entities/ActualizacionAcademica';
 import type { Project } from '../../../professional/domain/entities/Project';
 
 export interface VisibilityState {
@@ -25,11 +26,13 @@ export interface VisibilityState {
   showSoftSkills: boolean;
   showExperience: boolean;
   showEducation: boolean;
+  showActualizacion: boolean;
   showProjects: boolean;
   techSkillItems: Record<string, boolean>;
   softSkillItems: Record<string, boolean>;
   experienceItems: Record<string, boolean>;
   educationItems: Record<string, boolean>;
+  actualizacionItems: Record<string, boolean>;
   projectItems: Record<string, boolean>;
 }
 
@@ -38,6 +41,7 @@ export type ItemsKey =
   | 'softSkillItems'
   | 'experienceItems'
   | 'educationItems'
+  | 'actualizacionItems'
   | 'projectItems';
 
 export type BoolKey = Exclude<keyof VisibilityState, ItemsKey>;
@@ -47,6 +51,7 @@ const ITEMS_TO_BOOL: Record<ItemsKey, BoolKey> = {
   softSkillItems: 'showSoftSkills',
   experienceItems: 'showExperience',
   educationItems: 'showEducation',
+  actualizacionItems: 'showActualizacion',
   projectItems: 'showProjects',
 };
 
@@ -63,17 +68,23 @@ function allTrue<T extends object>(
   );
 }
 
+interface BuildVisibilityData {
+  skills: Skill[];
+  softSkills: SoftSkill[];
+  experiences: Experience[];
+  formacion: FormacionAcademica[];
+  actualizaciones: ActualizacionAcademica[];
+  projects: Project[];
+}
+
 function buildVisibility(
   profile: UserProfileEntity,
   portfolioItemVis: PortfolioItemVisibilidad | undefined,
-  skills: Skill[],
-  softSkills: SoftSkill[],
-  experiences: Experience[],
-  formacion: FormacionAcademica[],
-  projects: Project[]
+  data: BuildVisibilityData
 ): VisibilityState {
   const stored = portfolioItemVis ?? {};
   const v = profile.visibility;
+  const { skills, softSkills, experiences, formacion, actualizaciones, projects } = data;
 
   return {
     showPhone: v.showPhone ?? true,
@@ -90,6 +101,7 @@ function buildVisibility(
     showSoftSkills: v.showSoftSkills,
     showExperience: v.showExperience,
     showEducation: v.showEducation,
+    showActualizacion: v.showActualizacion ?? true,
     showProjects: stored.showProjects ?? true,
     techSkillItems:
       stored.techSkillItems ?? allTrue(skills, (s) => s.id),
@@ -99,19 +111,22 @@ function buildVisibility(
     experienceItems:
       stored.experienceItems ??
       allTrue(experiences, (e) =>
-        e.id !== undefined ? String(e.id) : undefined
+        e.id === undefined ? undefined : String(e.id)
       ),
     educationItems:
       stored.educationItems ??
       allTrue(formacion, (f) =>
-        f.idFormacionAcademica !== undefined
-          ? String(f.idFormacionAcademica)
-          : undefined
+        f.idFormacionAcademica === undefined ? undefined : String(f.idFormacionAcademica)
+      ),
+    actualizacionItems:
+      stored.actualizacionItems ??
+      allTrue(actualizaciones, (a) =>
+        a.idActualizacionAcademica === undefined ? undefined : String(a.idActualizacionAcademica)
       ),
     projectItems:
       stored.projectItems ??
       allTrue(projects, (p) =>
-        p.id !== undefined ? String(p.id) : undefined
+        p.id === undefined ? undefined : String(p.id)
       ),
   };
 }
@@ -139,11 +154,14 @@ export function useVisibilityPage() {
     const v = buildVisibility(
       profile!,
       portfolioItemVis,
-      profData.skills,
-      profData.softSkills,
-      profData.experiences,
-      profData.formacion,
-      profData.projects
+      {
+        skills: profData.skills,
+        softSkills: profData.softSkills,
+        experiences: profData.experiences,
+        formacion: profData.formacion,
+        actualizaciones: profData.actualizaciones,
+        projects: profData.projects,
+      }
     );
     setVis(v);
     setBaselineVis(JSON.stringify(v));
@@ -224,6 +242,7 @@ export function useVisibilityPage() {
           showSoftSkills: vis.showSoftSkills,
           showExperience: vis.showExperience,
           showEducation: vis.showEducation,
+          showActualizacion: vis.showActualizacion,
         },
       });
 
@@ -233,6 +252,7 @@ export function useVisibilityPage() {
         softSkillItems: vis.softSkillItems,
         experienceItems: vis.experienceItems,
         educationItems: vis.educationItems,
+        actualizacionItems: vis.actualizacionItems,
         projectItems: vis.projectItems,
       });
 

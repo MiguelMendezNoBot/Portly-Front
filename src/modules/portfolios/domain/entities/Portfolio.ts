@@ -4,6 +4,7 @@ export interface PortfolioItemVisibilidad {
   softSkillItems?: Record<string, boolean>;
   experienceItems?: Record<string, boolean>;
   educationItems?: Record<string, boolean>;
+  actualizacionItems?: Record<string, boolean>;
   projectItems?: Record<string, boolean>;
 }
 
@@ -31,5 +32,6 @@ export interface UpdateVisibilidadDto {
   softSkillItems?: Record<string, boolean>;
   experienceItems?: Record<string, boolean>;
   educationItems?: Record<string, boolean>;
+  actualizacionItems?: Record<string, boolean>;
   projectItems?: Record<string, boolean>;
 }

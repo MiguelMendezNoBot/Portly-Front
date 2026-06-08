@@ -18,6 +18,7 @@ import type {
   PortfolioPublicExperience,
   PortfolioPublicProject,
   PortfolioPublicFormacion,
+  PortfolioPublicActualizacion,
   PortfolioPublicUser,
 } from '../../domain/entities/PortfolioPublicData';
 import type { TemplateSection } from '../../domain/entities/Template';
@@ -2185,6 +2186,72 @@ function EducationSection({
   );
 }
 
+function ActualizacionesSection({
+  actualizaciones,
+  t,
+  title,
+}: {
+  actualizaciones: PortfolioPublicActualizacion[];
+  t: Theme;
+  title?: string;
+}) {
+  const isMobile = useIsMobile();
+  if (!actualizaciones.length) return null;
+  const isBrutalist = t.border === '#000000';
+
+  const formatDate = (dateStr: string | null | undefined): string => {
+    if (!dateStr) return '';
+    const [year, month] = dateStr.split('-');
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${months[parseInt(month, 10) - 1]} ${year}`;
+  };
+
+  return (
+    <section id="actualizacion" style={{ padding: isMobile ? '32px 0' : '48px 0' }}>
+      <SectionTitle text={title || 'Actualización académica'} t={t} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {actualizaciones.map((a, i) => (
+          <div
+            key={i}
+            style={{
+              background: isBrutalist ? t.accentBg : t.surface,
+              borderRadius: isBrutalist ? 0 : 14,
+              padding: isMobile ? '20px 16px' : '24px 32px',
+              border: isBrutalist ? '3px solid #000' : `1px solid ${t.border}`,
+              boxShadow: isBrutalist ? '6px 6px 0px #000' : 'none',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <p style={{ color: '#000', fontWeight: 900, fontSize: 18, margin: 0, textTransform: isBrutalist ? 'uppercase' : 'none' }}>
+                  {a.titulo}
+                </p>
+                <p style={{ color: isBrutalist ? '#000' : t.accentText, fontSize: 15, margin: '6px 0 0', fontWeight: 700 }}>
+                  {a.institucion}
+                </p>
+                {a.tipo && (
+                  <span style={{ fontSize: 12, color: isBrutalist ? '#fff' : t.textMuted, background: isBrutalist ? '#000' : t.badge, padding: '4px 12px', borderRadius: isBrutalist ? 0 : 6, marginTop: 10, display: 'inline-block', fontWeight: 800 }}>
+                    {a.tipo}
+                  </span>
+                )}
+              </div>
+              <span style={{ color: '#000', fontSize: 13, alignSelf: 'flex-start', fontWeight: 700 }}>
+                {formatDate(a.fechaInicio)} —{' '}
+                {a.aunNoLoFinalice ? 'Presente' : formatDate(a.fechaFinalizacion)}
+              </span>
+            </div>
+            {a.descripcion && (
+              <p style={{ color: isBrutalist ? '#000' : t.textSub, fontSize: 14, marginTop: 14, lineHeight: 1.7, fontWeight: isBrutalist ? 500 : 400 }}>
+                {a.descripcion}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ContactSection({
   usuario,
   t,
@@ -2334,6 +2401,15 @@ function renderSection(
         <EducationSection
           key="education"
           formaciones={data.formaciones}
+          t={t}
+          title={title}
+        />
+      );
+    case 'actualizacion':
+      return (
+        <ActualizacionesSection
+          key="actualizacion"
+          actualizaciones={data.actualizaciones ?? []}
           t={t}
           title={title}
         />
