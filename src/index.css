@@ -188,6 +188,53 @@ body {
 .animate-overlay-in     { animation: overlayFadeIn 0.25s ease-out forwards; }
 .animate-overlay-out    { animation: overlayFadeOut 0.2s ease-in forwards; }
 
+@keyframes ring {
+  0% { transform: rotate(0); }
+  10% { transform: rotate(25deg); }
+  20% { transform: rotate(-20deg); }
+  30% { transform: rotate(15deg); }
+  40% { transform: rotate(-10deg); }
+  50% { transform: rotate(5deg); }
+  60% { transform: rotate(0); }
+  100% { transform: rotate(0); }
+}
+.animate-ring { animation: ring 1.5s ease-in-out infinite; }
+
+@keyframes toastUnfold {
+  0% { transform: translateX(-50%) scaleX(0) scaleY(0.5); opacity: 0; }
+  10% { transform: translateX(-50%) scaleX(1.1) scaleY(1.1); opacity: 1; }
+  15% { transform: translateX(-50%) scaleX(0.95) scaleY(0.95); opacity: 1; }
+  20% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 1; }
+  85% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 1; }
+  90% { transform: translateX(-50%) scaleX(1.1) scaleY(1.1); opacity: 1; }
+  100% { transform: translateX(-50%) scaleX(0) scaleY(0.5); opacity: 0; }
+}
+.animate-toast-unfold { animation: toastUnfold 3.5s ease-in-out forwards; transform-origin: center; }
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(15deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(15deg); }
+  80% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+}
+.animate-wave { animation: wave 1s ease-in-out infinite; transform-origin: bottom center; }
+
+@keyframes characterDance {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(-4deg); }
+  75% { transform: translateY(-1px) rotate(4deg); }
+}
+.animate-character-dance { animation: characterDance 1.5s ease-in-out infinite; }
+
+@keyframes characterErrorShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-2px) rotate(-5deg); }
+  75% { transform: translateX(2px) rotate(5deg); }
+}
+.animate-character-error { animation: characterErrorShake 0.4s ease-in-out infinite; }
+
 /* Shimmer text */
 .text-shimmer {
   background: linear-gradient(90deg, #7c6bec, #c4bef8, #2dd4bf, #7c6bec);

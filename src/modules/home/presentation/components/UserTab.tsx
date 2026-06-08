@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import ChangePasswordForm from '../../../profile/presentation/components/ChangePasswordForm';
 import { verifyAccountLink } from '../../../auth/infrastructure/authService';
+import { InboxIcon } from '../../../../shared/components/InboxIcon';
 
 const UserIcon = () => (
   <svg
@@ -153,18 +154,20 @@ export const UserTab = () => {
   }
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        onClick={() => (isOpen ? closeMenu() : openMenu())}
-        className="flex items-center md:gap-2 bg-violet-100 border border-violet-200 rounded-full p-1.5 md:pl-1.5 md:pr-6 md:py-1.5 hover:bg-violet-200 transition-colors cursor-pointer shrink-0"
-      >
-        <div className="w-8 h-8 rounded-full bg-white border border-violet-200 flex items-center justify-center text-slate-600 shrink-0">
-          <UserIcon />
-        </div>
-        <span className="hidden md:inline text-src-6b72ff text-sm font-semibold tracking-wide px-2 whitespace-nowrap">
-          {user.displayName}
-        </span>
-      </button>
+    <div className="flex items-center gap-2 md:gap-4">
+      {user && <InboxIcon />}
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={() => (isOpen ? closeMenu() : openMenu())}
+          className="flex items-center md:gap-2 bg-violet-100 border border-violet-200 rounded-full p-1.5 md:pl-1.5 md:pr-6 md:py-1.5 hover:bg-violet-200 transition-colors cursor-pointer shrink-0"
+        >
+          <div className="w-8 h-8 rounded-full bg-white border border-violet-200 flex items-center justify-center text-slate-600 shrink-0">
+            <UserIcon />
+          </div>
+          <span className="hidden md:inline text-src-6b72ff text-sm font-semibold tracking-wide px-2 whitespace-nowrap">
+            {user.displayName}
+          </span>
+        </button>
 
       {menuState !== 'closed' && (
         <div
@@ -254,6 +257,7 @@ export const UserTab = () => {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 };
