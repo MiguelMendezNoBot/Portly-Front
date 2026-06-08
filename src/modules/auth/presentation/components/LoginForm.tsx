@@ -82,7 +82,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div>
           <label className="block text-sm font-bold mb-1">
-            Nombre de Usuario o Correo Electrónico
+            Nombre de Usuario o Correo Electrónico<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -101,7 +101,7 @@ export function LoginForm() {
 
         <div className="relative">
           <div className="flex justify-between items-center mb-1">
-            <label className="block text-sm font-bold">Contraseña</label>
+            <label className="block text-sm font-bold">Contraseña<span className="text-red-500">*</span></label>
             <Link
               to="/forgot-password"
               className="text-sm font-bold text-gray-900 hover:text-indigo-600"
